@@ -1,7 +1,8 @@
 package com.devcourse.web2_1_dashbunny_be.feature.admin.store.controller;
 
-import com.devcourse.dashbunny.domain.owner.StoreManagement;
-import com.devcourse.dashbunny.feature.admin.store.dto.StoreCreateDTO;
+
+import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreCreateDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
