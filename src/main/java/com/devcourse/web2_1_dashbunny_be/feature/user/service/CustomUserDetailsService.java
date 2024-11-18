@@ -1,7 +1,8 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.service;
 
 
-import com.devcourse.dashbunny.feature.user.repository.UserRepository;
+
+import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

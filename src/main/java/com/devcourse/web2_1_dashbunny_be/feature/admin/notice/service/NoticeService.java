@@ -1,12 +1,13 @@
 package com.devcourse.web2_1_dashbunny_be.feature.admin.notice.service;
 
-import com.devcourse.dashbunny.domain.admin.Notice;
-import com.devcourse.dashbunny.domain.admin.NoticeTarget;
-import com.devcourse.dashbunny.feature.admin.notice.dto.AddNotice;
-import com.devcourse.dashbunny.feature.admin.notice.dto.NoticeListView;
-import com.devcourse.dashbunny.feature.admin.notice.dto.NoticeView;
-import com.devcourse.dashbunny.feature.admin.notice.dto.UpdateNotice;
-import com.devcourse.dashbunny.feature.admin.notice.repository.NoticeRepository;
+
+import com.devcourse.web2_1_dashbunny_be.domain.admin.Notice;
+import com.devcourse.web2_1_dashbunny_be.domain.admin.NoticeTarget;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.AddNotice;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.NoticeListView;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.NoticeView;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.UpdateNotice;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

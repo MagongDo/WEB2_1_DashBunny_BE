@@ -1,6 +1,7 @@
 package com.devcourse.web2_1_dashbunny_be.config;
 
-import com.devcourse.dashbunny.feature.user.service.CustomUserDetailsService;
+
+import com.devcourse.web2_1_dashbunny_be.feature.user.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

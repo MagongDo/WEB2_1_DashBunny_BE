@@ -1,7 +1,8 @@
 package com.devcourse.web2_1_dashbunny_be.domain.owner;
 
-import com.devcourse.dashbunny.annotation.TSID;
-import com.devcourse.dashbunny.domain.owner.role.StoreStatus;
+
+import com.devcourse.web2_1_dashbunny_be.annotation.config.TSID;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

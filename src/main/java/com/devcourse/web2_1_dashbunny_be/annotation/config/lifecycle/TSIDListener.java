@@ -1,7 +1,8 @@
 package com.devcourse.web2_1_dashbunny_be.annotation.config.lifecycle;
 
 
-import com.devcourse.dashbunny.annotation.TSID;
+
+import com.devcourse.web2_1_dashbunny_be.annotation.config.TSID;
 import jakarta.persistence.PrePersist;
 import lombok.extern.slf4j.Slf4j;
 

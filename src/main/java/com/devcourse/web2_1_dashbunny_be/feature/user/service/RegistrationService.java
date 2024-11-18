@@ -1,8 +1,9 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.service;
 
 
-import com.devcourse.dashbunny.domain.user.User;
-import com.devcourse.dashbunny.feature.user.repository.UserRepository;
+
+import com.devcourse.web2_1_dashbunny_be.domain.user.User;
+import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
