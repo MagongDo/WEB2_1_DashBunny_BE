@@ -11,6 +11,9 @@ public class StoreListView {
     private String description;
     private String address;
     private StoreStatus storeStatus;
+    private String storeBannerImage;    // 가게 배너 이미지
+    private String userName; //사장님 이름-- StoreManagement엔티티에 아직 없음
+    private String approvedDate; //승인 날짜
     //수정날짜로 받기
 
 }

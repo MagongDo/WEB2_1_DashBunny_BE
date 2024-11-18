@@ -4,7 +4,8 @@ package com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 
-public record StoreCreateDTO(
+//StoreView로 이름 변경 예정
+public record StoreCreateRequest(
         String storeName,          // 가게 이름
         String contactNumber,      // 가게 연락처
         String address,            // 가게 위치
@@ -12,7 +13,12 @@ public record StoreCreateDTO(
         String category1,          // 대표 카테고리
         String category2,          // 추가 카테고리 1
         String category3,          // 추가 카테고리 2
-        String storeRegistrationDocs // 등록 서류
+        String storeRegistrationDocs, // 등록 서류
+        String storeLogo,          // 가게 매장 로고
+        String storeBannerImage,    // 가게 배너 이미지
+        StoreStatus storeStatus,
+        String userName //사장님 이름-- StoreManagement엔티티에 아직 없음
+
 ) {
     public StoreManagement toEntity() {
         StoreManagement storeManagement = new StoreManagement();
@@ -24,6 +30,8 @@ public record StoreCreateDTO(
         storeManagement.setCategory2(this.category2);
         storeManagement.setCategory3(this.category3);
         storeManagement.setStoreRegistrationDocs(this.storeRegistrationDocs);
+        storeManagement.setStoreLogo(this.storeLogo);
+        storeManagement.setStoreBannerImage(this.storeBannerImage);
         storeManagement.setStoreStatus(StoreStatus.PENDING);
         return storeManagement;
     }
