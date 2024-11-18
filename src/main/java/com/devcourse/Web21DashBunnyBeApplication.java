@@ -1,4 +1,4 @@
-package com.devcourse.web2_1_dashbunny_be;
+package com.devcourse;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
