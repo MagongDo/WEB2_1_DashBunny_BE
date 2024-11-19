@@ -2,15 +2,20 @@ package com.devcourse.web2_1_dashbunny_be.feature.admin.store.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.admin.StoreApplication;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.StoreApplicationType;
+import com.devcourse.web2_1_dashbunny_be.domain.admin.role.StoreIsApproved;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreClosureRequest;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreCreateRequest;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreListView;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreView;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreApplicationRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreManagementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +31,7 @@ public class StoreManagementService {
                 StoreApplication.builder()
                         .storeManagement(savedStoreManagement)
                         .storeApplicationType(StoreApplicationType.CREATE)
+                        .storeIsApproved(StoreIsApproved.WAIT)
                         .build()
         );
         return savedStoreManagement;
@@ -46,6 +52,7 @@ public class StoreManagementService {
                     StoreApplication.builder()
                             .storeManagement(storeManagement)
                             .storeApplicationType(StoreApplicationType.CLOSURE)
+                            .storeIsApproved(StoreIsApproved.WAIT)
                             .build()
             );
 
@@ -55,10 +62,7 @@ public class StoreManagementService {
         throw new IllegalStateException("Cannot apply for closure: Store is not in TEMP_CLOSE status.");
     }
 
-    //가게 번호로 단일 조회
-    public StoreManagement get(String storeId) {
-        StoreManagement store=storeManagementRepository.findById(storeId)
-                .orElseThrow(() -> new IllegalArgumentException("not found storeId: " + storeId));
-        return store;
-    }
+
+
+
 }

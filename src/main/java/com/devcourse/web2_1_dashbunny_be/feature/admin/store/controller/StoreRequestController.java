@@ -6,12 +6,17 @@ import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreClosureRequest;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreCreateRequest;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreListView;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreView;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreApplicationService;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreManagementService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -86,6 +91,19 @@ public class StoreRequestController {
     }
 
     //가게 조회
+    @GetMapping("/{storeId}")
+    public ResponseEntity<StoreView> getStore(@PathVariable String storeId) {
+        StoreView storeView=storeApplicationService.getStore(storeId);
+        return ResponseEntity.ok().body(storeView);
+    }
+
+    //가게 목록 조회
+    @GetMapping()
+    public ResponseEntity<List<StoreListView>> getAllStores() {
+        List<StoreListView> stores=storeApplicationService.getStores();
+        return ResponseEntity.ok().body(stores);
+    }
+
 
 
 

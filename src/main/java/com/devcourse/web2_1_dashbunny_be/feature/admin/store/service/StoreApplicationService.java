@@ -4,11 +4,15 @@ import com.devcourse.web2_1_dashbunny_be.domain.admin.StoreApplication;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.StoreIsApproved;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreListView;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreView;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreApplicationRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreManagementRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +26,7 @@ public class StoreApplicationService {
     public void approve(String storeId) {
         StoreManagement storeManagement = storeManagementRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("Store not found for ID: " + storeId));
-        StoreApplication storeApplication = storeApplicationRepository.findByRefereceId(storeId);
+        StoreApplication storeApplication = storeApplicationRepository.findByStoreId(storeId);
 
         if (storeApplication == null) {
             throw new IllegalArgumentException("Application not found for store ID: " + storeId);
@@ -44,7 +48,7 @@ public class StoreApplicationService {
     public void reject(String storeId, String reason) {
         StoreManagement storeManagement = storeManagementRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("Store not found for ID: " + storeId));
-        StoreApplication storeApplication = storeApplicationRepository.findByRefereceId(storeId);
+        StoreApplication storeApplication = storeApplicationRepository.findByStoreId(storeId);
 
         if (storeApplication == null) {
             throw new IllegalArgumentException("Application not found for store ID: " + storeId);
@@ -67,7 +71,7 @@ public class StoreApplicationService {
     public void close(String storeId) {
         StoreManagement storeManagement = storeManagementRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("Store not found for ID: " + storeId));
-        StoreApplication storeApplication = storeApplicationRepository.findByRefereceId(storeId);
+        StoreApplication storeApplication = storeApplicationRepository.findByStoreId(storeId);
 
         if (storeApplication == null) {
             throw new IllegalArgumentException("Application not found for store ID: " + storeId);
@@ -86,5 +90,19 @@ public class StoreApplicationService {
     }
 
 
+    //가게 번호로 단일 조회
+    public StoreView getStore(String storeId) {
+        StoreManagement store=storeManagementRepository.findById(storeId)
+                .orElseThrow(() -> new IllegalArgumentException("not found storeId: " + storeId));
+        return new StoreView(store);
+    }
+
+    //가게 목록 조회
+    public List<StoreListView> getStores() {
+        List<StoreManagement> stores=storeManagementRepository.findAll();
+        return stores.stream()
+                .map(StoreListView::new)
+                .toList();
+    }
 
 }
