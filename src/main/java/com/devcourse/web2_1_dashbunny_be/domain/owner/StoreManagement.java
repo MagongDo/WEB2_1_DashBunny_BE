@@ -18,7 +18,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "store_management")
-@EntityListeners(value = {TSIDListener1.class})
+//@EntityListeners(value = {TSIDListener1.class})
 public class StoreManagement {
 
     // 회원 ID
