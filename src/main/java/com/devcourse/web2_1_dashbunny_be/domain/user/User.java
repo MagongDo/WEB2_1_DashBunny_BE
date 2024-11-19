@@ -23,14 +23,14 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
+    @Column(nullable = false, length = 11)
+    private String phone;
+
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false, length = 50)
     private String name;
-
-    @Column(nullable = false, length = 13)
-    private String phone;
 
     @Column(length = 8)
     private String birthday;
@@ -38,7 +38,7 @@ public class User implements UserDetails {
     @Column(length = 50)
     private String email;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 11)
     private String role;
 
     @Column(nullable = false)
@@ -48,12 +48,12 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("user"));
+        return List.of(new SimpleGrantedAuthority(role));
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return phone;
     }
 
     @Override
