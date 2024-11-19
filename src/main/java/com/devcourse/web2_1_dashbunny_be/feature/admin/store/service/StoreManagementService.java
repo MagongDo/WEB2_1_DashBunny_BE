@@ -5,17 +5,12 @@ import com.devcourse.web2_1_dashbunny_be.domain.admin.role.StoreApplicationType;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.StoreIsApproved;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreClosureRequest;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreCreateRequest;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreListView;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreView;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreCreateRequestDTO;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreApplicationRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreManagementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +20,40 @@ public class StoreManagementService {
 
     // 가게 등록 신청
     @Transactional
-    public StoreManagement create(StoreCreateRequest storeCreateRequest) {
-        StoreManagement savedStoreManagement = storeManagementRepository.save(storeCreateRequest.toEntity());
+    public StoreManagement create(StoreCreateRequestDTO storeCreateRequestDTO) {
+        StoreManagement savedStoreManagement = storeManagementRepository.save(storeCreateRequestDTO.toEntity());
+        storeApplicationRepository.save(
+                StoreApplication.builder()
+                        .storeManagement(savedStoreManagement)
+                        .storeApplicationType(StoreApplicationType.CREATE)
+                        .storeIsApproved(StoreIsApproved.WAIT)
+                        .build()
+        );
+        return savedStoreManagement;
+    }
+
+    //가게 재등록 신청
+    @Transactional
+    public StoreManagement reCreate(String storeId, StoreCreateRequestDTO storeCreateRequestDTO) {
+        StoreManagement storeManagement = storeManagementRepository.findById(storeId)
+                .orElseThrow(() -> new IllegalArgumentException("Store ID not found: " + storeId));
+
+        // StoreManagement 정보 업데이트
+        storeManagement.setStoreName(storeCreateRequestDTO.getStoreName());
+        storeManagement.setContactNumber(storeCreateRequestDTO.getContactNumber());
+        storeManagement.setDescription(storeCreateRequestDTO.getDescription());
+        storeManagement.setAddress(storeCreateRequestDTO.getAddress());
+        storeManagement.setCategory1(storeCreateRequestDTO.getCategory1());
+        storeManagement.setCategory2(storeCreateRequestDTO.getCategory2());
+        storeManagement.setCategory3(storeCreateRequestDTO.getCategory3());
+        storeManagement.setStoreRegistrationDocs(storeCreateRequestDTO.getStoreRegistrationDocs());
+        storeManagement.setStoreBannerImage(storeCreateRequestDTO.getStoreBannerImage());
+        storeManagement.setStoreStatus(StoreStatus.PENDING); // 상태를 재등록 신청 중으로 변경
+
+        // 업데이트된 StoreManagement 저장
+        StoreManagement savedStoreManagement = storeManagementRepository.save(storeManagement);
+
+
         storeApplicationRepository.save(
                 StoreApplication.builder()
                         .storeManagement(savedStoreManagement)
