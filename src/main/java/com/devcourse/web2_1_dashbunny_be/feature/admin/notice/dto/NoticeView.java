@@ -2,7 +2,7 @@ package com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto;
 
 
 import com.devcourse.web2_1_dashbunny_be.domain.admin.Notice;
-import com.devcourse.web2_1_dashbunny_be.domain.admin.NoticeTarget;
+import com.devcourse.web2_1_dashbunny_be.domain.admin.role.NoticeTarget;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
