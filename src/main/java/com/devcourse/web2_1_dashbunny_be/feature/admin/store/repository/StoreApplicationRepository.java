@@ -8,10 +8,15 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface StoreApplicationRepository extends JpaRepository<StoreApplication, Long> {
-   // StoreApplication findByStoreId(String storeId);
 
     @Query("SELECT sa FROM StoreApplication sa WHERE sa.storeManagement.storeId = :storeId")
     StoreApplication findByStoreId(String storeId);
 
-    //Optional<StoreApplication> findByStoreId(@Param("storeId") String storeId);
+    //등록을 신청한 대기중인 가게 번호
+    @Query("SELECT sa FROM StoreApplication sa WHERE sa.storeManagement.storeId = :storeId AND sa.storeApplicationType='CREATE' AND sa.storeIsApproved = 'WAIT'")
+    StoreApplication findByStoreIdAndCreateAndWait(@Param("storeId") String storeId);
+
+    //폐업신청을 한 가게 번호
+    @Query("SELECT sa FROM StoreApplication sa WHERE sa.storeManagement.storeId = :storeId AND sa.storeApplicationType = 'CLOSURE'")
+    StoreApplication findByStoreIdAndClosure(@Param("storeId") String storeId);
 }

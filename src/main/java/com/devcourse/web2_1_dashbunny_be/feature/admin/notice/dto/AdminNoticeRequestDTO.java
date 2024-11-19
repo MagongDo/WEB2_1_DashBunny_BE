@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public class NoticeView {
+public class AdminNoticeRequestDTO {
     private Long noticeId;
     private String noticeTitle;
     private String noticeContent;
@@ -18,7 +18,7 @@ public class NoticeView {
     private NoticeTarget target;
     private Long viewCount;
 
-    public NoticeView(Notice notice) {
+    public AdminNoticeRequestDTO(Notice notice) {
         noticeId=notice.getNoticeId();
         noticeTitle=notice.getNoticeTitle();
         noticeContent=notice.getNoticeContent();

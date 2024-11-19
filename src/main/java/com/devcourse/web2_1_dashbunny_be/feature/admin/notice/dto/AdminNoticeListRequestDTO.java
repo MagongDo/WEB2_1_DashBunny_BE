@@ -8,14 +8,14 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class NoticeListView {
+public class AdminNoticeListRequestDTO {
     private Long noticeId;
     private String noticeTitle;
     private LocalDateTime createdDate;
     private NoticeTarget target;
     private Long viewCount;
 
-    public NoticeListView(Notice notice) {
+    public AdminNoticeListRequestDTO(Notice notice) {
         this.noticeId = notice.getNoticeId();
         this.noticeTitle = notice.getNoticeTitle();
         this.createdDate = notice.getCreatedDate();
