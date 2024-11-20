@@ -15,7 +15,6 @@ import java.util.List;
 
 // 가게 관리 및 가게 정보를 저장하는 엔티티 클래스
 @Entity
-@Builder
 @Setter
 @Getter
 @NoArgsConstructor
@@ -59,10 +58,18 @@ public class StoreManagement {
 
     // 2.가게 위치 [위도와 경도 (필수, JSON 형태로 저장)]
     @Column(columnDefinition = "JSON", nullable = false)
-    private String location ="{}"; //가게 신청할때 필요성?을 못느껴서 일단 디폴트값 "{}"로 정함
+    private String location ="{}";
 
+    //2. 가게 위치
+    // 위도
+    @Column(nullable = false)
+    private Double latitude;
 
-// [대표 카테고리 및 일반 카테고리 등]
+    //경도
+    @Column(nullable = false)
+    private Double longitude;
+
+    // [대표 카테고리 및 일반 카테고리 등]
     // 카테고리 1
     @Column
     private String category1;
