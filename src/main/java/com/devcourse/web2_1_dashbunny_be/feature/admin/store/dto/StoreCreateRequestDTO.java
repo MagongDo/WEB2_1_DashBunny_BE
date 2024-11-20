@@ -3,11 +3,13 @@ package com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-//StoreView로 이름 변경 예정
+
 @Getter
+@AllArgsConstructor //전체 필드 초기화
 @NoArgsConstructor
 public class StoreCreateRequestDTO {
     private String storeName;          // 가게 이름
@@ -23,19 +25,37 @@ public class StoreCreateRequestDTO {
     private StoreStatus storeStatus;
     private String userName; //사장님 이름-- StoreManagement엔티티에 아직 없음
 
+//    public StoreManagement toEntity() {
+//        StoreManagement storeManagement = new StoreManagement();
+//        storeManagement.setStoreName(this.storeName);
+//        storeManagement.setContactNumber(this.contactNumber);
+//        storeManagement.setAddress(this.address);
+//        storeManagement.setDescription(this.description);
+//        storeManagement.setCategory1(this.category1);
+//        storeManagement.setCategory2(this.category2);
+//        storeManagement.setCategory3(this.category3);
+//        storeManagement.setStoreRegistrationDocs(this.storeRegistrationDocs);
+//        storeManagement.setStoreLogo(this.storeLogo);
+//        storeManagement.setStoreBannerImage(this.storeBannerImage);
+//        storeManagement.setStoreStatus(StoreStatus.PENDING);
+//        return storeManagement;
+//    }
+//
     public StoreManagement toEntity() {
-        StoreManagement storeManagement = new StoreManagement();
-        storeManagement.setStoreName(this.storeName);
-        storeManagement.setContactNumber(this.contactNumber);
-        storeManagement.setAddress(this.address);
-        storeManagement.setDescription(this.description);
-        storeManagement.setCategory1(this.category1);
-        storeManagement.setCategory2(this.category2);
-        storeManagement.setCategory3(this.category3);
-        storeManagement.setStoreRegistrationDocs(this.storeRegistrationDocs);
-        storeManagement.setStoreLogo(this.storeLogo);
-        storeManagement.setStoreBannerImage(this.storeBannerImage);
-        storeManagement.setStoreStatus(StoreStatus.PENDING);
-        return storeManagement;
+        return StoreManagement.builder()
+                .storeName(storeName)
+                .contactNumber(contactNumber)
+                .address(address)
+                .description(description)
+                .category1(category1)
+                .category2(category2)
+                .category3(category3)
+                .storeRegistrationDocs(storeRegistrationDocs)
+                .storeLogo(storeLogo)
+                .storeBannerImage(storeBannerImage)
+                .storeStatus(storeStatus)
+                //사장님 이름
+                .build();
+
     }
 }
