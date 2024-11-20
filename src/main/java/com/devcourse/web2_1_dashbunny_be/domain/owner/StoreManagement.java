@@ -2,20 +2,16 @@ package com.devcourse.web2_1_dashbunny_be.domain.owner;
 
 
 import com.devcourse.web2_1_dashbunny_be.annotation.config.TSID;
-import com.devcourse.web2_1_dashbunny_be.annotation.config.lifecycle.TSIDListener1;
+import com.devcourse.web2_1_dashbunny_be.annotation.config.lifecycle.TSIDListener;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.StoreApplication;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 // 가게 관리 및 가게 정보를 저장하는 엔티티 클래스
@@ -23,7 +19,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "store_management")
-@EntityListeners(value = {TSIDListener1.class})
+@EntityListeners(value = {TSIDListener.class})
 public class StoreManagement {
 
     // 회원 ID
