@@ -1,7 +1,9 @@
 package com.devcourse.web2_1_dashbunny_be.domain.owner;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -10,6 +12,8 @@ import java.util.List;
 // 메뉴 그룹 정보를 관리하는 엔티티 클래스
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "menu_group")
 public class MenuGroup {
