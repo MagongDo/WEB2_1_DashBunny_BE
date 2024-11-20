@@ -2,6 +2,7 @@ package com.devcourse.web2_1_dashbunny_be.domain.owner;
 
 
 import com.devcourse.web2_1_dashbunny_be.annotation.config.TSID;
+import com.devcourse.web2_1_dashbunny_be.annotation.config.lifecycle.TSIDListener;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.StoreApplication;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import jakarta.persistence.*;
@@ -18,7 +19,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "store_management")
-//@EntityListeners(value = {TSIDListener1.class})
+@EntityListeners(value = {TSIDListener.class})
 public class StoreManagement {
 
     // 회원 ID
@@ -95,12 +96,12 @@ public class StoreManagement {
     // 최종 승인 날짜 (가장 최근 승인)
     private LocalDateTime approvedDate;
 
-//    //스토어가 가진 쿠폰 리스트
-//    //쿠폰이 없어도 스토어는 생성될 수 있어야한다. 리스트 초기화 진행
-//    @OneToMany(mappedBy = "storeManagement",cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<OwnerCoupon> couponList = new ArrayList<>();
-    // Getters and Setters -> 롬복 사용
+    //스토어가 가진 쿠폰 리스트
+    //쿠폰이 없어도 스토어는 생성될 수 있어야한다. 리스트 초기화 진행
+    @OneToMany(mappedBy = "storeManagement",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OwnerCoupon> couponList = new ArrayList<>();
 
+    //관리자 가게 신청관리
     @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<StoreApplication> stores = new ArrayList<>();
 }
