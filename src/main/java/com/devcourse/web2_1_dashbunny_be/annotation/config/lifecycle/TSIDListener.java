@@ -3,6 +3,7 @@ package com.devcourse.web2_1_dashbunny_be.annotation.config.lifecycle;
 
 
 import com.devcourse.web2_1_dashbunny_be.annotation.config.TSID;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import jakarta.persistence.PrePersist;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,7 +17,18 @@ public class TSIDListener {
     @PrePersist
     public void prePersist(Object entity) {
 
-        try {
+        try{
+            if (entity instanceof StoreManagement) {
+                StoreManagement storeManagement = (StoreManagement) entity;
+                if(storeManagement.getStoreId() ==null){
+                    storeManagement.setStoreId(creatTSID());
+                }
+            }
+        }catch (Exception e){
+            log.error("엔티티 아이디 주입 실패");
+            throw new RuntimeException(e);
+        }
+       /* try {
             // 엔티티 클래스의 모든 필드를 가져옴
             Field[] fields = entity.getClass().getDeclaredFields();
             for (Field field : fields) {
@@ -33,7 +45,7 @@ public class TSIDListener {
         }catch (IllegalAccessException e){
             log.error("엔티티 아이디 주입 실패");
             throw new RuntimeException(e);
-        }
+        }*/
     }
 
     private String creatTSID() {
