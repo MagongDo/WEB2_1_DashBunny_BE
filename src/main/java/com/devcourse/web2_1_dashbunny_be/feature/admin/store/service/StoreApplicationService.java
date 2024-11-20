@@ -39,7 +39,6 @@ public class StoreApplicationService {
         storeManagement.setApprovedDate(storeApplication.getApprovedDate()); // 승인 날짜 갱신
         storeManagementRepository.save(storeManagement);
 
-
         storeApplication.setStoreIsApproved(StoreIsApproved.APPROVE);
         storeApplicationRepository.save(storeApplication);
 

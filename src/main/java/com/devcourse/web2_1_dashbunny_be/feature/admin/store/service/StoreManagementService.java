@@ -53,7 +53,6 @@ public class StoreManagementService {
         // 업데이트된 StoreManagement 저장
         StoreManagement savedStoreManagement = storeManagementRepository.save(storeManagement);
 
-
         storeApplicationRepository.save(
                 StoreApplication.builder()
                         .storeManagement(savedStoreManagement)
