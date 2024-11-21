@@ -20,7 +20,7 @@ public class MenuController {
     //전체 메뉴 조회(메뉴 관리 1페이지 목록)
     @GetMapping("/read/menu/{storeId}")
     public ResponseEntity<List<MenuListResponseDTO>> readMenu(@PathVariable String storeId) {
-        List<MenuManagement> menus = menuService.findStore(storeId);
+        List<MenuManagement> menus = menuService.findStoreAllMenu(storeId);
         List<MenuListResponseDTO> result = menus.stream().map(MenuListResponseDTO::fromEntity).toList();
         return ResponseEntity.ok(result);
     }
@@ -57,45 +57,47 @@ public class MenuController {
     }
 
     //새로운 메뉴 등록(이미지 X)
-    @PostMapping("/store/create/menu")
-    public ResponseEntity<String> creatMenu(@RequestBody CreateMenuRequestDTO createMenuRequestDTO) {
+    @PostMapping("/store/create/menu/{storeId}")
+    public ResponseEntity<String> creatMenu(@PathVariable("storeId") Long storeId,
+                                            @RequestBody CreateMenuRequestDTO createMenuRequestDTO) {
         MenuManagement menu = createMenuRequestDTO.toEntity();
-        menuService.create(menu);
+        menuService.create(storeId,menu);
         return ResponseEntity.ok("메뉴가 성공적으로 등록되었습니다.");
     }
 
     //메뉴 이미지 등록 및 수정
     @PatchMapping("/update/menu/image/{menuId}")
-    public ResponseEntity<String> updateMenuImage(@RequestParam Long menuId,
+    public ResponseEntity<String> updateMenuImage(@RequestParam("menuId") Long menuId,
                                                   @RequestBody UpdateMenuImageRequestDTO imageUrlDTO) {
         menuService.updateImage(menuId,imageUrlDTO);
         return ResponseEntity.ok( "메뉴 이미지가 성공적으로 업데이트되었습니다.");
     }
 
     //다중 삭제 및 품절 처리
-    @PatchMapping("/read/menu/action")
-    public ResponseEntity<String> updateAction(@RequestBody UpdateActionRequestDTO actionRequestDTO) {
+    @PatchMapping("/read/menu/action/{menuId}")
+    public ResponseEntity<String> updateAction(@PathVariable("menuId") Long menuId,
+                                               @RequestBody UpdateActionRequestDTO actionRequestDTO) {
         if(actionRequestDTO.getAction().equals("delete")){
             menuService.delete(actionRequestDTO);
         } else if (actionRequestDTO.getAction().equals("SoldOut")) {
-            menuService.updateIsSoldOut(actionRequestDTO);
+            menuService.updateActionIsSoldOut(menuId,actionRequestDTO);
         }
         return ResponseEntity.ok("성공적으로 업데이트되었습니다.");
     }
 
     //단 건 품절 처리
     @PatchMapping("/update/menu-sold-out/{menuId}")
-    public ResponseEntity<String> updateSoldOut(@PathVariable Long menuId,
+    public ResponseEntity<String> updateSoldOut(@PathVariable("menuId") Long menuId,
                                                 @RequestBody UpdateSoldOutRequestDTO updateSoldOutRequestDTO) {
-        menuService.update(updateSoldOutRequestDTO);
+        menuService.updateIsSoldOut(menuId,updateSoldOutRequestDTO);
         return ResponseEntity.ok("품절 처리 완료되었습니다.");
     }
 
     //단 건 메뉴 수정 요청
-    @PatchMapping("/update/menu/{meneId}")
-    public ResponseEntity<String> updateMenu(@PathVariable Long meneId,
+    @PatchMapping("/update/menu/{menuId}")
+    public ResponseEntity<String> updateMenu(@PathVariable("menuId") Long menuId,
                                              @RequestBody UpdateMenuRequestDTO updateMenuRequestDTO) {
-        menuService.updateAll(updateMenuRequestDTO);
+        menuService.updateAll(menuId,updateMenuRequestDTO);
         return ResponseEntity.ok("메뉴 정보가 성공적으로 업데이트되었습니다.");
     }
 
