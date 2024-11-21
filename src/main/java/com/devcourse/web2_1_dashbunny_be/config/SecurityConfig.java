@@ -1,9 +1,11 @@
 package com.devcourse.web2_1_dashbunny_be.config;
 
 
+import com.devcourse.web2_1_dashbunny_be.config.oauth2.OAuth2AuthenticationSuccessHandler;
 import com.devcourse.web2_1_dashbunny_be.feature.user.handler.CustomAuthenticationFailureHandler;
 import com.devcourse.web2_1_dashbunny_be.feature.user.handler.CustomAuthenticationSuccessHandler;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.CustomUserDetailsService;
+import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +14,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,12 +27,8 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final CustomAuthenticationSuccessHandler successHandler;
     private final CustomAuthenticationFailureHandler failureHandler;
-
-    // 비밀번호 인코더 빈
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final PasswordEncoder passwordEncoder;
 
     // 인증 제공자
     @Bean
@@ -37,10 +36,16 @@ public class SecurityConfig {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 
         authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setPasswordEncoder(passwordEncoder);
 
         return authProvider;
     }
+
+//    @Bean
+//    public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
+//        return new OAuth2AuthenticationSuccessHandler();
+//    }
+
 
     // 보안 필터 체인
     @Bean
@@ -57,45 +62,54 @@ public class SecurityConfig {
                                 "/api/auth/**",
                                 "/login",
                                 "/main",
+                                "/test",
                                 "/error",
                                 "/favicon.ico",
+                                "/images/**",
                                 "/css/**",
                                 "/js/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(oAuth2AuthenticationSuccessHandler)
+                )
 
                 // 폼 로그인 설정
-                .formLogin(form -> form
-                        .loginPage("/login") // 로그인 폼을 제공하는 페이지 URL
-                        .loginProcessingUrl("/loginForm") // 로그인 폼 제출 시 처리할 URL
-                        .usernameParameter("phone") // 폼에서 사용하는 username 파라미터 이름
-                        .passwordParameter("password") // 폼에서 사용하는 password 파라미터 이름
-                        .defaultSuccessUrl("/main", true) // 로그인 성공 시 이동할 URL
-                        .failureUrl("/error") // 로그인 실패 시 이동할 URL
-                        .successHandler(successHandler) // 성공 핸들러 등록
-                        .failureHandler(failureHandler) // 실패 핸들러 등록
-                        .permitAll()
-                )
+//                .formLogin(form -> form
+//                        .loginPage("/login") // 로그인 폼을 제공하는 페이지 URL
+//                        .loginProcessingUrl("/loginForm") // 로그인 폼 제출 시 처리할 URL
+//                        .usernameParameter("phone") // 폼에서 사용하는 username 파라미터 이름
+//                        .passwordParameter("password") // 폼에서 사용하는 password 파라미터 이름
+//                        .defaultSuccessUrl("/main", true) // 로그인 성공 시 이동할 URL
+//                        .failureUrl("/loginForm?error=true") // 로그인 실패 시 이동할 URL
+//                        .successHandler(successHandler) // 성공 핸들러 등록
+//                        .failureHandler(failureHandler) // 실패 핸들러 등록
+//                        .permitAll()
+//                )
 
                 // 로그아웃 설정
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout=true")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                        .permitAll()
-                )
+//                .logout(logout -> logout
+//                        .logoutUrl("/logout")
+//                        .logoutSuccessUrl("/login?logout=true")
+//                        .invalidateHttpSession(true)
+//                        .deleteCookies("JSESSIONID")
+//                        .permitAll()
+//                )
 
                 // 세션 관리 설정
                 .sessionManagement(session -> session
+                        .sessionFixation().changeSessionId()
                         .sessionConcurrency(concurrency -> concurrency
                                 .maximumSessions(1)
                                 .maxSessionsPreventsLogin(false)
                         )
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                        .invalidSessionUrl("/")
                 );
 
         return http.build();
     }
+
 }
 

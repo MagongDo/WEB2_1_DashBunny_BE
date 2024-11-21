@@ -1,20 +1,25 @@
 package com.devcourse.web2_1_dashbunny_be.domain.user;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-@Entity
+
 @Table(name = "users")
-@Data
+@Entity
+@Getter
+@Builder
+@ToString
+@EntityListeners(AuditingEntityListener.class) // Date를 등록, 수정 일시 자동 반영 중요!!
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
@@ -23,6 +28,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
+    @NotBlank
     @Column(nullable = false, length = 11)
     private String phone;
 
@@ -45,6 +51,9 @@ public class User implements UserDetails {
     private LocalDateTime createdDate;
 
     private LocalDateTime modifiedDate;
+
+    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
+    private String isWithdrawn;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

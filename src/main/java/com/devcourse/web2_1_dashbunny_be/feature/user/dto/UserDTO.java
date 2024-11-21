@@ -1,13 +1,15 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.dto;
 
+import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+
+@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
@@ -27,5 +29,23 @@ public class UserDTO {
 
     @Email
     private String email;
+
+    public UserDTO(User user) {
+        this.phone = user.getPhone();
+        this.password = user.getPassword();
+        this.name = user.getName();
+        this.birthday = user.getBirthday();
+        this.email = user.getEmail();
+    }
+
+    public User toEntity() {
+        return User.builder()
+                .phone(phone)
+                .password(password)
+                .name(name)
+                .birthday(birthday)
+                .email(email)
+                .build();
+    }
 
 }
