@@ -5,7 +5,12 @@ import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.UpdateBasicInfo
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  *가게 기본 정보 클래스.
@@ -22,7 +27,7 @@ public class BasicInfoController {
    */
   @GetMapping("/basic-info/{storeId}")
   public ResponseEntity<BasicInfoListResponseDto> getBasicInfo(
-       @PathVariable("storeId") String storeId) {
+          @PathVariable("storeId") String storeId) {
     BasicInfoListResponseDto basicInfoResponse = storeService.findBasicInfo(storeId);
     return ResponseEntity.ok(basicInfoResponse);
   }

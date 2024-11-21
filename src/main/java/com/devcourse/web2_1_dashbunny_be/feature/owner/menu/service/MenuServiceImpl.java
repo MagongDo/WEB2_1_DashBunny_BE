@@ -42,32 +42,32 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public void updateAll(Long menuId, UpdateMenuRequestDTO updateMenuRequestDTO) {
+    public void updateAll(Long menuId, UpdateMenuRequestDto updateMenuRequestDTO) {
 
     }
 
     @Override
-    public void updateActionIsSoldOut(Long menuId, UpdateActionRequestDTO actionRequestDTO) {
+    public void updateActionIsSoldOut(Long menuId, UpdateActionRequestDto actionRequestDTO) {
 
     }
 
     @Override
-    public void updateImage(Long menuId, UpdateMenuImageRequestDTO imageUrlDTO) {
+    public void updateImage(Long menuId, UpdateMenuImageRequestDto imageUrlDTO) {
 
     }
 
     @Override
-    public void updateIsSoldOut(Long menuId, UpdateSoldOutRequestDTO updateSoldOutRequestDTO) {
+    public void updateIsSoldOut(Long menuId, UpdateSoldOutRequestDto updateSoldOutRequestDTO) {
 
     }
 
     @Override
-    public void delete(UpdateActionRequestDTO actionRequestDTO) {
+    public void delete(UpdateActionRequestDto actionRequestDTO) {
 
     }
 
     @Override
-    public MenuWithMenuGroupResponseDTO MenuWithGroups(Long meneId) {
+    public MenuWithMenuGroupResponseDto MenuWithGroups(Long meneId) {
         return null;
     }
 }
