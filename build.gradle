@@ -24,30 +24,32 @@ repositories {
 }
 
 dependencies {
-    //security
+    // Spring Boot 기본 의존성
     implementation 'org.springframework.boot:spring-boot-starter-security'
-
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 
-    //lombok
+    //Lombok
     compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
 
-    testImplementation 'com.h2database:h2:2.3.232'
+    // 개발용 도구
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // 테스트 의존성
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // MySQL JDBC Driver
     runtimeOnly 'mysql:mysql-connector-java'
+    implementation 'mysql:mysql-connector-java:8.0.33'
+    implementation 'com.mysql:mysql-connector-j:8.3.0'
 
     // H2 Database
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'com.h2database:h2'
-    runtimeOnly 'com.h2database:h2'
+    testImplementation 'com.h2database:h2'
 
     // 레디스
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'

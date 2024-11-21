@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminUpdateNoticeRequestDTO {
+public class AdminUpdateNoticeRequestDto {
     private String noticeTitle;
     private String noticeContent;
     private NoticeTarget target;
