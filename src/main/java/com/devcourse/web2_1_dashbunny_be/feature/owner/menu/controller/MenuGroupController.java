@@ -22,8 +22,7 @@ public class MenuGroupController {
     //특정 가게 id의 그룹 목록을 반환
     @GetMapping("/read/group/{storeId}")
     public ResponseEntity<List<MenuGroupListResponseDTO>> readMenuGroup(@PathVariable String storeId) {
-       List<MenuGroup> menuGroups =  groupService.read(storeId);
-       //앤티티를 디티오로 변환
+        List<MenuGroup> menuGroups =  groupService.read(storeId);
         List<MenuGroupListResponseDTO> responseDTOS = menuGroups.stream()
                 .map(MenuGroupListResponseDTO :: fromEntity)
                 .toList();
