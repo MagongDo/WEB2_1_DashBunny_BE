@@ -65,4 +65,9 @@ public class OwnerCoupon {
     @Column(precision = 10, scale = 2)
     private BigInteger maximumDiscount;
 
+
+    // 쿠폰 상세 내용 (긴 텍스트 저장)
+    @Column(columnDefinition="TEXT", nullable = true)
+    private String couponDescription;
+
 }
