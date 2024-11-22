@@ -19,28 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class MainController {
 
-//    private final KakaoService kakaoService;
-//
-//    @Value("${kakao.client_id}")
-//    private String client_id;
-//
-//    @Value("${kakao.redirect_uri}")
-//    private String redirect_uri;
+    @GetMapping ("/login")
+    public String login(Model model) {
 
-//    @GetMapping ("/login")
-//    public String login(Model model) {
-//
-//        return "login";
-//    }
-
-    @GetMapping ("/test")
-    public String test(Model model) {
-
-//        String location =
-//                "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+client_id+"&redirect_uri="+redirect_uri;
-//        model.addAttribute("location", location);
-        return "test";
-
+        return "login";
     }
 
 //    @GetMapping("/oauth/kakao")
