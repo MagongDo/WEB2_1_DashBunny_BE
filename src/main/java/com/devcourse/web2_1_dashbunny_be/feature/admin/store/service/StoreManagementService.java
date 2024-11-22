@@ -3,6 +3,7 @@ package com.devcourse.web2_1_dashbunny_be.feature.admin.store.service;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.StoreApplication;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.StoreApplicationType;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.StoreIsApproved;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.Categorys;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreCreateRequestDTO;
@@ -11,6 +12,8 @@ import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreMan
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -43,12 +46,21 @@ public class StoreManagementService {
         storeManagement.setContactNumber(storeCreateRequestDTO.getContactNumber());
         storeManagement.setDescription(storeCreateRequestDTO.getDescription());
         storeManagement.setAddress(storeCreateRequestDTO.getAddress());
-        storeManagement.setCategory1(storeCreateRequestDTO.getCategory1());
-        storeManagement.setCategory2(storeCreateRequestDTO.getCategory2());
-        storeManagement.setCategory3(storeCreateRequestDTO.getCategory3());
         storeManagement.setStoreRegistrationDocs(storeCreateRequestDTO.getStoreRegistrationDocs());
         storeManagement.setStoreBannerImage(storeCreateRequestDTO.getStoreBannerImage());
         storeManagement.setStoreStatus(StoreStatus.PENDING); // 상태를 재등록 신청 중으로 변경
+        if (storeCreateRequestDTO.getCategories() != null) {
+            List<Categorys> updatedCategories = storeCreateRequestDTO.getCategories().stream()
+                    .map(type -> {
+                        Categorys category = new Categorys();
+                        category.setCategoryType(type);
+                        category.setStoreManagement(storeManagement); // StoreManagement와 연결
+                        return category;
+                    })
+                    .toList();
+
+            storeManagement.setCategory(updatedCategories);
+        }
 
         // 업데이트된 StoreManagement 저장
         StoreManagement savedStoreManagement = storeManagementRepository.save(storeManagement);

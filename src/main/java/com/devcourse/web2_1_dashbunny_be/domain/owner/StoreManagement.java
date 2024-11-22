@@ -8,6 +8,10 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
 // 가게 관리 및 가게 정보를 저장하는 엔티티 클래스
 @Entity
 @Setter
@@ -78,4 +82,40 @@ public class StoreManagement {
     @Column(nullable = false, length = 255)
     private String storeRegistrationDocs;
 
+    //--------------------------------------데이터 추가
+
+    @OneToOne
+    @JoinColumn(name="feedback_id")
+    @ToString.Exclude
+    private StoreFeedBack storeFeedback;
+
+    @OneToOne
+    @JoinColumn(name="deliveryInfo_id")
+    @ToString.Exclude
+    private DeliveryOperationInfo deliveryInfo;
+
+    @OneToMany
+    @JoinColumn(name="coupon_id")
+    @ToString.Exclude
+    private List<OwnerCoupon> ownerCoupon;
+
+    @OneToMany
+    @JoinColumn(name="flag_id")
+    @ToString.Exclude
+    private List<StoreFlag> storeFlags;
+
+    @OneToMany
+    @JoinColumn(name="category_id")
+    @ToString.Exclude
+    private List<Categorys> category;
+
+    public BigDecimal maxDiscountPrice() {
+        return ownerCoupon.stream()
+                .map(OwnerCoupon::getDiscountPrice) // OwnerCoupon에서 할인 금액을 가져옴
+                .max(BigDecimal::compareTo) // 가장 큰 할인 금액 찾기
+                .orElse(BigDecimal.ZERO); // 값이 없을 경우 기본값으로 0 반환
+    }
+
+    //가게 등록 승인 날짜
+    private LocalDateTime approvedDate;
 }

@@ -16,11 +16,13 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "owner_coupon")
+
 public class OwnerCoupon {
 
     // 사장님 쿠폰 ID (자동 생성)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "coupon_id", nullable = false)  // 명시적으로 매핑
     private Long couponId;
 
     //단순 id 참조에서 객체 중심으로 변경해 보았는데 어떤 방식이 더 좋으신가요?
