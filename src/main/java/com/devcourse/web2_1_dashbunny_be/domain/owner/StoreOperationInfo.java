@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class StoreOperation {
+public class StoreOperationInfo {
 
     @Id
     @GeneratedValue
@@ -17,6 +17,10 @@ public class StoreOperation {
     @OneToOne
     @JoinColumn(name = "store_id",nullable = false, unique = true)
     private StoreManagement store;
+
+        // 쇼츠 링크 (필요시 필드명 수정)
+    @Column
+    private String shortsUrl;
 
     //영업시간 (예: "09:00-22:00")
     private String openingHours;
@@ -39,25 +43,5 @@ public class StoreOperation {
     private String pauseStartTime;
     private String pauseEndTime;
 
-    // 포장 주문 여부 *호정님 여기를 살렸습니다!!
-    @Column(nullable = false)
-    private boolean isTakeout = true;
 
-    //사장님이 입력하는 배달 가능 지역
-    private String deliveryArea;
-
-    // 최소 배달 예상 시간 (예: 13분)
-    private String minDeliveryTime;
-
-    // 최대 배달 예상 시간 (예 : 40분)
-    private String maxDeliveryTime;
-
-    // 포장 할인 금액
-    private Long takeoutDiscount;
-
-    // 기본 배달 팁
-    private Long defaultDeliveryTip;
-
-    // 최소 주문 금액
-    private Long minimumOrderPrice;
 }
