@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
  * 가게 레포지토리 클래스.
  */
 @Repository
-public interface StoreRepository extends JpaRepository<StoreManagement, String> {
+public interface StoreManagementRepository extends JpaRepository<StoreManagement, String> {
 }

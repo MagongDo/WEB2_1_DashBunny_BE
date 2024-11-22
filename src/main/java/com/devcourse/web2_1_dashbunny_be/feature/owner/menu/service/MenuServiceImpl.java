@@ -4,7 +4,7 @@ import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.common.Validator;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.menu.*;
-import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.List;
 public class MenuServiceImpl implements MenuService {
 
     private Validator validator;
-    private StoreRepository storeRepository;
+    private StoreManagementRepository storeManagementRepository;
     private MenuRepository menuRepository;
 
     //전체 메뉴 조회(메뉴 관리 1페이지 목록)

@@ -7,7 +7,7 @@ import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreListRequestDTO;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreRequestDTO;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreApplicationRepository;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreManagementRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;

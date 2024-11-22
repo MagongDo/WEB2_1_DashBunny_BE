@@ -8,6 +8,8 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 // 가게 관리 및 가게 정보를 저장하는 엔티티 클래스
 @Entity
 @Setter
@@ -77,5 +79,10 @@ public class StoreManagement {
     // 가게 등록 서류 (필수, 최대 길이 255자)
     @Column(nullable = false, length = 255)
     private String storeRegistrationDocs;
+
+  /**
+   * 가게 생성 시간.
+   */
+  private LocalDateTime approvedDate;
 
 }

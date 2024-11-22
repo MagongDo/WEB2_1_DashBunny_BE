@@ -3,7 +3,7 @@ package com.devcourse.web2_1_dashbunny_be.feature.owner.common;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuGroup;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
-import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuGroupRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,7 +16,7 @@ public class Validator {
 
     private final MenuGroupRepository menuGroupRepository;
     private final MenuRepository menuRepository;
-    private final StoreRepository storeRepository;
+    private final StoreManagementRepository storeManagementRepository;
 
     //메뉴 그룹 아이디 검증 메서드
     public MenuGroup validateGroupId(Long groupId) {
@@ -32,7 +32,7 @@ public class Validator {
 
     //가게 아이디 검증 메서드
     public StoreManagement validateStoreId(String storeId) {
-        return storeRepository.findById(storeId)
+        return storeManagementRepository.findById(storeId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 가게 엔티티를 찾을 수 없습니다."));
     }
 
