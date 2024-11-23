@@ -3,6 +3,7 @@ package com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
  */
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class AdminStoreListRequestDto {
 
   private String storeId;

@@ -21,6 +21,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(value = {AuditingEntityListener.class})
+@Table(name = "store_application")
 public class StoreApplication {
 
   @Id

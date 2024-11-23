@@ -2,9 +2,8 @@ package com.devcourse.web2_1_dashbunny_be.domain.admin;
 
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponStatus;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.devcourse.web2_1_dashbunny_be.domain.admin.role.DiscountType;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
@@ -19,6 +18,7 @@ import org.hibernate.annotations.UuidGenerator;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "admin_coupon")
 public class AdminCoupon {
 
   @Id
@@ -37,17 +37,20 @@ public class AdminCoupon {
   @Column(nullable = false)
   private LocalDateTime expiredDate; //쿠폰 만료기한
 
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private CouponStatus couponStatus = CouponStatus.PENDING; //쿠폰 상태
 
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private CouponType couponType = CouponType.Regula; //쿠폰 유형
+
+  @Column(nullable = false)
+  private DiscountType discountType; //할인 타입 (정률,정액)
 
   private Long maxIssuance; //발급한도
 
   private String couponDescription; //쿠폰 상세 내용
-
-
 
 }
 

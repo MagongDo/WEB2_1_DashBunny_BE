@@ -39,7 +39,7 @@ public class StoreRequestController {
    * 사장님 - 가게 등록 재신청 api (POST).
    */
   @PostMapping("/recreate/{storeId}")
-  public ResponseEntity<String> createStore(@PathVariable String storeId, @RequestBody StoreCreateRequestDto storeCreateRequestDto) {
+  public ResponseEntity<String> recreateStore(@PathVariable String storeId, @RequestBody StoreCreateRequestDto storeCreateRequestDto) {
     storeManagementService.reCreate(storeId, storeCreateRequestDto);
     return ResponseEntity.ok("가게 등록 재승인 요청을 성공했습니다.");
   }

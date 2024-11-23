@@ -7,7 +7,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@EnableJpaAuditing
 class Web21DashBunnyBeApplicationTests {
 
   @Test

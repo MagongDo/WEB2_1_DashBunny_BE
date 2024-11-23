@@ -10,6 +10,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 // 사장님 쿠폰 정보를 관리하는 엔티티 클래스
 @Getter
@@ -22,6 +23,8 @@ public class OwnerCoupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long couponId;
+    //@UuidGenerator
+    //  private String couponId; //쿠폰 아이디
 
     //단순 id 참조에서 객체 중심으로 변경해 보았는데 어떤 방식이 더 좋으신가요?
     // 강민 : 와 이걸 이제 이해했습니다,,객체 중심이 더 좋은거 같습니다!!
@@ -54,7 +57,7 @@ public class OwnerCoupon {
 
     // 만료기한 (필수)
     @Column(nullable = false)
-    private LocalDate expiryDate;
+    private LocalDateTime expiredDate;
 
     // 할인 방식 (열거형, 필수)
     @Enumerated(EnumType.STRING)

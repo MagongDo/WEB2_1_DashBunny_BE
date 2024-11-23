@@ -8,13 +8,11 @@ import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCoup
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponListRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponStatusChangeRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.repository.AdminCouponRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.service.AdminCouponService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
