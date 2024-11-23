@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 /**
  * 공지사항 목록 조회 데이터를 보여주는 dto.
  */

@@ -4,6 +4,8 @@ import com.devcourse.web2_1_dashbunny_be.domain.admin.AdminCoupon;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponStatus;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponType;
 import java.time.LocalDateTime;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +15,7 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class AdminCouponRequestDto {
   private String couponId;
   private String couponName;
@@ -20,6 +23,7 @@ public class AdminCouponRequestDto {
   private String couponDescription;
   private Long discountPrice; //할인 금액
   private Long minOrderPrice; //최소 주문 금액
+  private Long maxIssuance; //발급한도
   private LocalDateTime expiredDate; //쿠폰 만료기한
   private CouponStatus couponStatus; //쿠폰 상태
 
@@ -33,6 +37,7 @@ public class AdminCouponRequestDto {
     this.couponDescription = adminCoupon.getCouponDescription();
     this.discountPrice = adminCoupon.getDiscountPrice();
     this.minOrderPrice = adminCoupon.getMinOrderPrice();
+    this.maxIssuance = adminCoupon.getMaxIssuance();
     this.expiredDate = adminCoupon.getExpiredDate();
     this.couponStatus = adminCoupon.getCouponStatus();
   }

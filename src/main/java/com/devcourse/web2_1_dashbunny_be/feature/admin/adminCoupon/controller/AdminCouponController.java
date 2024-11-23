@@ -26,7 +26,7 @@ public class AdminCouponController {
    * 관리자 쿠폰 등록 api (POST).
    */
   @PostMapping
-  public ResponseEntity<AdminCoupon> addAdminCoupon(AdminCouponAddRequestDto request) {
+  public ResponseEntity<AdminCoupon> addAdminCoupon(@RequestBody AdminCouponAddRequestDto request) {
     AdminCoupon adminCoupon = adminCouponService.saveAdminCoupon(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(adminCoupon);
   }
@@ -53,7 +53,7 @@ public class AdminCouponController {
    * 관리자 쿠폰 상태 변경 api (PUT).
    */
   @PutMapping("/{couponId}")
-  public ResponseEntity<AdminCoupon> updateAdminCouponStatus(@PathVariable String couponId, AdminCouponStatusChangeRequestDto request) {
+  public ResponseEntity<AdminCoupon> updateAdminCouponStatus(@PathVariable String couponId, @RequestBody AdminCouponStatusChangeRequestDto request) {
     AdminCoupon coupon = adminCouponService.finAdminCouponStatusChange(couponId, request);
     return ResponseEntity.status(HttpStatus.OK).body(coupon);
   }

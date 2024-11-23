@@ -4,6 +4,8 @@ import com.devcourse.web2_1_dashbunny_be.domain.admin.AdminCoupon;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponStatus;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponType;
 import java.time.LocalDateTime;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +15,7 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class AdminCouponListRequestDto {
   private String couponId;
   private String couponName;
