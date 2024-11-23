@@ -11,6 +11,10 @@ import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreMan
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 /**
@@ -111,14 +115,47 @@ public class StoreApplicationService {
   }
 
 
+//  /**
+//   * 가게 목록 조회 메서드.
+//   */
+//  public List<AdminStoreListRequestDto> getStores() {
+//    List<StoreManagement> stores = storeManagementRepository.findAll();
+//    return stores.stream()
+//            .map(AdminStoreListRequestDto::new)
+//            .toList();
+//  }
+
+
   /**
-   * 가게 목록 조회 메서드.
+   * 가게 상태에 따른 가게 목록 조회 메서드.
+   * @param status 가게 상태
+   * @param page 페이지 번호
+   * @param size 한 페이지당 데이터 수
+   * @return 페이징된 가게 목록
    */
-  public List<AdminStoreListRequestDto> getStores() {
-    List<StoreManagement> stores = storeManagementRepository.findAll();
-    return stores.stream()
-            .map(AdminStoreListRequestDto::new)
-            .toList();
+  public Page<AdminStoreListRequestDto> getStores(String status, int page, int size) {
+    Pageable pageable = PageRequest.of(page - 1, size, Sort.by("approvedDate").descending()); //승인 날짜기준으로 내림차순 정렬
+    Page<StoreManagement> stores;
+
+    // 상태별 필터링
+    if ("ENTIRE".equalsIgnoreCase(status)) { //가게 등록 신청
+      stores = storeManagementRepository.findAll(pageable);
+    }else if ("PENDING".equalsIgnoreCase(status)) { //가게 등록 신청
+      stores = storeManagementRepository.findByStoreStatus(StoreStatus.PENDING, pageable);
+    } else if ("CLOSURE_PENDING".equalsIgnoreCase(status)) { //가게 폐업 신청
+      stores = storeManagementRepository.findByStoreStatus(StoreStatus.CLOSURE_PENDING, pageable);
+    } else if ("OPEN".equalsIgnoreCase(status)) { //영업중
+      stores = storeManagementRepository.findByStoreStatus(StoreStatus.OPEN, pageable);
+    } else if ("CLOSE".equalsIgnoreCase(status)) { //영업 종료 (가게 상태 in 영업준비중 , 휴업중 )
+      stores = storeManagementRepository.findByStoreStatusIn(
+              List.of(StoreStatus.PENDING_OPEN, StoreStatus.TEMP_CLOSE), pageable
+      );
+    } else {
+      // 기본 동작: 전체 목록 조회
+      stores = storeManagementRepository.findAll(pageable);
+    }
+
+    return stores.map(AdminStoreListRequestDto::new); // Entity -> DTO 변환
   }
 
 }

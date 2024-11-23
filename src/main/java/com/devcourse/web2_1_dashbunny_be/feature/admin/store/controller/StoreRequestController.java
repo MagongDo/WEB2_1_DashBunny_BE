@@ -8,6 +8,7 @@ import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreManage
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -93,12 +94,30 @@ public class StoreRequestController {
   }
 
 
+//  /**
+//   * 관리자 - 가게 목록 조회 api (GET).
+//   */
+//  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+//  public ResponseEntity<List<AdminStoreListRequestDto>> getAllStores() {
+//    List<AdminStoreListRequestDto> stores = storeApplicationService.getStores();
+//    return ResponseEntity.ok().body(stores);
+//  }
+
+
   /**
-   * 관리자 - 가게 목록 조회 api (GET).
+   * 관리자 - 가게 상태에 따른 목록 조회 api (GET).
+   * @param status 가게 상태
+   * @param page 페이지 번호
+   * @param size 한 페이지당 데이터 수
+   * @return 페이징된 가게 목록
    */
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<List<AdminStoreListRequestDto>> getAllStores() {
-    List<AdminStoreListRequestDto> stores = storeApplicationService.getStores();
+  public ResponseEntity<Page<AdminStoreListRequestDto>> getStores(
+          @RequestParam(defaultValue = "ENTIRE") String status,
+          @RequestParam(defaultValue = "1") int page,
+          @RequestParam(defaultValue = "10") int size
+  ) {
+    Page<AdminStoreListRequestDto> stores = storeApplicationService.getStores(status, page, size);
     return ResponseEntity.ok().body(stores);
   }
 
