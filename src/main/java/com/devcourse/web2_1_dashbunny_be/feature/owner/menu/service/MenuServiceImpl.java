@@ -15,9 +15,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MenuServiceImpl implements MenuService {
 
-    private Validator validator;
-    private StoreManagementRepository storeManagementRepository;
-    private MenuRepository menuRepository;
+    private final Validator validator;
+    private final StoreManagementRepository storeManagementRepository;
+    private final MenuRepository menuRepository;
 
     //전체 메뉴 조회(메뉴 관리 1페이지 목록)
     @Override

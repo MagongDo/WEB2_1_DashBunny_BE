@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder(toBuilder = true)
 @Table(name = "store_management")
 @EntityListeners(value = {TSIDListener.class})
 public class StoreManagement {
@@ -27,7 +28,7 @@ public class StoreManagement {
     private String storeId;
 
     // userid 빠져있음
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
@@ -47,7 +48,7 @@ public class StoreManagement {
 
     // 가게 소개 내용 (TEXT 타입)
     @Column(columnDefinition = "TEXT")
-    private String description;
+    private String storeDescription;
 
     // 가게 전화번호 (필수, 최대 길이 13자)
     @Column(nullable = false, length = 13)

@@ -1,55 +1,132 @@
 package com.devcourse.web2_1_dashbunny_be.feature.owner.store.service;
 
+import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreOperationInfo;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.common.Validator;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.*;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreOperationInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 가게 관리를 위한 service class.
  */
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class StoreServiceImpl implements StoreService {
 
   private final StoreManagementRepository storeManagementRepository;
   private final StoreOperationInfoRepository storeOperationInfoRepository;
+  private BasicInfoListResponseDto basicInfoListResponseDto;
+  private final Validator validator;
 
   /**
    * 기본 정보를 반환 api service.
    */
   @Override
-   public BasicInfoListResponseDto findBasicInfo(String storeId) {
-      //가게의 기본정보 가져오와서 디티오 생성 . 스토어 에서 쇼츠 url 만 가져와야한다..
+  public BasicInfoListResponseDto findBasicInfo(String storeId) {
+    BasicInfoProjection basicInfoProjection = validator.validateBasicStoreId(storeId);
+    return basicInfoListResponseDto.fromEntity(basicInfoProjection);
+  }
 
-    return null;
-   }
+  /**
+  *기본 정보 수정을 위한 api service.
+  */
+  @Override
+  public void updateBasicInfo(String storeId, UpdateBasicInfoRequestDto updateBasicInfo) {
+    StoreManagement store = validator.validateStoreId(storeId);
 
-    @Override
-    public void updateBasicInfo(UpdateBasicInfoRequestDto updateBasicInfo) {
-
+    if (updateBasicInfo.getContactNumber() != null) {
+      store.setContactNumber(updateBasicInfo.getContactNumber());
+    }
+    if (updateBasicInfo.getStoreLogo() != null) {
+      store.setStoreLogo(updateBasicInfo.getStoreLogo());
+    }
+    if (updateBasicInfo.getStoreBannerImage() != null) {
+      store.setStoreBannerImage(updateBasicInfo.getStoreBannerImage());
+    }
+    if (updateBasicInfo.getStoreDescription() != null) {
+      store.setStoreDescription(updateBasicInfo.getStoreDescription());
     }
 
-    @Override
-    public OperationInfoListResponseDto findOperationInfo(String storeId) {
-        return null;
+    StoreOperationInfo operationInfo = store.getStoreOperation();
+    if (operationInfo != null && updateBasicInfo.getShortsUrl() != null) {
+      operationInfo.setShortsUrl(updateBasicInfo.getShortsUrl());
     }
 
-    @Override
-    public void addOperationInfo(String storeId, CreateOperationInfoResponseDto operationInfo) {
+    storeManagementRepository.save(store);
+  }
 
+  /**
+  * 가게 운영 정보 조회를 위한 api service.
+   * 운영 정보가 없을 때, 기본 정보를 기반으로 새로운 운영 정보를 생성하고 반환하도록 코드를 작성.
+   */
+  @Override
+  public OperationInfoListResponseDto findOperationInfo(String storeId) {
+    StoreManagement store = validator.validateStoreId(storeId);
+    StoreOperationInfo operationInfo = store.getStoreOperation();
+
+    if (operationInfo == null) {
+      operationInfo = new StoreOperationInfo();
+      operationInfo.setStore(store);
+      operationInfo.setShortsUrl("쇼츠 url 입력");
+      store.setStoreOperation(operationInfo);
+      operationInfo.setPaused(Boolean.FALSE);
+      operationInfo.setPauseStartTime("시작 시간");
+      operationInfo.setPauseEndTime("종료 시간");
+      storeOperationInfoRepository.save(operationInfo);
     }
 
-    @Override
-    public void updatePauseTime(String storeId, UpdatePauseTimeRequestDto pauseTimeDto) {
+    return OperationInfoListResponseDto.fromEntity(operationInfo);
+  }
 
+  @Override
+  public void addOperationInfo(String storeId, CreateOperationInfoResponseDto operationInfo) {
+    StoreManagement store = validator.validateStoreId(storeId);
+    StoreOperationInfo storeOperationInfo = store.getStoreOperation();
+
+    if (operationInfo.getOpeningHours() != null) {
+      storeOperationInfo.setOpeningHours(operationInfo.getOpeningHours());
+    }
+    if (operationInfo.getBreakTime() != null) {
+      storeOperationInfo.setBreakTime(operationInfo.getBreakTime());
+    }
+    if (operationInfo.getHolidayDays() != null) {
+      storeOperationInfo.setHolidayDays(operationInfo.getHolidayDays());
+    }
+    if (operationInfo.getHolidayNotice() != null) {
+      storeOperationInfo.setHolidayNotice(operationInfo.getHolidayNotice());
     }
 
-    @Override
-    public void updateResumeTime(String storeId) {
+    storeOperationInfoRepository.save(storeOperationInfo);
+  }
 
+  /**
+   *가게 운영 일시정지를 위한 api service.
+   */
+  @Override
+  public void updatePauseTime(String storeId, UpdatePauseTimeRequestDto pauseTimeDto) {
+    StoreManagement store = validator.validateStoreId(storeId);
+    StoreOperationInfo storeOperationInfo =  store.getStoreOperation();
+
+    storeOperationInfo.setPauseStartTime(pauseTimeDto.getPauseStartTime());
+    storeOperationInfo.setPauseEndTime(pauseTimeDto.getPauseEndTime());
+    storeOperationInfo.setPaused(false);
+
+    storeOperationInfoRepository.save(storeOperationInfo);
+  }
+
+  /**
+   *가게 운영 재시작 위한 api service.
+  */
+  @Override
+  public void updateResumeTime(String storeId) {
+    StoreManagement store = validator.validateStoreId(storeId);
+
+    StoreOperationInfo storeOperationInfo =  store.getStoreOperation();
+    storeOperationInfo.setPaused(true);
+
+    storeOperationInfoRepository.save(storeOperationInfo);
     }
 }

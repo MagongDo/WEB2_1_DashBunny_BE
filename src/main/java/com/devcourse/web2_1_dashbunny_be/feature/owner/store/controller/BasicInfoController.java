@@ -39,7 +39,7 @@ public class BasicInfoController {
   public ResponseEntity<String> updateBasicInfo(
           @PathVariable("storeId") String storeId,
           @RequestBody UpdateBasicInfoRequestDto updateBasicInfo) {
-    storeService.updateBasicInfo(updateBasicInfo);
+    storeService.updateBasicInfo(storeId, updateBasicInfo);
     return ResponseEntity.ok("정보 수정이 완료되었습니다.");
   }
 

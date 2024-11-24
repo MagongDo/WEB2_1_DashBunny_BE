@@ -22,17 +22,16 @@ public class BasicInfoListResponseDto {
   /**
    *가게 엔티티를 디티오로 변환.
    */
-  public BasicInfoListResponseDto fromEntity(StoreManagement storeManagement,
-                                             StoreOperationInfo storeOperationInfo) {
+  public BasicInfoListResponseDto fromEntity(BasicInfoProjection basicInfoProjection) {
     return BasicInfoListResponseDto.builder()
-       .storeName(storeManagement.getStoreName())
-       .storePhone(storeManagement.getContactNumber())
-       .storeStatus(storeManagement.getStoreStatus())
-       .storeAddress(storeManagement.getAddress())
-       .storeLogo(storeManagement.getStoreLogo())
-       .storeBannerImage(storeManagement.getStoreBannerImage())
-       .storeDescription(storeManagement.getDescription())
-       .shortsUrl(storeOperationInfo.getShortsUrl())
+       .storeName(basicInfoProjection.getStoreName())
+       .storePhone(basicInfoProjection.getContactNumber())
+       .storeStatus(basicInfoProjection.getStoreStatus())
+       .storeAddress(basicInfoProjection.getAddress())
+       .storeLogo(basicInfoProjection.getStoreLogo())
+       .storeBannerImage(basicInfoProjection.getStoreBannerImage())
+       .storeDescription(basicInfoProjection.getDescription())
+       .shortsUrl(basicInfoProjection.getShortsUrl())
        .build();
   }
 
