@@ -31,7 +31,7 @@ public class MenuGroupController {
   /**
   * 특정 가게 id의 그룹 목록을 반환.
   */
-  @GetMapping("/read/group/{storeId}")
+  @GetMapping("/group/{storeId}")
   public ResponseEntity<List<MenuGroupListResponseDto>> readMenuGroup(
           @PathVariable String storeId) {
     List<MenuGroup> menuGroups =  groupService.read(storeId);
@@ -44,18 +44,19 @@ public class MenuGroupController {
   /**
    * 새로운 메뉴 그롭 생성을 위한 요청.
    */
-  @PostMapping("/creat/group")
+  @PostMapping("/group/{storeId}")
   public ResponseEntity<String> createGroup(
-          @RequestBody CreateMenuGroupRequestDto createMenuGroupRequestDto) {
+          @RequestBody CreateMenuGroupRequestDto createMenuGroupRequestDto,
+          @PathVariable("storeId") String storeId) {
     MenuGroup menuGroup = createMenuGroupRequestDto.toEntity();
-    groupService.save(menuGroup);
+    groupService.save(storeId, menuGroup);
     return ResponseEntity.ok("그룹 성공적으로 등록되었습니다.");
   }
 
   /**
    *기존 그룹 정보 수정을 위한 요청.
    */
-  @PatchMapping("/update/group/{groupId}")
+  @PatchMapping("/group/{groupId}")
   public ResponseEntity<String> updateGroup(
           @PathVariable String groupId,
           @RequestBody UpdateMenuGroupRequestDto updateMenuGroupRequestDto) {
@@ -66,7 +67,7 @@ public class MenuGroupController {
     /**
      * 그룹 정보 삭제를 위한 요청.
      */
-  @DeleteMapping("/delete/group/{groupId}")
+  @DeleteMapping("/group/{groupId}")
   public ResponseEntity<String> deleteGroup(@PathVariable String groupId) {
     groupService.delete(groupId);
     return ResponseEntity.ok("그룹이 성공적으로 삭제되었습니다.");
