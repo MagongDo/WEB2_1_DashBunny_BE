@@ -59,8 +59,12 @@ public class GroupServiceImpl implements GroupService {
     menuGroupRepository.save(group);
   }
 
+  /**
+  * 메뉴 그룹 삭제를 위한 api service.
+  */
   @Override
-  public void delete(String groupId) {
-
+  public void delete(Long groupId) {
+    MenuGroup menuGroup = validator.validateGroupId(groupId);
+    menuGroupRepository.delete(menuGroup);
   }
 }

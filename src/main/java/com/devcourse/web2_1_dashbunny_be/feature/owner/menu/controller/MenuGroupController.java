@@ -67,11 +67,11 @@ public class MenuGroupController {
     return ResponseEntity.ok("그룹 이름이 성공적으로 수정되었습니다.");
   }
 
-    /**
-     * 그룹 정보 삭제를 위한 요청.
-     */
+  /**
+  * 그룹 정보 삭제를 위한 요청.
+  */
   @DeleteMapping("/group/{groupId}")
-  public ResponseEntity<String> deleteGroup(@PathVariable String groupId) {
+  public ResponseEntity<String> deleteGroup(@PathVariable Long groupId) {
     groupService.delete(groupId);
     return ResponseEntity.ok("그룹이 성공적으로 삭제되었습니다.");
   }

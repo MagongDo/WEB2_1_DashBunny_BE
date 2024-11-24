@@ -16,6 +16,6 @@ public interface GroupService {
 
     void update(Long groupId, UpdateMenuGroupRequestDto menuGroup) ;
 
-    void delete(String groupId);
+    void delete(Long groupId);
 
 }
