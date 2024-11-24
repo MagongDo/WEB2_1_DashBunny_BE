@@ -7,27 +7,27 @@ import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.*;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreOperationInfoRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
  * 가게 관리를 위한 service class.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class StoreServiceImpl implements StoreService {
 
   private final StoreManagementRepository storeManagementRepository;
   private final StoreOperationInfoRepository storeOperationInfoRepository;
-  private BasicInfoListResponseDto basicInfoListResponseDto;
   private final Validator validator;
 
   /**
    * 기본 정보를 반환 api service.
    */
   @Override
-  public BasicInfoListResponseDto findBasicInfo(String storeId) {
-    BasicInfoProjection basicInfoProjection = validator.validateBasicStoreId(storeId);
-    return basicInfoListResponseDto.fromEntity(basicInfoProjection);
+  public BasicInfoProjection findBasicInfo(String storeId) {
+    return validator.validateBasicStoreId(storeId);
   }
 
   /**
@@ -65,9 +65,11 @@ public class StoreServiceImpl implements StoreService {
   @Override
   public OperationInfoListResponseDto findOperationInfo(String storeId) {
     StoreManagement store = validator.validateStoreId(storeId);
+    log.info("Find operation info for store {}", storeId);
     StoreOperationInfo operationInfo = store.getStoreOperation();
 
     if (operationInfo == null) {
+      log.info("널 {}", storeId);
       operationInfo = new StoreOperationInfo();
       operationInfo.setStore(store);
       operationInfo.setShortsUrl("쇼츠 url 입력");
@@ -75,8 +77,13 @@ public class StoreServiceImpl implements StoreService {
       operationInfo.setPaused(Boolean.FALSE);
       operationInfo.setPauseStartTime("시작 시간");
       operationInfo.setPauseEndTime("종료 시간");
+
+      store.setStoreOperation(operationInfo);
       storeOperationInfoRepository.save(operationInfo);
+      log.info("저장완료");
+      operationInfo = validator.validateOperationStoreId(operationInfo.getOperationId());
     }
+    log.info("생성된 운영정보 아이디 {}", operationInfo.getOperationId());
 
     return OperationInfoListResponseDto.fromEntity(operationInfo);
   }
@@ -111,7 +118,9 @@ public class StoreServiceImpl implements StoreService {
     StoreOperationInfo storeOperationInfo =  store.getStoreOperation();
 
     storeOperationInfo.setPauseStartTime(pauseTimeDto.getPauseStartTime());
+    log.info("시작 시간 {}", pauseTimeDto.getPauseStartTime());
     storeOperationInfo.setPauseEndTime(pauseTimeDto.getPauseEndTime());
+    log.info("종료 시간 ()", pauseTimeDto.getPauseEndTime());
     storeOperationInfo.setPaused(false);
 
     storeOperationInfoRepository.save(storeOperationInfo);

@@ -45,7 +45,7 @@ public interface BasicInfoProjection {
   /**
    * StoreMenagement.
    */
-  String getDescription();
+  String getStoreDescription();
 
   /**
    * StoreMenagement.

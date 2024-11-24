@@ -17,20 +17,20 @@ public interface StoreManagementRepository extends JpaRepository<StoreManagement
   /**
   *기본 정보 조회를 위한 쿼리.
   */
-  @Query(""" 
-         SELECT s.storeName,
-                s.contactNumber,
-                s.storeStatus,
-                s.address,
-                s.storeLogo,
-                s.storeBannerImage,
-                s.storeDescription,
-                (SELECT o.shortsUrl
-                FROM StoreOperationInfo o
-                WHERE o.store.storeId = s.storeId) AS shortsUrl
-         FROM StoreManagement s
-         WHERE s.storeId = :storeId
-         """)
+  @Query("""
+       SELECT s.storeName AS storeName,
+              s.contactNumber AS contactNumber,
+              s.storeStatus AS storeStatus,
+              s.address AS address,
+              s.storeLogo AS storeLogo,
+              s.storeBannerImage AS storeBannerImage,
+              s.storeDescription AS storeDescription,
+              (SELECT o.shortsUrl
+               FROM StoreOperationInfo o
+               WHERE o.store.storeId = s.storeId) AS shortsUrl
+       FROM StoreManagement s
+       WHERE s.storeId = :storeId
+       """)
     BasicInfoProjection findBasicInfoByStoreId(@Param("storeId") String storeId);
 
   /**

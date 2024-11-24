@@ -11,14 +11,17 @@ import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepos
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreOperationInfoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 /**
  * 검증 클래스.
  */
+
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class Validator {
 
     private final MenuGroupRepository menuGroupRepository;
@@ -40,8 +43,9 @@ public class Validator {
 
     //가게 아이디 검증 메서드
     public StoreManagement validateStoreId(String storeId) {
+        log.info("Validating storeId: {}", storeId); // 로그 추가
         return storeManagementRepository.findById(storeId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 가게 엔티티를 찾을 수 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("Store not found for ID: " + storeId));
     }
 
     //가게 아이디 검증 메서드
@@ -55,6 +59,7 @@ public class Validator {
 
     //가게 운영정보 검증 메서드
     public StoreOperationInfo validateOperationStoreId(Long operationId) {
+        log.info("검증 시작");
         StoreOperationInfo operationInfo = storeOperationInfoRepository.findById(operationId)
                 .orElseThrow(() -> new EntityNotFoundException("가게의 운영 정보를 불러올 수 잆습니다."));
         return operationInfo;

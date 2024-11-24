@@ -41,7 +41,7 @@ public class StoreManagementService {
         // StoreManagement 정보 업데이트
         storeManagement.setStoreName(storeCreateRequestDTO.getStoreName());
         storeManagement.setContactNumber(storeCreateRequestDTO.getContactNumber());
-        storeManagement.setDescription(storeCreateRequestDTO.getDescription());
+        storeManagement.setStoreDescription(storeCreateRequestDTO.getDescription());
         storeManagement.setAddress(storeCreateRequestDTO.getAddress());
         storeManagement.setStoreRegistrationDocs(storeCreateRequestDTO.getStoreRegistrationDocs());
         storeManagement.setStoreBannerImage(storeCreateRequestDTO.getStoreBannerImage());

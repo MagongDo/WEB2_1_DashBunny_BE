@@ -15,5 +15,4 @@ public class UpdateBasicInfoRequestDto {
   private String storeBannerImage;
   private String storeDescription;
   private String shortsUrl;
-
   }

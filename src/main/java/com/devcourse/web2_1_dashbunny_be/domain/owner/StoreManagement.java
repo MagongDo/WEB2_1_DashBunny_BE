@@ -4,7 +4,7 @@ package com.devcourse.web2_1_dashbunny_be.domain.owner;
 import com.devcourse.web2_1_dashbunny_be.annotation.config.TSID;
 import com.devcourse.web2_1_dashbunny_be.annotation.config.lifecycle.TSIDListener;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
-import com.devcourse.web2_1_dashbunny_be.domain.user.User;
+/*import com.devcourse.web2_1_dashbunny_be.domain.user.User;*/
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,13 +27,13 @@ public class StoreManagement {
     @Column(name = "store_id", nullable = false)
     private String storeId;
 
-    // userid 빠져있음
+ /*   // userid 빠져있음
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
-
+*/
     // operationid 빠져있음
-    @OneToOne(mappedBy = "store", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private StoreOperationInfo storeOperation;
 
 
@@ -64,9 +64,9 @@ public class StoreManagement {
     @Column(nullable = false, length = 255)
     private String address;
 
-    // 2.가게 위치 [위도와 경도 (필수, JSON 형태로 저장)]
+/*    // 2.가게 위치 [위도와 경도 (필수, JSON 형태로 저장)]
     @Column(columnDefinition = "JSON", nullable = false)
-    private String location = "{}";
+    private String location = "{}";*/
 
     //2. 가게 위치
     // 위도
