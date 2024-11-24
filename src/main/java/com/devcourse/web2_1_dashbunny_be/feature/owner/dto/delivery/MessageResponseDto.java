@@ -5,8 +5,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class DeliveryInfoResponseDto {
-    private String minDeliveryTime;
-    private String maxDeliveryTime;
-    private String deliveryAreaInfo;
+public class MessageResponseDto {
+    private String message;
 }
