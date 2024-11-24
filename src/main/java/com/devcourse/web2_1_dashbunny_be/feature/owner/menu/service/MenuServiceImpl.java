@@ -57,12 +57,19 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public void updateAll(Long menuId, UpdateMenuRequestDto updateMenuRequestDTO) {
 
-    }
+  }
 
-    @Override
-    public void updateActionIsSoldOut(Long menuId, UpdateActionRequestDto actionRequestDTO) {
-
-    }
+  /**
+  * 다중 메뉴 품절 처리.
+  */
+  @Override
+  public void updateActionIsSoldOut(UpdateActionRequestDto actionRequestDTO) {
+      for(Long menuId : actionRequestDTO.getMenuIds()){
+          MenuManagement menu = validator.validateMenuId(menuId);
+          menu.setIsSoldOut(true);
+          menuRepository.save(menu);
+      }
+  }
 
     @Override
     public void updateImage(Long menuId, UpdateMenuImageRequestDto imageUrlDTO) {
@@ -72,11 +79,16 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public void updateIsSoldOut(Long menuId, UpdateSoldOutRequestDto updateSoldOutRequestDTO) {
 
-    }
+  }
 
-    @Override
-    public void delete(UpdateActionRequestDto actionRequestDTO) {
-
+  /**
+   * 다중 메뉴 삭제를 위한 api service.
+   */
+  @Override
+  public void delete(UpdateActionRequestDto actionRequestDTO) {
+     for(Long menuId : actionRequestDTO.getMenuIds()) {
+        menuRepository.deleteById(menuId);
+     }
     }
 
     @Override

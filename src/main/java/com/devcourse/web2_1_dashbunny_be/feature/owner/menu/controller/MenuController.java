@@ -75,14 +75,13 @@ public class MenuController {
   /**
    * 다중 삭제 및 품절 처리.
    */
-  @PatchMapping("/menu/action/{menuId}")
+  @PatchMapping("/menu/action")
   public ResponseEntity<String> updateAction(
-          @PathVariable("menuId") Long menuId,
           @RequestBody UpdateActionRequestDto actionRequestDto) {
     if (actionRequestDto.getAction().equals("delete")) {
       menuService.delete(actionRequestDto);
     } else if (actionRequestDto.getAction().equals("SoldOut")) {
-      menuService.updateActionIsSoldOut(menuId, actionRequestDto);
+      menuService.updateActionIsSoldOut(actionRequestDto);
     }
     return ResponseEntity.ok("성공적으로 업데이트되었습니다.");
   }
