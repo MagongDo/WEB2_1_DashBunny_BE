@@ -14,7 +14,7 @@ public interface GroupService {
 
     void save(String storeId, MenuGroup menuGroup);
 
-    void update(String groupId, UpdateMenuGroupRequestDto menuGroup) ;
+    void update(Long groupId, UpdateMenuGroupRequestDto menuGroup) ;
 
     void delete(String groupId);
 

@@ -61,7 +61,7 @@ public class MenuGroupController {
    */
   @PatchMapping("/group/{groupId}")
   public ResponseEntity<String> updateGroup(
-          @PathVariable String groupId,
+          @PathVariable Long groupId,
           @RequestBody UpdateMenuGroupRequestDto updateMenuGroupRequestDto) {
     groupService.update(groupId, updateMenuGroupRequestDto);
     return ResponseEntity.ok("그룹 이름이 성공적으로 수정되었습니다.");
