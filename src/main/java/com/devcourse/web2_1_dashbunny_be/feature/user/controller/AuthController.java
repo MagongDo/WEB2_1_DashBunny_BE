@@ -1,5 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 
+/*
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,3 +22,4 @@ public class AuthController {
 //        return "signUp";
 //    }
 }
+*/

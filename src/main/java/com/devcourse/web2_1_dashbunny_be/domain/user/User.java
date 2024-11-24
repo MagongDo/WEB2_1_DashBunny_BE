@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.domain.user;
 
 import jakarta.persistence.*;
@@ -75,4 +76,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
-}
+}*/
