@@ -2,10 +2,12 @@ package com.devcourse.web2_1_dashbunny_be.feature.owner.dto.menu;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import lombok.Builder;
+import lombok.Getter;
 
 /**
  * 메뉴 생성을 위한 DTO 클래스.
  */
+@Getter
 @Builder
 public class CreateMenuRequestDto {
   private String menuName;
@@ -21,7 +23,6 @@ public class CreateMenuRequestDto {
   public MenuManagement toEntity() {
     MenuManagement menu = new MenuManagement();
     menu.setMenuName(menuName);
-    menu.getMenuGroup().setGroupId(menuGroupId);
     menu.setPrice(price);
     menu.setStockAvailable(stockAvailable);
     menu.setMenuStock(menuStock);

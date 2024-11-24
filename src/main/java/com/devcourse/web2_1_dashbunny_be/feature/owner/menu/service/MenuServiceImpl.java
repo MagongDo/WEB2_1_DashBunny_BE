@@ -1,5 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.feature.owner.menu.service;
 
+import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuGroup;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.common.Validator;
@@ -36,10 +37,22 @@ public class MenuServiceImpl implements MenuService {
         return List.of();
     }
 
-    @Override
-    public void create(Long storeId, MenuManagement menu) {
+  /**
+  * 새로운 메뉴 등록을 위한 api service.
+  */
+  @Override
+  public void create(
+          String storeId, MenuManagement menu, CreateMenuRequestDto createMenuRequestDto) {
+    StoreManagement store = validator.validateStoreId(storeId);
 
+    if(createMenuRequestDto.getMenuGroupId() !=null) {
+        MenuGroup group = validator.validateGroupId(createMenuRequestDto.getMenuGroupId());
+        menu.setMenuGroup(group);
     }
+
+    menu.setStoreId(storeId);
+    menuRepository.save(menu);
+  }
 
     @Override
     public void updateAll(Long menuId, UpdateMenuRequestDto updateMenuRequestDTO) {

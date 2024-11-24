@@ -45,10 +45,10 @@ public class MenuCreateController {
    */
   @PostMapping("/create-menu/{storeId}")
   public ResponseEntity<String> creatMenu(
-          @PathVariable("storeId") Long storeId,
+          @PathVariable("storeId") String storeId,
           @RequestBody CreateMenuRequestDto createMenuRequestDto) {
     MenuManagement menu = createMenuRequestDto.toEntity();
-    menuService.create(storeId, menu);
+    menuService.create(storeId, menu, createMenuRequestDto);
     return ResponseEntity.ok("메뉴가 성공적으로 등록되었습니다.");
   }
 
