@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.feature.user.service;
 
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
@@ -19,4 +20,4 @@ public class CustomUserDetailsService implements UserDetailsService {
         return userRepository.findByPhone(phone)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + phone));
     }
-}
+}*/
