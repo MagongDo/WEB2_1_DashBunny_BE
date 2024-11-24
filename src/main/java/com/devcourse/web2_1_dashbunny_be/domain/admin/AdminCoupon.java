@@ -39,18 +39,25 @@ public class AdminCoupon {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private CouponStatus couponStatus = CouponStatus.PENDING; //쿠폰 상태
+  private CouponStatus couponStatus = CouponStatus.PENDING; //쿠폰 상태 (대기, 활성화, 만료, 조기종료)
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private CouponType couponType = CouponType.Regula; //쿠폰 유형
+  private CouponType couponType = CouponType.Regula; //쿠폰 유형 (일반, 선착순)
 
   @Column(nullable = false)
   private DiscountType discountType; //할인 타입 (정률,정액)
 
+  @Column(nullable = true)
+  private Long maximumDiscount; // 최대 할인 금액 (정률 방식에만 적용)
+
   private Long maxIssuance; //발급한도
 
+  private LocalDateTime downloadStartDate; // (선착순 쿠폰일 경우)다운로드 시작 시간
+
   private String couponDescription; //쿠폰 상세 내용
+
+
 
 }
 

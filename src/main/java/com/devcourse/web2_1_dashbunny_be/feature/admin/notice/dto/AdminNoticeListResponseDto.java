@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
-public class AdminNoticeListRequestDto {
+public class AdminNoticeListResponseDto {
   private Long noticeId;
   private String noticeTitle;
   private LocalDateTime createdDate;
@@ -21,7 +21,7 @@ public class AdminNoticeListRequestDto {
   /**
     * Notice엔티티에서 DTO로 데이터를 변환을 위한 생성자.
     */
-  public AdminNoticeListRequestDto(Notice notice) {
+  public AdminNoticeListResponseDto(Notice notice) {
     this.noticeId = notice.getNoticeId();
     this.noticeTitle = notice.getNoticeTitle();
     this.createdDate = notice.getCreatedDate();

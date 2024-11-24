@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminStoreRequestDto {
+public class AdminStoreResponseDto {
   private String storeId;
   private  String storeName;          // 가게 이름
   private String contactNumber;      // 가게 연락처
@@ -30,7 +30,7 @@ public class AdminStoreRequestDto {
   /**
    * StoreManagement 엔티티에서 DTO로 데이터를 변환을 위한 생성자.
    */
-  public AdminStoreRequestDto(StoreManagement storeManagement) {
+  public AdminStoreResponseDto(StoreManagement storeManagement) {
     this.storeId = storeManagement.getStoreId();
     this.storeName = storeManagement.getStoreName();
     this.contactNumber = storeManagement.getContactNumber();

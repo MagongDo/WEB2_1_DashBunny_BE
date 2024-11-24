@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AdminCouponStatusChangeRequestDto {
-    private CouponStatus couponStatus;
+  private CouponStatus couponStatus;
 }

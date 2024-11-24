@@ -5,8 +5,8 @@ import com.devcourse.web2_1_dashbunny_be.domain.admin.AdminCoupon;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponStatus;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponType;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponAddRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponListRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponListResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponStatusChangeRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.service.AdminCouponService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -88,7 +88,7 @@ class AdminCouponControllerTest {
   @Test
   void getAllAdminCoupon() throws Exception {
     //GIVEN
-    AdminCouponListRequestDto dto = new AdminCouponListRequestDto(
+    AdminCouponListResponseDto dto = new AdminCouponListResponseDto(
             "HelloCoupon",
             "Welcome Coupon",
             CouponType.Regula,
@@ -112,7 +112,7 @@ class AdminCouponControllerTest {
   void getAdminCoupon() throws Exception {
     //GIVEN
     String couponId = "HelloCoupon";
-    AdminCouponRequestDto dto = new AdminCouponRequestDto(
+    AdminCouponResponseDto dto = new AdminCouponResponseDto(
             "HelloCoupon",
             "Welcome Coupon",
             CouponType.Regula,

@@ -2,8 +2,8 @@ package com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.controller;
 
 import com.devcourse.web2_1_dashbunny_be.domain.admin.AdminCoupon;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponAddRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponListRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponListResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponStatusChangeRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.service.AdminCouponService;
 import java.util.List;
@@ -35,8 +35,8 @@ public class AdminCouponController {
    * 관리자 쿠폰 목록 조회 api (GET)
    */
   @GetMapping
-  public ResponseEntity<List<AdminCouponListRequestDto>> getAllAdminCoupon() {
-    List<AdminCouponListRequestDto> adminCoupons = adminCouponService.findAllAdminCoupons();
+  public ResponseEntity<List<AdminCouponListResponseDto>> getAllAdminCoupon() {
+    List<AdminCouponListResponseDto> adminCoupons = adminCouponService.findAllAdminCoupons();
     return ResponseEntity.status(HttpStatus.OK).body(adminCoupons);
   }
 
@@ -44,8 +44,8 @@ public class AdminCouponController {
    * 단일 관리자 쿠폰 조회 api (GET).
    */
   @GetMapping("/{couponId}")
-  public ResponseEntity<AdminCouponRequestDto> getAdminCoupon(@PathVariable String couponId) {
-    AdminCouponRequestDto adminCouponRequestDto = adminCouponService.finAdminCouponById(couponId);
+  public ResponseEntity<AdminCouponResponseDto> getAdminCoupon(@PathVariable String couponId) {
+    AdminCouponResponseDto adminCouponRequestDto = adminCouponService.finAdminCouponById(couponId);
     return ResponseEntity.status(HttpStatus.OK).body(adminCouponRequestDto);
   }
 

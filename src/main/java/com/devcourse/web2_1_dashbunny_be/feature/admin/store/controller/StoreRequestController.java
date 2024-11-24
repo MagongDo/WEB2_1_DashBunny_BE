@@ -1,11 +1,10 @@
 package com.devcourse.web2_1_dashbunny_be.feature.admin.store.controller;
 
-import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreListRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreListResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreCreateRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreApplicationService;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreManagementService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -88,9 +87,9 @@ public class StoreRequestController {
    * 관리자 - 가게 조회 api (GET).
    */
   @GetMapping("/{storeId}")
-  public ResponseEntity<AdminStoreRequestDto> getStore(@PathVariable String storeId) {
-    AdminStoreRequestDto adminStoreRequestDto = storeApplicationService.getStore(storeId);
-    return ResponseEntity.ok().body(adminStoreRequestDto);
+  public ResponseEntity<AdminStoreResponseDto> getStore(@PathVariable String storeId) {
+    AdminStoreResponseDto adminStoreResponseDto = storeApplicationService.getStore(storeId);
+    return ResponseEntity.ok().body(adminStoreResponseDto);
   }
 
 
@@ -98,8 +97,8 @@ public class StoreRequestController {
 //   * 관리자 - 가게 목록 조회 api (GET).
 //   */
 //  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-//  public ResponseEntity<List<AdminStoreListRequestDto>> getAllStores() {
-//    List<AdminStoreListRequestDto> stores = storeApplicationService.getStores();
+//  public ResponseEntity<List<AdminStoreListResponseDto>> getAllStores() {
+//    List<AdminStoreListResponseDto> stores = storeApplicationService.getStores();
 //    return ResponseEntity.ok().body(stores);
 //  }
 
@@ -112,12 +111,12 @@ public class StoreRequestController {
    * @return 페이징된 가게 목록
    */
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Page<AdminStoreListRequestDto>> getStores(
+  public ResponseEntity<Page<AdminStoreListResponseDto>> getStores(
           @RequestParam(defaultValue = "ENTIRE") String status,
           @RequestParam(defaultValue = "1") int page,
           @RequestParam(defaultValue = "10") int size
   ) {
-    Page<AdminStoreListRequestDto> stores = storeApplicationService.getStores(status, page, size);
+    Page<AdminStoreListResponseDto> stores = storeApplicationService.getStores(status, page, size);
     return ResponseEntity.ok().body(stores);
   }
 

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
-public class AdminNoticeRequestDto {
+public class AdminNoticeResponseDto {
   private Long noticeId;
   private String noticeTitle;
   private String noticeContent;
@@ -24,7 +24,7 @@ public class AdminNoticeRequestDto {
   /**
    * Notice엔티티에서 DTO로 데이터를 변환을 위한 생성자.
    */
-  public AdminNoticeRequestDto(Notice notice) {
+  public AdminNoticeResponseDto(Notice notice) {
     noticeId = notice.getNoticeId();
     noticeTitle = notice.getNoticeTitle();
     noticeContent = notice.getNoticeContent();

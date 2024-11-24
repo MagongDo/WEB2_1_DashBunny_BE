@@ -4,8 +4,8 @@ import com.devcourse.web2_1_dashbunny_be.domain.admin.StoreApplication;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.StoreIsApproved;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreListRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreListResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreApplicationRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreManagementRepository;
 import java.util.List;
@@ -108,20 +108,20 @@ public class StoreApplicationService {
   /**
    * 가게 번호로 단일 정보 조회 메서드.
    */
-  public AdminStoreRequestDto getStore(String storeId) {
+  public AdminStoreResponseDto getStore(String storeId) {
     StoreManagement store = storeManagementRepository.findById(storeId)
             .orElseThrow(() -> new IllegalArgumentException("not found storeId: " + storeId));
-    return new AdminStoreRequestDto(store);
+    return new AdminStoreResponseDto(store);
   }
 
 
 //  /**
 //   * 가게 목록 조회 메서드.
 //   */
-//  public List<AdminStoreListRequestDto> getStores() {
+//  public List<AdminStoreListResponseDto> getStores() {
 //    List<StoreManagement> stores = storeManagementRepository.findAll();
 //    return stores.stream()
-//            .map(AdminStoreListRequestDto::new)
+//            .map(AdminStoreListResponseDto::new)
 //            .toList();
 //  }
 
@@ -133,7 +133,7 @@ public class StoreApplicationService {
    * @param size 한 페이지당 데이터 수
    * @return 페이징된 가게 목록
    */
-  public Page<AdminStoreListRequestDto> getStores(String status, int page, int size) {
+  public Page<AdminStoreListResponseDto> getStores(String status, int page, int size) {
     Pageable pageable = PageRequest.of(page - 1, size, Sort.by("approvedDate").descending()); //승인 날짜기준으로 내림차순 정렬
     Page<StoreManagement> stores;
 
@@ -155,7 +155,7 @@ public class StoreApplicationService {
       stores = storeManagementRepository.findAll(pageable);
     }
 
-    return stores.map(AdminStoreListRequestDto::new); // Entity -> DTO 변환
+    return stores.map(AdminStoreListResponseDto::new); // Entity -> DTO 변환
   }
 
 }

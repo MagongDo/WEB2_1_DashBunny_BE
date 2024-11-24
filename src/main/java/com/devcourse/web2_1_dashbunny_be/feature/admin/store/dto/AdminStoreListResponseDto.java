@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminStoreListRequestDto {
+public class AdminStoreListResponseDto {
 
   private String storeId;
   private String storeName;
@@ -31,7 +31,7 @@ public class AdminStoreListRequestDto {
   /**
    * StoreManagement 엔티티에서 DTO로 데이터를 변환을 위한 생성자.
    */
-  public AdminStoreListRequestDto(StoreManagement storeManagement) {
+  public AdminStoreListResponseDto(StoreManagement storeManagement) {
     this.storeId = storeManagement.getStoreId();
     this.storeName = storeManagement.getStoreName();
     this.contactNumber = storeManagement.getContactNumber();

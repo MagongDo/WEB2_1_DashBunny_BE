@@ -2,8 +2,8 @@ package com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.admin.AdminCoupon;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponAddRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponListRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponListResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponStatusChangeRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.repository.AdminCouponRepository;
 import java.util.List;
@@ -30,10 +30,10 @@ public class AdminCouponService {
   /**
    * 쿠폰 목록 조회.
    */
-  public List<AdminCouponListRequestDto> findAllAdminCoupons() {
+  public List<AdminCouponListResponseDto> findAllAdminCoupons() {
     List<AdminCoupon> adminCoupons = adminCouponRepository.findAll();
     return adminCoupons.stream()
-            .map(AdminCouponListRequestDto::new)
+            .map(AdminCouponListResponseDto::new)
             .toList();
   }
 
@@ -41,10 +41,10 @@ public class AdminCouponService {
   /**
    * 쿠폰 단일 조회.
    */
-  public AdminCouponRequestDto finAdminCouponById(String couponId) {
+  public AdminCouponResponseDto finAdminCouponById(String couponId) {
     AdminCoupon coupon = adminCouponRepository.findById(couponId)
             .orElseThrow(() -> new IllegalArgumentException("not found couponId: " + couponId));
-    return new AdminCouponRequestDto(coupon);
+    return new AdminCouponResponseDto(coupon);
   }
 
   /**

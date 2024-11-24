@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminCouponRequestDto {
+public class AdminCouponResponseDto {
   private String couponId;
   private String couponName;
   private CouponType couponType;
@@ -30,7 +30,7 @@ public class AdminCouponRequestDto {
   /**
    * 엔티티에서 DTO로 데이터를 변환위한 생성자.
    */
-  public AdminCouponRequestDto(AdminCoupon adminCoupon) {
+  public AdminCouponResponseDto(AdminCoupon adminCoupon) {
     this.couponId = adminCoupon.getCouponId();
     this.couponName = adminCoupon.getCouponName();
     this.couponType = adminCoupon.getCouponType();

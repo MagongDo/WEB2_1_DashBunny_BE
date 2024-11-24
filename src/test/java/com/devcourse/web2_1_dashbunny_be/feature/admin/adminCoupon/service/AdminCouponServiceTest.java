@@ -5,8 +5,8 @@ import com.devcourse.web2_1_dashbunny_be.domain.admin.AdminCoupon;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponStatus;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponType;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponAddRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponListRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponListResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponStatusChangeRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.repository.AdminCouponRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -78,7 +78,7 @@ class AdminCouponServiceTest {
     when(adminCouponRepository.findAll()).thenReturn(List.of(adminCoupon));
 
     //WHEN
-    List<AdminCouponListRequestDto> result = adminCouponService.findAllAdminCoupons();
+    List<AdminCouponListResponseDto> result = adminCouponService.findAllAdminCoupons();
 
     //THEN
     assertThat(result).hasSize(1);
@@ -102,7 +102,7 @@ class AdminCouponServiceTest {
     when(adminCouponRepository.findById(couponId)).thenReturn(Optional.of(adminCoupon));
 
     //WHEN
-    AdminCouponRequestDto result = adminCouponService.finAdminCouponById(couponId);
+    AdminCouponResponseDto result = adminCouponService.finAdminCouponById(couponId);
 
     //THEN
     assertThat(result.getCouponName()).isEqualTo("Welcome Coupon");

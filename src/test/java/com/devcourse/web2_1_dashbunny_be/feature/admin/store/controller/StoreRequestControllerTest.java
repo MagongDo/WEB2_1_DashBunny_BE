@@ -3,18 +3,15 @@ package com.devcourse.web2_1_dashbunny_be.feature.admin.store.controller;
 import com.devcourse.web2_1_dashbunny_be.config.SecurityConfig;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreListRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreListResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreCreateRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreApplicationService;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreManagementService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.auditing.AuditingHandler;
@@ -30,7 +27,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -176,7 +172,7 @@ class StoreRequestControllerTest {
     void getStore() throws Exception {
         // GIVEN
         String storeId = "123";
-        AdminStoreRequestDto mockResponse = new AdminStoreRequestDto(
+        AdminStoreResponseDto mockResponse = new AdminStoreResponseDto(
                 "123",
                 "Store A",
                 "010-1234-5678",
@@ -214,8 +210,8 @@ class StoreRequestControllerTest {
         int size = 5;
 
         // Mock 데이터 생성
-        List<AdminStoreListRequestDto> mockStores = Arrays.asList(
-                new AdminStoreListRequestDto(
+        List<AdminStoreListResponseDto> mockStores = Arrays.asList(
+                new AdminStoreListResponseDto(
                         "123",
                         "Store A",
                         "010-1234-5678",
@@ -225,7 +221,7 @@ class StoreRequestControllerTest {
                         "..png",
                         "김사장",
                         LocalDateTime.of(2024, 12, 31, 23, 59)),
-                new AdminStoreListRequestDto( "234",
+                new AdminStoreListResponseDto( "234",
                         "Store B",
                         "010-1234-2234",
                         "보쌈 맛 끝내줍니다! 어서오세요 단체주문 환영",
@@ -236,7 +232,7 @@ class StoreRequestControllerTest {
                         LocalDateTime.of(2024, 12, 31, 23, 59))
         );
 
-        Page<AdminStoreListRequestDto> mockPage = new PageImpl<>(mockStores, PageRequest.of(page - 1, size), mockStores.size());
+        Page<AdminStoreListResponseDto> mockPage = new PageImpl<>(mockStores, PageRequest.of(page - 1, size), mockStores.size());
 
         // Mock 설정
         when(storeApplicationService.getStores(status, page, size)).thenReturn(mockPage);

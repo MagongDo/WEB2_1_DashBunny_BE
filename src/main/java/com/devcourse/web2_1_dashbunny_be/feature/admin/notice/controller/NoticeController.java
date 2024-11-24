@@ -3,8 +3,8 @@ package com.devcourse.web2_1_dashbunny_be.feature.admin.notice.controller;
 
 import com.devcourse.web2_1_dashbunny_be.domain.admin.Notice;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.AdminAddNoticeRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.AdminNoticeListRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.AdminNoticeRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.AdminNoticeListResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.AdminNoticeResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.AdminUpdateNoticeRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.service.NoticeService;
 import java.util.HashMap;
@@ -42,8 +42,8 @@ public class NoticeController {
    */
   //http://localhost:8080/api/notice/admin?role=OWNER이게 아님..
   @GetMapping("")
-  public ResponseEntity<List<AdminNoticeListRequestDto>> getNotices(@RequestParam String role)  {
-    List<AdminNoticeListRequestDto> notices;
+  public ResponseEntity<List<AdminNoticeListResponseDto>> getNotices(@RequestParam String role)  {
+    List<AdminNoticeListResponseDto> notices;
 
     if (!role.equals("admin")) { //사장님, 사용자가 조회
       notices = noticeService.getAllNoticesByRole(role);
@@ -54,8 +54,8 @@ public class NoticeController {
   }
 
 //  @GetMapping()
-//  public ResponseEntity<List<AdminNoticeListRequestDto>> getNotices() {
-//      List<AdminNoticeListRequestDto> notices=noticeService.getAllNotices();
+//  public ResponseEntity<List<AdminNoticeListResponseDto>> getNotices() {
+//      List<AdminNoticeListResponseDto> notices=noticeService.getAllNotices();
 //      return ResponseEntity.ok().body(notices);
 //  }
 
@@ -63,9 +63,9 @@ public class NoticeController {
    *단일 공지사항 조회 api (GET).
    */
   @GetMapping("/id/{noticeId}")
-  public ResponseEntity<AdminNoticeRequestDto> getNotice(@PathVariable Long noticeId) {
-    AdminNoticeRequestDto adminNoticeRequestDto = noticeService.getNotice(noticeId);
-    return ResponseEntity.ok().body(adminNoticeRequestDto);
+  public ResponseEntity<AdminNoticeResponseDto> getNotice(@PathVariable Long noticeId) {
+    AdminNoticeResponseDto adminNoticeResponseDto = noticeService.getNotice(noticeId);
+    return ResponseEntity.ok().body(adminNoticeResponseDto);
   }
 
   /**
