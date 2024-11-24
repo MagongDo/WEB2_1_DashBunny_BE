@@ -13,6 +13,7 @@ public class FileUploadController {
 
   private final fileUploadService fileUploadService;
   private final MenuService menuService;
+
   /**
   * 파일 업로드 API
   * @param file 업로드할 파일

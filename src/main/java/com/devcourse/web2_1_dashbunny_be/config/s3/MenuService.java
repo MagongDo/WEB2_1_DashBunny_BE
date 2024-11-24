@@ -1,6 +1,7 @@
 package com.devcourse.web2_1_dashbunny_be.config.s3;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
