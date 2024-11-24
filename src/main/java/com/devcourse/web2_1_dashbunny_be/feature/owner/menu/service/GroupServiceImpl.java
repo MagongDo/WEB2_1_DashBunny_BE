@@ -22,7 +22,8 @@ public class GroupServiceImpl implements GroupService {
 
   @Override
   public List<MenuGroup> read(String storeId) {
-    return List.of();
+    StoreManagement store = validator.validateStoreId(storeId);
+    return menuGroupRepository.findByStoreId(storeId);
   }
 
   /**
