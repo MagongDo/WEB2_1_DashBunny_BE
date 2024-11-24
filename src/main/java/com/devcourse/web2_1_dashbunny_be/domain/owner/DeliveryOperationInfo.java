@@ -18,7 +18,7 @@ public class DeliveryOperationInfo {
 
     @OneToOne
     @JoinColumn(name = "store_id", nullable = false, unique = true)
-    private StoreManagement store; // StoreManagement와 1:1 관계
+    private StoreManagement storeManagement; // StoreManagement와 1:1 관계
 
     @Lob
     @Column(nullable = true,  length = 255)

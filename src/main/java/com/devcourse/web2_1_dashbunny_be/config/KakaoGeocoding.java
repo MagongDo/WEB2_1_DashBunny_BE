@@ -6,22 +6,27 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
+@Component
 public class KakaoGeocoding {
 
     @Value("${kakao.api.key}")
-    private static String kakaoApiKey;
-    private static final String KAKAO_API_KEY = kakaoApiKey; // 카카오 REST API 키
+    private String kakaoApiKey; // 인스턴스 필드로 변경
 
-
-    public static JsonObject getCoordinatesFromAddress(String address) throws Exception {
+    public JsonObject getCoordinatesFromAddress(String address) throws Exception {
         OkHttpClient client = new OkHttpClient();
 
-        String url = "https://dapi.kakao.com/v2/local/search/address.json?query=" + address;
+        String encodedAddress = URLEncoder.encode(address, StandardCharsets.UTF_8.toString());
+
+        String url = "https://dapi.kakao.com/v2/local/search/address.json?query=" + encodedAddress;
 
         Request request = new Request.Builder()
                 .url(url)
-                .addHeader("Authorization", "KakaoAK " + KAKAO_API_KEY)
+                .addHeader("Authorization", "KakaoAK " + kakaoApiKey)
                 .build();
 
         try (Response response = client.newCall(request).execute()) {

@@ -10,6 +10,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 // 가게 관리 및 가게 정보를 저장하는 엔티티 클래스
@@ -89,25 +90,30 @@ public class StoreManagement {
     @ToString.Exclude
     private StoreFeedBack storeFeedback;
 
-    @OneToOne
-    @JoinColumn(name="deliveryInfo_id")
+    @OneToOne(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private DeliveryOperationInfo deliveryInfo;
 
-    @OneToMany
-    @JoinColumn(name="coupon_id")
+    @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<OwnerCoupon> ownerCoupon;
 
-    @OneToMany
-    @JoinColumn(name="flag_id")
+    @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<StoreFlag> storeFlags;
 
+    @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Categorys> category = new ArrayList<>();
+
     @OneToMany
-    @JoinColumn(name="category_id")
+    @JoinColumn(name="menuGroup_id")
     @ToString.Exclude
-    private List<Categorys> category;
+    private List<MenuGroup> menuGroup;
+
+    @OneToMany
+    @JoinColumn(name="menuManagement_id")
+    @ToString.Exclude
+    private List<MenuManagement> menuManagements;
 
     public BigDecimal maxDiscountPrice() {
         return ownerCoupon.stream()

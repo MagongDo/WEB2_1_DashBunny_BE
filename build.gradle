@@ -35,7 +35,7 @@ dependencies {
     //http 요청을 처리하기 위한 라이브러리
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
 
-
+    implementation 'mysql:mysql-connector-java:8.0.33'
 
     //security
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -46,7 +46,7 @@ dependencies {
     //lombok
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'mysql:mysql-connector-java:8.0.33'
     annotationProcessor 'org.projectlombok:lombok'
 
     testImplementation 'com.h2database:h2:2.3.232'

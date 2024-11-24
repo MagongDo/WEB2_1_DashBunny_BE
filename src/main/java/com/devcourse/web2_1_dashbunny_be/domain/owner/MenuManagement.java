@@ -16,9 +16,10 @@ public class MenuManagement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long menuId;
 
-    // 가게 고유키 (필수)
-    @Column(nullable = false)
-    private String storeId;
+    // 가게 고유키 (필수)(수정)
+    @ManyToOne
+    @JoinColumn(name = "store_id", nullable = false)
+    private StoreManagement storeId;
 
     // 그룹 고유키 (MenuGroup과 연관 관계 설정)
     // 그룹이 없어도 메뉴는 존재할 수 있다.

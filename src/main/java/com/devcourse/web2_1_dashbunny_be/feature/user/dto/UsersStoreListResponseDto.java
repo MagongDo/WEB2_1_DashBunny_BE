@@ -2,13 +2,17 @@ package com.devcourse.web2_1_dashbunny_be.feature.user.dto;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UsersStoreListResponseDto {
     private String storeId;
     private String storeName;
@@ -20,18 +24,26 @@ public class UsersStoreListResponseDto {
     private BigDecimal discountPrice;
     private StoreStatus status;
 
-    public UsersStoreListResponseDto toDTO(StoreManagement storeManagement) {
-        return UsersStoreListResponseDto.builder()
-                .storeId(storeManagement.getStoreId())
-                .storeName(storeManagement.getStoreName())
-                .rating(storeManagement.getStoreFeedback().getRating())
-                .reviewCount(storeManagement.getStoreFeedback().getReviewCount())
-                .baseDeliveryTip(storeManagement.getDeliveryInfo().getBaseDeliveryTip())
-                .minDeliveryTime(storeManagement.getDeliveryInfo().getMinDeliveryTime())
-                .maxDeliveryTime(storeManagement.getDeliveryInfo().getMaxDeliveryTime())
-                .discountPrice(storeManagement.maxDiscountPrice())
-                .status(storeManagement.getStoreStatus())
-                .build();
+    public void toDTO(StoreManagement store) {
+        if (store == null) {
+            return;
+        }
+        this.storeId = store.getStoreId();
+        this.storeName = store.getStoreName();
+
+        if (store.getStoreFeedback() != null) {
+            this.rating = store.getStoreFeedback().getRating();
+            this.reviewCount = store.getStoreFeedback().getReviewCount();
+        }
+
+        if (store.getDeliveryInfo() != null) {
+            this.baseDeliveryTip = store.getDeliveryInfo().getBaseDeliveryTip();
+            this.minDeliveryTime = store.getDeliveryInfo().getMinDeliveryTime();
+            this.maxDeliveryTime = store.getDeliveryInfo().getMaxDeliveryTime();
+            this.discountPrice = store.maxDiscountPrice(); // 실제 할인 가격 필드로 수정
+        }
+
+        this.status = store.getStoreStatus();
     }
 
 }

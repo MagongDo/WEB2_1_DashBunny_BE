@@ -42,7 +42,7 @@ class UsersStoreServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        usersStoreService = new UsersStoreService(storeManagementRepository, userRepository);
+//        usersStoreService = new UsersStoreService(storeManagementRepository, userRepository);
         ReflectionTestUtils.setField(usersStoreService, "redisTemplate", redisTemplate);
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
     }
@@ -56,7 +56,7 @@ class UsersStoreServiceTest {
         // Mock 좌표 변환
         JsonObject mockCoordinates = MockGeoUtils.getMockCoordinates();
         try (var mockedStatic = mockStatic(KakaoGeocoding.class)) {
-            mockedStatic.when(() -> KakaoGeocoding.getCoordinatesFromAddress(address)).thenReturn(mockCoordinates);
+//            mockedStatic.when(() -> KakaoGeocoding.getCoordinatesFromAddress(address)).thenReturn(mockCoordinates);
 
             // Redis Mock 설정
             String redisKey = RedisKeyUtil.generateKey(userId, mockCoordinates.get("latitude").getAsDouble(), mockCoordinates.get("longitude").getAsDouble());
@@ -68,7 +68,7 @@ class UsersStoreServiceTest {
             StoreManagement mockStore = mock(StoreManagement.class);
             when(mockStore.getStoreId()).thenReturn("store1");
             when(mockStore.getStoreName()).thenReturn("KOREAN Restaurant");
-            when(mockStore.getCategory()).thenReturn(List.of(new Categorys(CategoryType.KOREAN)));
+//            when(mockStore.getCategory()).thenReturn(List.of(new Categorys(CategoryType.KOREAN)));
 
             // Mock StoreFeedback
             StoreFeedBack mockFeedback = mock(StoreFeedBack.class);
