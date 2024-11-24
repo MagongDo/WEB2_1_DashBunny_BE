@@ -1,8 +1,12 @@
 package com.devcourse.web2_1_dashbunny_be.domain.owner;
 
+import com.devcourse.web2_1_dashbunny_be.domain.user.CartItem;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // 메뉴 정보를 관리하는 엔티티 클래스
 @Getter
@@ -55,12 +59,9 @@ public class MenuManagement {
     @Column(nullable = false)
     private Long price;
 
-
-
-
-
-
-
+    //------------------------------추가 수정
+    @OneToMany(mappedBy = "menuManagement", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItem> cartItems = new ArrayList<>();
 
 
 }
