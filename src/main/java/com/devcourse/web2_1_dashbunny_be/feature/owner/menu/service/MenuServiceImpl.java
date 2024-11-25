@@ -23,6 +23,13 @@ public class MenuServiceImpl implements MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
 
+    // 그룹 메뉴 조회
+    @Override
+    public List<MenuManagement> findGroupMenu(String groupId) {
+        // 그룹 ID에 해당하는 메뉴 리스트 조회
+        return menuRepository.findByGroupId(groupId);
+    }
+
     //전체 메뉴 조회(메뉴 관리 1페이지 목록)
     @Override
     public List<MenuManagement> findStoreAllMenu(String storeId) {
@@ -30,14 +37,9 @@ public class MenuServiceImpl implements MenuService {
         return menuRepository.findAllByStoreId(storeId);
     }
 
-    @Override
-    public List<MenuManagement> findGroupMenu(String groupId) {
-        return List.of();
-    }
-
+    // 메뉴명 기준으로 메뉴 검색
     @Override
     public List<MenuManagement> findSearchMenuName(String menuName) {
-        // 메뉴명 기준으로 메뉴 검색
         return menuRepository.findByMenuNameContaining(menuName);
     }
 
@@ -102,12 +104,19 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public void updateImage(Long menuId, UpdateMenuImageRequestDto imageUrlDTO) {
-
+        MenuManagement menu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new RuntimeException("해당 메뉴를 찾을 수 없습니다."));
+        menu.setMenuImage(imageUrlDTO.getImageUrl()); // 이미지 URL 업데이트
+        menuRepository.save(menu); // 변경 내용 저장
     }
+
 
     @Override
     public void updateIsSoldOut(Long menuId, UpdateSoldOutRequestDto updateSoldOutRequestDTO) {
-
+        MenuManagement menu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new RuntimeException("해당 메뉴를 찾을 수 없습니다."));
+        menu.setIsSoldOut(updateSoldOutRequestDTO.getIsSoldOut()); // 품절 상태 업데이트
+        menuRepository.save(menu); // 변경 내용 저장
     }
 
   /**

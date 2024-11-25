@@ -1,11 +1,15 @@
 package com.devcourse.web2_1_dashbunny_be.feature.owner.dto.menu;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * 단건 환불 처리를 위한 DTO 클래스.
+ * 단건 품절 처리 요청 DTO 클래스.
  */
-@Getter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UpdateSoldOutRequestDto {
-  private boolean soldOut;
+  private Boolean isSoldOut; // 품절 여부 (true/false)
 }
