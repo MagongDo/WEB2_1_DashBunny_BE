@@ -4,7 +4,7 @@ package com.devcourse.web2_1_dashbunny_be.domain.owner;
 import com.devcourse.web2_1_dashbunny_be.annotation.config.TSID;
 import com.devcourse.web2_1_dashbunny_be.annotation.config.lifecycle.TSIDListener;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
-import com.devcourse.web2_1_dashbunny_be.domain.user.User;
+/*import com.devcourse.web2_1_dashbunny_be.domain.user.User;*/
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,10 +28,12 @@ public class StoreManagement {
     @Column(name = "store_id", nullable = false)
     private String storeId;
 
+/*
     // userid 빠져있음
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private User user;
+*/
 
     // operationid 빠져있음
     @OneToOne(mappedBy = "store", cascade = CascadeType.ALL)
@@ -49,7 +51,7 @@ public class StoreManagement {
 
     // 가게 소개 내용 (TEXT 타입)
     @Column(columnDefinition = "TEXT")
-    private String description;
+    private String storeDescription;
 
     // 가게 전화번호 (필수, 최대 길이 13자)
     @Column(nullable = false, length = 13)
@@ -85,8 +87,8 @@ public class StoreManagement {
     //가게 등록 승인 날짜
     private LocalDateTime approvedDate;
 
-    //스토어가 가진 쿠폰 리스트
-    //쿠폰이 없어도 스토어는 생성될 수 있어야한다. 리스트 초기화 진행
+  //스토어가 가진 쿠폰 리스트
+  //쿠폰이 없어도 스토어는 생성될 수 있어야한다. 리스트 초기화 진행
   @OneToMany(mappedBy = "storeManagement",cascade = CascadeType.ALL, orphanRemoval = true)
   private List<OwnerCoupon> couponList = new ArrayList<>();
 

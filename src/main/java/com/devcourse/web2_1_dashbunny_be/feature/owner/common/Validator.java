@@ -1,10 +1,8 @@
 package com.devcourse.web2_1_dashbunny_be.feature.owner.common;
 
-import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuGroup;
-import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
-import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
-import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreOperationInfo;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.*;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.BasicInfoProjection;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.ownerCoupon.repository.OwnerCouponRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuGroupRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
@@ -28,6 +26,7 @@ public class Validator {
     private final MenuRepository menuRepository;
     private final StoreManagementRepository storeManagementRepository;
     private final StoreOperationInfoRepository storeOperationInfoRepository;
+    private final OwnerCouponRepository ownerCouponRepository;
 
     //메뉴 그룹 아이디 검증 메서드
     public MenuGroup validateGroupId(Long groupId) {
@@ -65,4 +64,11 @@ public class Validator {
         return operationInfo;
     }
 
+    /**
+     * 쿠폰 검증 메서드.
+     */
+    public OwnerCoupon validateCouponId(Long couponId) {
+      return ownerCouponRepository.findById(couponId)
+                .orElseThrow(() -> new EntityNotFoundException("쿠폰 정보를 찾을 수 없습니다."));
+    }
 }

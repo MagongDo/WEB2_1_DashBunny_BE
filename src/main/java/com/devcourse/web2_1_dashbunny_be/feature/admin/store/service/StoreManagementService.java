@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.feature.admin.store.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.admin.StoreApplication;
@@ -12,9 +13,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+*/
 /**
  * 가게 관리 service.
- */
+ *//*
+//옮기기 서비스
 @Service
 @RequiredArgsConstructor
 public class StoreManagementService {
@@ -22,9 +25,11 @@ public class StoreManagementService {
   private final StoreApplicationRepository storeApplicationRepository;
 
 
-  /**
+  */
+/**
    * 가게 등록 신청 메서드.
-   */
+   *//*
+
   @Transactional
   public StoreManagement create(StoreCreateRequestDto storeCreateRequestDto) {
     // 가게 객체 생성
@@ -43,9 +48,11 @@ public class StoreManagementService {
 
   //가게 재등록 신청
 
-  /**
+  */
+/**
    * 가게 재등록 신청 메서드.
-   */
+   *//*
+
   @Transactional
   public StoreManagement reCreate(String storeId, StoreCreateRequestDto storeCreateRequestDto) {
     StoreManagement storeManagement = storeManagementRepository.findById(storeId)
@@ -80,9 +87,11 @@ public class StoreManagementService {
 
   // 가게 폐업 신청
 
-  /**
+  */
+/**
    * 가게 폐업 신청 메서드.
-   */
+   *//*
+
   @Transactional
   public StoreManagement close(String storeId) {
     StoreManagement storeManagement = storeManagementRepository.findById(storeId)
@@ -108,3 +117,4 @@ public class StoreManagementService {
     throw new IllegalStateException("Cannot apply for closure: Store is not in TEMP_CLOSE status.");
   }
 }
+*/

@@ -23,5 +23,5 @@ public interface OwnerCouponService {
   /**
   * 새로운 쿠폰 저장을 위한 api service.
   */
-  void saveOwnerCoupon(OwnerCoupon ownerCoupon);
+  void saveOwnerCoupon(OwnerCoupon ownerCoupon, int day);
 }

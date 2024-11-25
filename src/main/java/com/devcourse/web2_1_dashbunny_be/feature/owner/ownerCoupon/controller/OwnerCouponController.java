@@ -47,8 +47,9 @@ public class OwnerCouponController {
   public ResponseEntity<String> createCoupon(
             @PathVariable("storeId") String storeId,
             @RequestBody CreateOwnerCouponRequestDto createOwnerCouponRequestDto) {
+    int day = createOwnerCouponRequestDto.getExpiredDate();
     OwnerCoupon ownerCoupon = createOwnerCouponRequestDto.toEntity();
-    ownerCouponService.saveOwnerCoupon(ownerCoupon);
+    ownerCouponService.saveOwnerCoupon(ownerCoupon,day);
     return ResponseEntity.ok("쿠폰 생성이 완료 되었습니다");
     }
 }
