@@ -31,9 +31,15 @@ public class MenuGroup {
     @Column(nullable = false, length = 255)
     private String groupName;
 
+    // 대표 그룹 여부 (true이면 대표 그룹)
+    @Column(nullable = false)
+    private Boolean isMainGroup = false; // 기본값 false로 설정
+
     // MenuManagement와의 연관관계 (1:N)
     @OneToMany(mappedBy = "menuGroup", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Column(nullable = true)
     private List<MenuManagement> menuList = new ArrayList<>();
 
+
+
 }
-//그룹 삭제시 명시적으로 그룹 삭제 전에 관계 해제하는 과정을 서비스 단에서 추가해 주어야 한다.

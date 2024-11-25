@@ -34,8 +34,8 @@ public class OwnerReview {
     @Column(length = 50)
     private String status;
 
-    // 가게 ID (필수), 연관관계 매핑 아직 적용 x
-    @Column(nullable = false)
-    private Long storeId;
+    @OneToOne
+    @JoinColumn(name = "store_id", nullable = false, unique = true)
+    private StoreManagement store; // StoreManagement와 1:1 관계
 
 }
