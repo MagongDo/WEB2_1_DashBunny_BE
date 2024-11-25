@@ -38,7 +38,7 @@ public class Notice {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private NoticeTarget target=NoticeTarget.ENTIRE; //대상 (디폴트:전체)
+    private NoticeTarget target=NoticeTarget.ENTIRE; //대상 (디폴트:전체)간접참조
 
     @Column(nullable =false)
     private Long viewCount;
