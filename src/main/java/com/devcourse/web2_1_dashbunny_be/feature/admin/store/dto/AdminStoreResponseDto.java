@@ -35,7 +35,7 @@ public class AdminStoreResponseDto {
     this.storeName = storeManagement.getStoreName();
     this.contactNumber = storeManagement.getContactNumber();
     this.address = storeManagement.getAddress();
-    this.description = storeManagement.getDescription();
+    this.description = storeManagement.getStoreDescription();
 //    this.category1 = storeManagement.getCategory1();
 //    this.category2 = storeManagement.getCategory2();
 //    this.category3 = storeManagement.getCategory3();

@@ -47,16 +47,19 @@ public class OwnerCoupon {
   private Long discountPrice;
 
   // 최소 주문 금액 (필수)
-  @Column(nullable = false)
+  @Column(nullable = true)
   private Long minOrderPrice;
 
   // 만료기한 (필수)
-  @Column(nullable = false)
+  @Column(nullable = true)
   private LocalDateTime expiredDate;
+
+  @Column(nullable = false)
+  private LocalDateTime creatCouponAt;
 
   // 쿠폰 승인 상태 (열거형, 필수)
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false, length = 50)
+  @Column(nullable = true, length = 50)
   private CouponStatus couponStatus; //쿠폰 상태 (대기, 활성화, 만료, 조기종료)
 
   // 할인 방식 (열거형, 필수)

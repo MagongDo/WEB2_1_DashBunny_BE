@@ -33,6 +33,7 @@ public class OwnerCouponServiceImpl implements OwnerCouponService {
   public void updateCouponStatus(Long couponId) {
     OwnerCoupon coupon = validator.validateCouponId(couponId);
     coupon.setCouponStatus(CouponStatus.EARLY_TERMINATED);
+    ownerCouponRepository.save(coupon);
   }
 
   //-1 시키키
@@ -44,4 +45,5 @@ public class OwnerCouponServiceImpl implements OwnerCouponService {
     ownerCoupon.setExpiredDate(expireDate);
     ownerCouponRepository.save(ownerCoupon);
   }
+  //검증이 지금 가게에 대한 부분을 컨트롤러에서 하고 있다. 이걸 서비스단으로 옮기는 작업을 해야한다.
 }
