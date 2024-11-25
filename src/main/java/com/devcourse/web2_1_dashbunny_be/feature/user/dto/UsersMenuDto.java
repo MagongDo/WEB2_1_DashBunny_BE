@@ -20,7 +20,7 @@ public class UsersMenuDto {
     private Integer menuOption;     // 메뉴 옵션
     private Boolean isSoldOut;      // 재고 여부
 
-    public static UsersMenuDto toMenuDTO(MenuManagement menu) {
+    public static UsersMenuDto toMenuDto(MenuManagement menu) {
         return UsersMenuDto.builder()
                 .menuId(menu.getMenuId())
                 .menuName(menu.getMenuName())

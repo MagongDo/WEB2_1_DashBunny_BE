@@ -45,13 +45,13 @@ public class UsersStoreResponseDto {
                 .storeStatus(store.getStoreStatus())
                 .usersMenuGroup(store.getMenuGroup() != null
                         ? store.getMenuGroup().stream()
-                        .map(UsersMenuGroupDto::toMenuGroupDTO)
+                        .map(UsersMenuGroupDto::toMenuGroupDto)
                         .toList()
                         : null)
                 .usersMenus(store.getMenuManagements() != null
                         ? store.getMenuManagements().stream()
                         .filter(menu -> menu.getMenuGroup() == null) // 메뉴 그룹에 속하지 않은 메뉴만 선택
-                        .map(UsersMenuDto::toMenuDTO)
+                        .map(UsersMenuDto::toMenuDto)
                         .toList()
                         : null)
                 .build();

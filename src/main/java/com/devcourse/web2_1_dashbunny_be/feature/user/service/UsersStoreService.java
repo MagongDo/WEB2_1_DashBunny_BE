@@ -162,7 +162,7 @@ public class UsersStoreService {
 
             // DTO로 변환하여 응답 리스트에 추가
             UsersStoreListResponseDto dto = new UsersStoreListResponseDto();
-            dto.toDTO(store);
+            dto.toUsersStoreListResponseDto(store);
             responseDtos.add(dto);
         }
         return responseDtos;

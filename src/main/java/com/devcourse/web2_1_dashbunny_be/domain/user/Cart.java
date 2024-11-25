@@ -22,7 +22,7 @@ public class Cart {
 
     @OneToOne
     @Column(name = "userId", nullable = false)
-    private User userId;
+    private User user;
 
     @OneToOne
     @Column(name = "storeId", nullable = false)
