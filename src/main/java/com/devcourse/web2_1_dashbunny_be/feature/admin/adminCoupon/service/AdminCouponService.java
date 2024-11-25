@@ -1,10 +1,10 @@
 package com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.admin.AdminCoupon;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponAddRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AddAdminCouponRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponResponseDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponStatusChangeRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.ChangeAdminCouponStatusRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.repository.AdminCouponRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class AdminCouponService {
   /**
    * 쿠폰 생성.
    */
-  public AdminCoupon saveAdminCoupon(AdminCouponAddRequestDto request) {
+  public AdminCoupon saveAdminCoupon(AddAdminCouponRequestDto request) {
     return adminCouponRepository.save(request.toEntity());
   }
 
@@ -50,7 +50,7 @@ public class AdminCouponService {
   /**
    * 쿠폰 상태 변경.
    */
-  public AdminCoupon finAdminCouponStatusChange(String couponId, AdminCouponStatusChangeRequestDto status) {
+  public AdminCoupon finAdminCouponStatusChange(String couponId, ChangeAdminCouponStatusRequestDto status) {
     AdminCoupon coupon = adminCouponRepository.findById(couponId)
             .orElseThrow(() -> new IllegalArgumentException("not found couponId: " + couponId));
     coupon.setCouponStatus(status.getCouponStatus());

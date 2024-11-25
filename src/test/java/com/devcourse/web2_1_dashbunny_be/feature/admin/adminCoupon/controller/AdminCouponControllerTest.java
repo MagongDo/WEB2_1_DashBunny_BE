@@ -4,10 +4,10 @@ import com.devcourse.web2_1_dashbunny_be.config.SecurityConfig;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.AdminCoupon;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponStatus;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponType;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponAddRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AddAdminCouponRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponResponseDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponStatusChangeRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.ChangeAdminCouponStatusRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.service.AdminCouponService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,7 +59,7 @@ class AdminCouponControllerTest {
   @Test
   void addAdminCoupon() throws Exception {
     //GIVEN
-    AdminCouponAddRequestDto requestDto = new AdminCouponAddRequestDto(
+    AddAdminCouponRequestDto requestDto = new AddAdminCouponRequestDto(
             "Welcome Coupon",
             CouponType.Regula,
             CouponStatus.ACTIVE,
@@ -71,7 +71,7 @@ class AdminCouponControllerTest {
     );
     AdminCoupon response = requestDto.toEntity();
 
-    when(adminCouponService.saveAdminCoupon(any(AdminCouponAddRequestDto.class))).thenReturn(response);
+    when(adminCouponService.saveAdminCoupon(any(AddAdminCouponRequestDto.class))).thenReturn(response);
 
     //WHEN & THEN
     mockMvc.perform(post("/api/adminCoupon")
@@ -82,7 +82,7 @@ class AdminCouponControllerTest {
             .andExpect(jsonPath("$.couponType").value("Regula"))
             .andExpect(jsonPath("$.couponStatus").value("ACTIVE"));
 
-    verify(adminCouponService, times(1)).saveAdminCoupon(any(AdminCouponAddRequestDto.class));
+    verify(adminCouponService, times(1)).saveAdminCoupon(any(AddAdminCouponRequestDto.class));
   }
 
   @Test
@@ -149,10 +149,10 @@ class AdminCouponControllerTest {
             100L,
             "This is a welcome coupon"
     );
-    AdminCouponStatusChangeRequestDto request = new AdminCouponStatusChangeRequestDto(CouponStatus.ACTIVE);
+    ChangeAdminCouponStatusRequestDto request = new ChangeAdminCouponStatusRequestDto(CouponStatus.ACTIVE);
     adminCoupon.setCouponStatus(CouponStatus.ACTIVE);
 
-    when(adminCouponService.finAdminCouponStatusChange(eq(couponId), any(AdminCouponStatusChangeRequestDto.class))).thenReturn(adminCoupon); //eq는 특정 값이 매칭되도록 하는 Mockito의 Matcher
+    when(adminCouponService.finAdminCouponStatusChange(eq(couponId), any(ChangeAdminCouponStatusRequestDto.class))).thenReturn(adminCoupon); //eq는 특정 값이 매칭되도록 하는 Mockito의 Matcher
 
     //WHEN & THEN
     mockMvc.perform(put("/api/adminCoupon/{couponId}", couponId)
@@ -161,7 +161,7 @@ class AdminCouponControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.couponStatus").value("ACTIVE"));
 
-    verify(adminCouponService, times(1)).finAdminCouponStatusChange(eq(couponId), any(AdminCouponStatusChangeRequestDto.class));
+    verify(adminCouponService, times(1)).finAdminCouponStatusChange(eq(couponId), any(ChangeAdminCouponStatusRequestDto.class));
 
   }
 

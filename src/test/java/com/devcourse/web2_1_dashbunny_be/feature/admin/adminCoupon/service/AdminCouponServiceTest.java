@@ -4,10 +4,10 @@ package com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.service;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.AdminCoupon;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponStatus;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponType;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponAddRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AddAdminCouponRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponResponseDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponStatusChangeRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.ChangeAdminCouponStatusRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.repository.AdminCouponRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ class AdminCouponServiceTest {
   @Test
   void testSaveAdminCoupon() {
       //GIVEN
-    AdminCouponAddRequestDto adminCouponAddRequestDto = new AdminCouponAddRequestDto(
+    AddAdminCouponRequestDto addAdminCouponRequestDto = new AddAdminCouponRequestDto(
             "Welcome Coupon",
             CouponType.Regula,
             CouponStatus.ACTIVE,
@@ -52,11 +52,11 @@ class AdminCouponServiceTest {
             "This is a welcome coupon"
 
     );
-    AdminCoupon adminCoupon = adminCouponAddRequestDto.toEntity();
+    AdminCoupon adminCoupon = addAdminCouponRequestDto.toEntity();
     when(adminCouponRepository.save(any(AdminCoupon.class))).thenReturn(adminCoupon); // adminCouponRepository.save 메소드가 호출되었을떄 adminCoupon 객체가 반환하도록
 
     //WHEN
-    AdminCoupon result = adminCouponService.saveAdminCoupon(adminCouponAddRequestDto);
+    AdminCoupon result = adminCouponService.saveAdminCoupon(addAdminCouponRequestDto);
 
     //THEN
     assertThat(result.getCouponName()).isEqualTo("Welcome Coupon");
@@ -122,12 +122,12 @@ class AdminCouponServiceTest {
             .minOrderPrice(15000L)
             .expiredDate(LocalDateTime.of(2024, 12, 31, 23, 59))
             .build();
-    AdminCouponStatusChangeRequestDto adminCouponStatusChangeRequestDto = new AdminCouponStatusChangeRequestDto(CouponStatus.ACTIVE);
+    ChangeAdminCouponStatusRequestDto changeAdminCouponStatusRequestDto = new ChangeAdminCouponStatusRequestDto(CouponStatus.ACTIVE);
     when(adminCouponRepository.findById(couponId)).thenReturn(Optional.of(adminCoupon));
     when(adminCouponRepository.save(any(AdminCoupon.class))).thenReturn(adminCoupon);
 
     //WHEN
-    AdminCoupon result = adminCouponService.finAdminCouponStatusChange(couponId, adminCouponStatusChangeRequestDto);
+    AdminCoupon result = adminCouponService.finAdminCouponStatusChange(couponId, changeAdminCouponStatusRequestDto);
 
     //THEN
     assertThat(result.getCouponStatus()).isEqualTo(CouponStatus.ACTIVE);

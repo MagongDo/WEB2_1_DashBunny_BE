@@ -22,8 +22,8 @@ import org.hibernate.annotations.UuidGenerator;
 public class AdminCoupon {
 
   @Id
-  @UuidGenerator
-  private String couponId; //쿠폰 아이디
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long couponId; //쿠폰 아이디
 
   @Column(nullable = false)
   private String couponName; //쿠폰명
@@ -55,6 +55,7 @@ public class AdminCoupon {
 
   private LocalDateTime downloadStartDate; // (선착순 쿠폰일 경우)다운로드 시작 시간
 
+  @Column(columnDefinition="TEXT", nullable = true)
   private String couponDescription; //쿠폰 상세 내용
 
 

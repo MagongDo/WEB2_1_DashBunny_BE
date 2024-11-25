@@ -9,12 +9,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
-class AdminCouponAddRequestDtoTest {
+class AddAdminCouponRequestDtoTest {
 
   @Test
   void testToEntity() {
     //GIVEN
-    AdminCouponAddRequestDto dto = new AdminCouponAddRequestDto(
+    AddAdminCouponRequestDto dto = new AddAdminCouponRequestDto(
             "Welcome Coupon",
             CouponType.Regula,
             CouponStatus.ACTIVE,

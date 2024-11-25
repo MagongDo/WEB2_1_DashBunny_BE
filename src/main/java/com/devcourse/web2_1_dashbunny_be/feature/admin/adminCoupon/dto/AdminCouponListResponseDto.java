@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdminCouponListResponseDto {
-  private String couponId;
+  private Long couponId;
   private String couponName;
   private CouponType couponType;
   //private String couponDescription;
