@@ -70,6 +70,12 @@ public class AuthController {
         return userService.sendSmsToFindPhone(phoneNum);
     }
 
+    /**
+     * 사용자의 전화번호와 인증 코드를 검증하는 엔드포인트입니다.
+     *
+     * @param smsVerification 전화번호와 인증 코드가 포함된 요청 본문
+     * @return 검증 결과를 포함한 ResponseEntity
+     */
     @PostMapping("/verify-sms")
     public ResponseEntity<?> verifySms(@RequestBody SmsVerification smsVerification) {
         Map<String, Object> response = new HashMap<>();
