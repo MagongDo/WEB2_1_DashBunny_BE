@@ -41,7 +41,7 @@ public class AdminCouponService {
   /**
    * 쿠폰 단일 조회.
    */
-  public AdminCouponResponseDto finAdminCouponById(String couponId) {
+  public AdminCouponResponseDto finAdminCouponById(Long couponId) {
     AdminCoupon coupon = adminCouponRepository.findById(couponId)
             .orElseThrow(() -> new IllegalArgumentException("not found couponId: " + couponId));
     return new AdminCouponResponseDto(coupon);
@@ -50,7 +50,7 @@ public class AdminCouponService {
   /**
    * 쿠폰 상태 변경.
    */
-  public AdminCoupon finAdminCouponStatusChange(String couponId, ChangeAdminCouponStatusRequestDto status) {
+  public AdminCoupon finAdminCouponStatusChange(Long couponId, ChangeAdminCouponStatusRequestDto status) {
     AdminCoupon coupon = adminCouponRepository.findById(couponId)
             .orElseThrow(() -> new IllegalArgumentException("not found couponId: " + couponId));
     coupon.setCouponStatus(status.getCouponStatus());
