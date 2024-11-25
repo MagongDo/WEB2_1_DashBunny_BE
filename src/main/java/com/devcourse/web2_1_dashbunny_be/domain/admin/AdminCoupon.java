@@ -51,7 +51,7 @@ public class AdminCoupon {
   @Column(nullable = true)
   private Long maximumDiscount; // 최대 할인 금액 (정률 방식에만 적용)
 
-  private Long maxIssuance; //발급한도
+  private Long maxIssuance; //발급한도 (선착순 쿠폰일 경우)
 
   private LocalDateTime downloadStartDate; // (선착순 쿠폰일 경우)다운로드 시작 시간
 

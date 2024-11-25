@@ -32,7 +32,7 @@ public class AdminCouponController {
   }
 
   /**
-   * 관리자 쿠폰 목록 조회 api (GET)
+   * 관리자 쿠폰 목록 조회 api (GET).
    */
   @GetMapping
   public ResponseEntity<List<AdminCouponListResponseDto>> getAllAdminCoupon() {
@@ -44,7 +44,7 @@ public class AdminCouponController {
    * 단일 관리자 쿠폰 조회 api (GET).
    */
   @GetMapping("/{couponId}")
-  public ResponseEntity<AdminCouponResponseDto> getAdminCoupon(@PathVariable String couponId) {
+  public ResponseEntity<AdminCouponResponseDto> getAdminCoupon(@PathVariable Long couponId) {
     AdminCouponResponseDto adminCouponRequestDto = adminCouponService.finAdminCouponById(couponId);
     return ResponseEntity.status(HttpStatus.OK).body(adminCouponRequestDto);
   }
@@ -53,9 +53,11 @@ public class AdminCouponController {
    * 관리자 쿠폰 상태 변경 api (PUT).
    */
   @PutMapping("/{couponId}")
-  public ResponseEntity<AdminCoupon> updateAdminCouponStatus(@PathVariable String couponId, @RequestBody ChangeAdminCouponStatusRequestDto request) {
+  public ResponseEntity<AdminCoupon> updateAdminCouponStatus(@PathVariable Long couponId, @RequestBody ChangeAdminCouponStatusRequestDto request) {
     AdminCoupon coupon = adminCouponService.finAdminCouponStatusChange(couponId, request);
     return ResponseEntity.status(HttpStatus.OK).body(coupon);
   }
+
+
 
 }
