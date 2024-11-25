@@ -16,3 +16,8 @@ spring:
     console:
       enabled: true       # H2 콘솔 활성화
       path: /h2-console   # H2 콘솔 경로 설정
+
+  data:
+    jpa:
+      auditing:
+        enabled: false  # JPA Auditing 비활성화

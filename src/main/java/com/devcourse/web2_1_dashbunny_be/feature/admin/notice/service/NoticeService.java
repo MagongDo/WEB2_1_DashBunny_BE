@@ -4,15 +4,15 @@ package com.devcourse.web2_1_dashbunny_be.feature.admin.notice.service;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.Notice;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.NoticeTarget;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.AdminAddNoticeRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.AdminNoticeListRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.AdminNoticeRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.AdminNoticeListResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.AdminNoticeResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.AdminUpdateNoticeRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.repository.NoticeRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 /**
  * 공지사항 serice.
@@ -34,10 +34,10 @@ public class NoticeService {
   /**
    *공지사항 목록 조회- 관리자.
    */
-  public List<AdminNoticeListRequestDto> getAllNotices() {
+  public List<AdminNoticeListResponseDto> getAllNotices() {
     List<Notice> notices = noticeRepository.findAll();
     return notices.stream()
-          .map(AdminNoticeListRequestDto::new)
+          .map(AdminNoticeListResponseDto::new)
           .toList();
   }
 
@@ -45,10 +45,10 @@ public class NoticeService {
   /**
    *공지사항 목록 조회- 사장님,사용자.
    */
-  public List<AdminNoticeListRequestDto> getAllNoticesByRole(String role) {
+  public List<AdminNoticeListResponseDto> getAllNoticesByRole(String role) {
     List<Notice> notices = noticeRepository.findByTarget(NoticeTarget.valueOf(role));
     return notices.stream()
-            .map(AdminNoticeListRequestDto::new)
+            .map(AdminNoticeListResponseDto::new)
             .toList();
   }
 
@@ -56,11 +56,11 @@ public class NoticeService {
   /**
    * 공지사항 단일 조회.
    */
-  public AdminNoticeRequestDto getNotice(Long noticeId) {
+  public AdminNoticeResponseDto getNotice(Long noticeId) {
     Notice notice = noticeRepository.findById(noticeId)
             .orElseThrow(() -> new IllegalArgumentException("not found noticeId: " + noticeId));
     notice.isIncrementViewCount(); //조회수 증가
-    return new AdminNoticeRequestDto(notice);
+    return new AdminNoticeResponseDto(notice);
   }
 
 

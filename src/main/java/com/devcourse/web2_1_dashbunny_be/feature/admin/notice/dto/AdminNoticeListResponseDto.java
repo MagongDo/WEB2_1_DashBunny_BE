@@ -6,13 +6,12 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 /**
  * 공지사항 목록 조회 데이터를 보여주는 dto.
  */
 @Getter
 @NoArgsConstructor
-public class AdminNoticeListRequestDto {
+public class AdminNoticeListResponseDto {
   private Long noticeId;
   private String noticeTitle;
   private LocalDateTime createdDate;
@@ -22,7 +21,7 @@ public class AdminNoticeListRequestDto {
   /**
     * Notice엔티티에서 DTO로 데이터를 변환을 위한 생성자.
     */
-  public AdminNoticeListRequestDto(Notice notice) {
+  public AdminNoticeListResponseDto(Notice notice) {
     this.noticeId = notice.getNoticeId();
     this.noticeTitle = notice.getNoticeTitle();
     this.createdDate = notice.getCreatedDate();
