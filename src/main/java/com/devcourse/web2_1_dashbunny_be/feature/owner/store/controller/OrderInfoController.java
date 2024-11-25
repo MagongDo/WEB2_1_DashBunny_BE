@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.feature.owner.store.controller;
 
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.order.MessageResponseDto;
@@ -27,4 +28,4 @@ public class OrderInfoController {
         orderInfoService.saveOrUpdateOrderInfo(requestDto);
         return ResponseEntity.ok(new MessageResponseDto("주문 정보가 성공적으로 저장되었습니다."));
     }
-}
+}*/

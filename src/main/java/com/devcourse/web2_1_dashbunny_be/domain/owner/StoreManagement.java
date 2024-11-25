@@ -18,7 +18,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
 @Table(name = "store_management")
 @EntityListeners(value = {TSIDListener.class})
 public class StoreManagement {
@@ -29,13 +28,15 @@ public class StoreManagement {
     @Column(name = "store_id", nullable = false)
     private String storeId;
 
- /*   // userid 빠져있음
-    @ManyToOne(fetch = FetchType.LAZY)
+/*
+    // userid 빠져있음
+    @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 */
+
     // operationid 빠져있음
-    @OneToOne(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "store", cascade = CascadeType.ALL)
     private StoreOperationInfo storeOperation;
 
 
@@ -66,9 +67,9 @@ public class StoreManagement {
     @Column(nullable = false, length = 255)
     private String address;
 
-/*    // 2.가게 위치 [위도와 경도 (필수, JSON 형태로 저장)]
+    // 2.가게 위치 [위도와 경도 (필수, JSON 형태로 저장)]
     @Column(columnDefinition = "JSON", nullable = false)
-    private String location = "{}";*/
+    private String location = "{}";
 
     //2. 가게 위치
     // 위도
@@ -83,13 +84,11 @@ public class StoreManagement {
     @Column(nullable = false, length = 255)
     private String storeRegistrationDocs;
 
-  /**
-   * 가게 생성 시간.
-   */
-  private LocalDateTime approvedDate;
+    //가게 등록 승인 날짜
+    private LocalDateTime approvedDate;
 
-    //스토어가 가진 쿠폰 리스트
-    //쿠폰이 없어도 스토어는 생성될 수 있어야한다. 리스트 초기화 진행
+  //스토어가 가진 쿠폰 리스트
+  //쿠폰이 없어도 스토어는 생성될 수 있어야한다. 리스트 초기화 진행
   @OneToMany(mappedBy = "storeManagement",cascade = CascadeType.ALL, orphanRemoval = true)
   private List<OwnerCoupon> couponList = new ArrayList<>();
 

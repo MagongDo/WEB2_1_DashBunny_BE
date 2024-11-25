@@ -27,7 +27,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public List<MenuManagement> findGroupMenu(String groupId) {
         // 그룹 ID에 해당하는 메뉴 리스트 조회
-        return menuRepository.findByGroupId(groupId);
+        return null;/*menuRepository.findByGroupId(groupId);*/
     }
 
     //전체 메뉴 조회(메뉴 관리 1페이지 목록)
@@ -40,7 +40,7 @@ public class MenuServiceImpl implements MenuService {
     // 메뉴명 기준으로 메뉴 검색
     @Override
     public List<MenuManagement> findSearchMenuName(String menuName) {
-        return menuRepository.findByMenuNameContaining(menuName);
+        return null;/*menuRepository.findByMenuNameContaining(menuName);*/
     }
 
   /**

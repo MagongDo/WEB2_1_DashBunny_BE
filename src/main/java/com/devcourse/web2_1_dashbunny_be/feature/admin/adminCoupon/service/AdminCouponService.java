@@ -1,15 +1,15 @@
 package com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.admin.AdminCoupon;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponAddRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponListRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponStatusChangeRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AddAdminCouponRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponListResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.AdminCouponResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.ChangeAdminCouponStatusRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.repository.AdminCouponRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 /**
  * 관리자 쿠폰생성 service.
@@ -22,7 +22,7 @@ public class AdminCouponService {
   /**
    * 쿠폰 생성.
    */
-  public AdminCoupon saveAdminCoupon(AdminCouponAddRequestDto request) {
+  public AdminCoupon saveAdminCoupon(AddAdminCouponRequestDto request) {
     return adminCouponRepository.save(request.toEntity());
   }
 
@@ -30,10 +30,10 @@ public class AdminCouponService {
   /**
    * 쿠폰 목록 조회.
    */
-  public List<AdminCouponListRequestDto> findAllAdminCoupons() {
+  public List<AdminCouponListResponseDto> findAllAdminCoupons() {
     List<AdminCoupon> adminCoupons = adminCouponRepository.findAll();
     return adminCoupons.stream()
-            .map(AdminCouponListRequestDto::new)
+            .map(AdminCouponListResponseDto::new)
             .toList();
   }
 
@@ -41,16 +41,16 @@ public class AdminCouponService {
   /**
    * 쿠폰 단일 조회.
    */
-  public AdminCouponRequestDto finAdminCouponById(String couponId) {
+  public AdminCouponResponseDto finAdminCouponById(Long couponId) {
     AdminCoupon coupon = adminCouponRepository.findById(couponId)
             .orElseThrow(() -> new IllegalArgumentException("not found couponId: " + couponId));
-    return new AdminCouponRequestDto(coupon);
+    return new AdminCouponResponseDto(coupon);
   }
 
   /**
    * 쿠폰 상태 변경.
    */
-  public AdminCoupon finAdminCouponStatusChange(String couponId, AdminCouponStatusChangeRequestDto status) {
+  public AdminCoupon finAdminCouponStatusChange(Long couponId, ChangeAdminCouponStatusRequestDto status) {
     AdminCoupon coupon = adminCouponRepository.findById(couponId)
             .orElseThrow(() -> new IllegalArgumentException("not found couponId: " + couponId));
     coupon.setCouponStatus(status.getCouponStatus());

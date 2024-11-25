@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @AllArgsConstructor
-public class AdminCouponStatusChangeRequestDto {
-    private CouponStatus couponStatus;
+@NoArgsConstructor
+public class ChangeAdminCouponStatusRequestDto {
+  private CouponStatus couponStatus; // 사용가능, 조기 종료, 만료
 }
