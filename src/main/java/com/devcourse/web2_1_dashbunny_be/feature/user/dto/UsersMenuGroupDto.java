@@ -18,12 +18,12 @@ public class UsersMenuGroupDto {
     private String groupName;            // 그룹 이름
     private List<UsersMenuDto> menus;         // 메뉴 리스트
 
-    public static UsersMenuGroupDto toMenuGroupDTO(MenuGroup group) {
+    public static UsersMenuGroupDto toMenuGroupDto(MenuGroup group) {
         return UsersMenuGroupDto.builder()
                 .groupId(group.getGroupId())
                 .groupName(group.getGroupName())
                 .menus(group.getMenuList().stream()
-                        .map(UsersMenuDto::toMenuDTO)
+                        .map(UsersMenuDto::toMenuDto)
                         .toList())
                 .build();
     }

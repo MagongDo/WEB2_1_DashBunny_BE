@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 public class UsersStoreListResponseDto {
     private String storeId;
     private String storeName;
+    private String storeLogo;
     private double rating;
     private int reviewCount;
     private Long baseDeliveryTip;
@@ -24,13 +25,13 @@ public class UsersStoreListResponseDto {
     private BigDecimal discountPrice;
     private StoreStatus status;
 
-    public void toDTO(StoreManagement store) {
+    public void toUsersStoreListResponseDto(StoreManagement store) {
         if (store == null) {
             return;
         }
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
-
+        this.storeLogo = store.getStoreLogo();
         if (store.getStoreFeedback() != null) {
             this.rating = store.getStoreFeedback().getRating();
             this.reviewCount = store.getStoreFeedback().getReviewCount();
