@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddOwnerCouponRequestDto {
+public class CreateOwnerCouponRequestDto {
 
   private String couponName; //쿠폰명
   private Long discountPrice; //할인금액

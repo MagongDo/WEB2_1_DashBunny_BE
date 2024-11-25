@@ -1,44 +1,27 @@
 package com.devcourse.web2_1_dashbunny_be.feature.owner.ownerCoupon.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.OwnerCoupon;
-import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.ownerCoupon.AddOwnerCouponRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.ownerCoupon.OwnerCouponListResponseDto;
-import com.devcourse.web2_1_dashbunny_be.feature.owner.ownerCoupon.repository.OwnerCouponRepository;
+
 import java.util.List;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-
 
 /**
- * 사장님 쿠폰 service.
+ * 쿠폰 관리 interface.
  */
-@Service
-@RequiredArgsConstructor
-public class OwnerCouponService {
-  private final OwnerCouponRepository ownerCouponRepository;
+public interface OwnerCouponService {
 
   /**
-   *  사장님 쿠폰 생성.
-   */
-  public OwnerCoupon saveOwnerCoupon(AddOwnerCouponRequestDto request) {
-    return ownerCouponRepository.save(request.toEntity());
-  }
-
+  * 쿠폰 전체 조회를 위한 api service.
+  */
+  List<OwnerCouponListResponseDto> getCounponList(String storeId);
 
   /**
-   * 사장님 쿠폰 목록 조회.
-   */
-  public List<OwnerCouponListResponseDto> findAllOwnerCoupons() {
-    List<OwnerCoupon> ownerCoupons = ownerCouponRepository.findAll();
-    return ownerCoupons.stream()
-            .map(OwnerCouponListResponseDto::new)
-            .toList();
+  * 쿠폰 상태 업데이트를 위한 api service.
+  */
+  void updateCouponStatus(Long couponId);
 
-  }
-
-  //이후는 호정님께 토스하겠습니다!!
-  //쿠폰 만료기한이 넘으면 CouponStatus가 EXPIRED가 된다는것을 생각해주십쇼!
-
-
+  /**
+  * 새로운 쿠폰 저장을 위한 api service.
+  */
+  void saveOwnerCoupon(OwnerCoupon ownerCoupon);
 }
