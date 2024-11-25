@@ -39,9 +39,15 @@ dependencies {
 
     //security
     implementation 'org.springframework.boot:spring-boot-starter-security'
-
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.2.RELEASE'
+    //Webflux
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
 
     //lombok
     compileOnly 'org.projectlombok:lombok'
@@ -51,16 +57,17 @@ dependencies {
 
     testImplementation 'com.h2database:h2:2.3.232'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
+
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // MySQL JDBC Driver
-    runtimeOnly 'mysql:mysql-connector-java'
+//    runtimeOnly 'mysql:mysql-connector-java'
+    implementation 'mysql:mysql-connector-java:8.0.33'
 
     // H2 Database
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'com.h2database:h2'
-    runtimeOnly 'com.h2database:h2'
+
 
     // 레디스
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
