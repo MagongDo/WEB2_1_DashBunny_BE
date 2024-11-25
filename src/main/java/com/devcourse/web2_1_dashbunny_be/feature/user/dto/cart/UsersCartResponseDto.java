@@ -1,14 +1,12 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart;
 
 import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
-import com.devcourse.web2_1_dashbunny_be.domain.user.CartItem;
 import lombok.Builder;
 
 import java.util.List;
 
 @Builder
 public class UsersCartResponseDto {
-    private Long cartId;                   // 장바구니 ID
     private Long userId;                   // 사용자 ID
     private String storeName;              // 가게 이름
     private List<UsersCartItemDto> cartItems;   // 장바구니 아이템 리스트
@@ -31,7 +29,6 @@ public class UsersCartResponseDto {
                 //- discountAmount;
 
         return UsersCartResponseDto.builder()
-                .cartId(cart.getCartId())  // 장바구니 ID
                 .userId(cart.getUser().getUserId())  // 사용자 ID
                 .storeName(cart.getStoreId().getStoreName())  // 가게 이름
                 .cartItems(cartItemDtos)  // 장바구니 아이템 리스트
