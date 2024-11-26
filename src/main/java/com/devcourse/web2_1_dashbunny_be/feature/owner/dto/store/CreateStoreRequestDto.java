@@ -2,22 +2,29 @@ package com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
+import jakarta.persistence.Column;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * 생성된 가게 정보를 넘겨주는 dto.
  */
 @Getter
+@Setter
+@ToString
 @Builder
-public class StoreCreateRequestDto {
+public class CreateStoreRequestDto {
     private String storeName;          // 가게 이름
     private String contactNumber;      // 가게 연락처
     private String address;            // 가게 위치
     private String description;        // 가게 소개
-    private String category1;          // 대표 카테고리
+/*    private String category1;          // 대표 카테고리
     private String category2;          // 추가 카테고리 1
-    private String category3;          // 추가 카테고리 2
+    private String category3;          // 추가 카테고리 2*/
+    private Double latitude;
+    private Double longitude;
     private String storeRegistrationDocs; // 등록 서류
     private String storeLogo;          // 가게 매장 로고
     private String storeBannerImage;    // 가게 배너 이미지
@@ -39,6 +46,8 @@ public class StoreCreateRequestDto {
         storeManagement.setStoreRegistrationDocs(this.storeRegistrationDocs);
         storeManagement.setStoreLogo(this.storeLogo);
         storeManagement.setStoreBannerImage(this.storeBannerImage);
+        storeManagement.setLatitude(this.latitude);
+        storeManagement.setLongitude(this.longitude);
         storeManagement.setStoreStatus(StoreStatus.PENDING);
         return storeManagement;
     }
