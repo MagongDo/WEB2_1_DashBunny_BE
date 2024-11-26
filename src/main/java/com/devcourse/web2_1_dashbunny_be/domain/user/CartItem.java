@@ -2,15 +2,13 @@ package com.devcourse.web2_1_dashbunny_be.domain.user;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "cart_item")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class CartItem {

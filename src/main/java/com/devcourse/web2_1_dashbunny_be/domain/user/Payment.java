@@ -3,6 +3,7 @@ package com.devcourse.web2_1_dashbunny_be.domain.user;
 import com.devcourse.web2_1_dashbunny_be.domain.user.role.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -18,8 +19,9 @@ public class Payment {
     @Column(nullable = false, unique = true)
     private String paymentId; // 토스 결제 고유 ID
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id", nullable = false)
+    @ToString.Exclude
     private Cart cart; // 장바구니와의 관계
 
     @Column(nullable = false)

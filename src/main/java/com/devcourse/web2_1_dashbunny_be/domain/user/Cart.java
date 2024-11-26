@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Getter
+@Setter
 @ToString
 @EntityListeners(AuditingEntityListener.class)
 public class Cart {
@@ -25,17 +26,18 @@ public class Cart {
     private User user;
 
     @OneToOne
-    @Column(name = "storeId", nullable = false)
+    @Column(name = "storeId")
     private StoreManagement storeId;
 
     @Column(name = "userCouponId")
     private String userCouponId;
 
-    @Column(name = "totalPrice", nullable = false)
+    @Column(name = "totalPrice")
     private Long totalPrice;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cartId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> cartItems;
 
-
+    @OneToOne(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Payment payment; // 결제와의 관계
 }
