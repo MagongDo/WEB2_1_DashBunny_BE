@@ -8,9 +8,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing
 public class Web21DashBunnyBeApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Web21DashBunnyBeApplication.class, args);
-    }
+  public static void main(String[] args) {
 
+      SpringApplication.run(Web21DashBunnyBeApplication.class, args);
+    }
 }
 // .
