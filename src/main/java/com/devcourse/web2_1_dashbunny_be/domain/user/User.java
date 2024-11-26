@@ -1,21 +1,25 @@
-/*
 package com.devcourse.web2_1_dashbunny_be.domain.user;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-@Entity
+
 @Table(name = "users")
-@Data
+@Entity
+@Getter
+@Builder(toBuilder = true)
+@ToString
+@EntityListeners(AuditingEntityListener.class) // Date를 등록, 수정 일시 자동 반영 중요!!
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
@@ -24,14 +28,15 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
+    @NotBlank
+    @Column(nullable = false, length = 11)
+    private String phone;
+
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false, length = 50)
     private String name;
-
-    @Column(nullable = false, length = 13)
-    private String phone;
 
     @Column(length = 8)
     private String birthday;
@@ -39,22 +44,32 @@ public class User implements UserDetails {
     @Column(length = 50)
     private String email;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 11)
     private String role;
+
+    @Column(length = 255)
+    private String profileImageUrl;
 
     @Column(nullable = false)
     private LocalDateTime createdDate;
 
     private LocalDateTime modifiedDate;
 
+ /*   @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
+    private String isWithdrawn;*/
+
+    @Column(nullable = false, length = 1)
+    @Builder.Default
+    private String isWithdrawn = "N";
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("user"));
+        return List.of(new SimpleGrantedAuthority(role));
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return phone;
     }
 
     @Override
@@ -76,4 +91,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
-}*/
+}

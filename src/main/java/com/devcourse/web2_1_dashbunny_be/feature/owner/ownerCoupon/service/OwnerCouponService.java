@@ -2,12 +2,14 @@ package com.devcourse.web2_1_dashbunny_be.feature.owner.ownerCoupon.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.OwnerCoupon;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.ownerCoupon.OwnerCouponListResponseDto;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * 쿠폰 관리 interface.
  */
+@Repository
 public interface OwnerCouponService {
 
   /**

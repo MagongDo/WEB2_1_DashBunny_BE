@@ -1,12 +1,17 @@
 package com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store;
 
+import com.devcourse.web2_1_dashbunny_be.domain.owner.Categorys;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.role.CategoryType;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.List;
 
 /**
  * 생성된 가게 정보를 넘겨주는 dto.
@@ -30,7 +35,8 @@ public class CreateStoreRequestDto {
     private String storeBannerImage;    // 가게 배너 이미지
     private StoreStatus storeStatus;
     //private String userName; //사장님 이름-- StoreManagement엔티티에 아직 없음
-
+    @Size(max = 3, message = "카테고리는 최대 3개까지 선택할 수 있습니다.")
+    private List<CategoryType> categories;
     /**
      * StoreManagement 객체 생성 메소드.
      */
@@ -49,6 +55,17 @@ public class CreateStoreRequestDto {
         storeManagement.setLatitude(this.latitude);
         storeManagement.setLongitude(this.longitude);
         storeManagement.setStoreStatus(StoreStatus.PENDING);
+
+        if (this.categories != null) {
+            List<Categorys> categoryEntities = this.categories.stream()
+                    .map(type -> {
+                        Categorys category = new Categorys();
+                        category.setCategoryType(type);
+                        return category;
+                    })
+                    .toList();
+            storeManagement.setCategory(categoryEntities);
+        }
         return storeManagement;
     }
 
