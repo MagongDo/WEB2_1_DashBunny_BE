@@ -24,7 +24,7 @@ public class SmsVerification {
 
     @Column(length = 11)
     @Pattern(regexp = "^010\\d{8}$", message = "유효한 전화번호 형식이 아닙니다. 예: 01012345678")
-    private String phoneNumber;
+    private String phone;
 
     private String verificationCode;
 

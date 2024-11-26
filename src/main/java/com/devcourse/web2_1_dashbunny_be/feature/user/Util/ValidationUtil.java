@@ -22,13 +22,13 @@ public class ValidationUtil {
     public String createCode(String phoneNumber) {
 
         // 기존 인증번호 비활성화
-        smsVerificationRepository.updateIsUsedByPhoneNumber(phoneNumber);
+        smsVerificationRepository.updateIsUsedByPhone(phoneNumber);
 
         int code = secureRandom.nextInt(1_000_000); // 0부터 999999까지의 숫자 생성
         String verificationCode = String.format("%06d", code);
 
         SmsVerification verification = SmsVerification.builder()
-                .phoneNumber(phoneNumber)
+                .phone(phoneNumber)
                 .verificationCode(verificationCode)
                 .build();
 

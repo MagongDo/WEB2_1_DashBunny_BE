@@ -5,30 +5,31 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.SmsVerification;
 import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDTO;
+import com.devcourse.web2_1_dashbunny_be.feature.user.service.FileStorageService;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import net.nurigo.sdk.message.model.Message;
-import net.nurigo.sdk.message.response.SingleMessageSentResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
+@Log4j2
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final UserService userService;
+//    // 소셜 회원가입 시 번호 저장용 세션
+//    private static final String SESSION_ADDITIONAL_DATA_KEY = "SESSION_ADDITIONAL_DATA";
 
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@Validated @RequestBody UserDTO userDTO) {
@@ -59,7 +60,7 @@ public class AuthController {
             @Validated @RequestBody SmsVerification smsVerification,
             BindingResult bindingResult) {
 
-        String phoneNum = smsVerification.getPhoneNumber();
+        String phoneNum = smsVerification.getPhone();
         log.info("전화번호로 SMS 전송 요청을 받았습니다: {}", phoneNum);
 
         if (bindingResult.hasErrors()) {
@@ -81,7 +82,7 @@ public class AuthController {
         Map<String, Object> response = new HashMap<>();
 
         boolean isValid = userService.verifyCode
-                (smsVerification.getPhoneNumber(), smsVerification.getVerificationCode());
+                (smsVerification.getPhone(), smsVerification.getVerificationCode());
 
         if (isValid) {
             response.put("code", 200);
@@ -93,6 +94,15 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+
+//    @PostMapping("/save-additional-data")
+//    public String saveAdditionalData(@RequestBody UserDTO userDTO, HttpSession session) {
+//        session.setAttribute(SESSION_ADDITIONAL_DATA_KEY, userDTO.getPhone());
+//        log.info("저장된 세션 번호 {}", session.getAttribute(SESSION_ADDITIONAL_DATA_KEY));
+//        return "Additional data saved in session.";
+//    }
+
+
 
 
 }

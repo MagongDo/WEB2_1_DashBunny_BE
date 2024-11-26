@@ -14,14 +14,14 @@ import java.util.Optional;
 @Repository
 public interface SmsVerificationRepository extends JpaRepository<SmsVerification, Long> {
 
-    void deleteByPhoneNumber(String phoneNumber);
+    void deleteByPhone(String phone);
 
     @Modifying
     @Transactional
-    @Query("UPDATE SmsVerification v SET v.isUsed = true WHERE v.phoneNumber = :phoneNumber AND v.isUsed = false")
-    void updateIsUsedByPhoneNumber(@Param("phoneNumber") String phoneNumber);
+    @Query("UPDATE SmsVerification v SET v.isUsed = true WHERE v.phone = :phone AND v.isUsed = false")
+    void updateIsUsedByPhone(@Param("phone") String phone);
 
-    Optional<SmsVerification> findTopByPhoneNumberOrderByCreatedAtDesc(String phoneNumber);
+    Optional<SmsVerification> findTopByPhoneOrderByCreatedAtDesc(String phone);
 
     @Transactional
     @Modifying

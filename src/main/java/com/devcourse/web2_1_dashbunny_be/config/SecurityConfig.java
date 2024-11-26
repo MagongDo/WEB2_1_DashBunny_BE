@@ -15,7 +15,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -59,7 +58,9 @@ public class SecurityConfig {
                 // 요청에 대한 권한 설정
                 // 권한순서는 위에서부터 아래로 내려감
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/user/upload-profile-picture").permitAll()
                         .requestMatchers("/api/auth/session-user").hasRole("USER")
+//                        .requestMatchers("/uploads/upload-profile-picture").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/login",
@@ -71,7 +72,7 @@ public class SecurityConfig {
                                 "/css/**",
                                 "/js/**"
                         ).permitAll()
-                        .requestMatchers("/user/**").hasRole("USER")
+                        .requestMatchers("/api/user/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -103,7 +104,7 @@ public class SecurityConfig {
 
                 // 세션 관리 설정
                 .sessionManagement(session -> session
-                        .sessionFixation().changeSessionId()
+                        .sessionFixation().migrateSession()
                         .sessionConcurrency(concurrency -> concurrency
                                 .maximumSessions(1)
                                 .maxSessionsPreventsLogin(false)

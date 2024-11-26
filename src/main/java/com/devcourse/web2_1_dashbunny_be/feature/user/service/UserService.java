@@ -149,7 +149,7 @@ public class UserService {
     // 인증번호 검증 서비스
     public boolean verifyCode(String phoneNumber, String code) {
         Optional<SmsVerification> optionalVerification =
-                smsVerificationRepository.findTopByPhoneNumberOrderByCreatedAtDesc(phoneNumber);
+                smsVerificationRepository.findTopByPhoneOrderByCreatedAtDesc(phoneNumber);
 
         if (optionalVerification.isPresent()) {
             SmsVerification verification = optionalVerification.get();
@@ -166,6 +166,26 @@ public class UserService {
             }
         }
         return false;
+    }
+
+
+    /**
+     * 사용자의 프로필 사진 URL을 업데이트합니다.
+     *
+     * @param userId       사용자 ID
+     * @param profileImageUrl 프로필 사진 URL
+     */
+    @Transactional
+    public void updateProfileImageUrl(Long userId, String profileImageUrl) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        // Builder 패턴을 사용하여 User 객체 생성
+        User updatedUser = user.toBuilder()
+                .profileImageUrl(profileImageUrl)
+                .modifiedDate(LocalDateTime.now())
+                .build();
+
+        userRepository.save(updatedUser);
     }
 
 }
