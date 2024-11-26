@@ -3,9 +3,13 @@ package com.devcourse.web2_1_dashbunny_be.feature.user.service;
 import com.devcourse.web2_1_dashbunny_be.config.GeoUtils;
 import com.devcourse.web2_1_dashbunny_be.config.KakaoGeocoding;
 import com.devcourse.web2_1_dashbunny_be.config.RedisKeyUtil;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuGroup;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreFlag;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreManagementRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuGroupRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
@@ -27,6 +31,8 @@ public class UsersStoreService {
     private final StoreManagementRepository storeManagementRepository;
     private final UserRepository userRepository;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final MenuGroupRepository menuGroupRepository;
+    private final MenuRepository menuRepository;
     private final KakaoGeocoding kakaoGeocoding; // 추가된 필드
     private static final Logger logger = LoggerFactory.getLogger(UsersStoreService.class);
 
@@ -156,6 +162,7 @@ public class UsersStoreService {
             // 카테고리 필터링
             boolean hasCategory = store.getCategory().stream()
                     .anyMatch(cat -> cat.getCategoryType().name().equalsIgnoreCase(category));
+            logger.info("Stored store {}: {}", store.getStoreId(), store);
             if (!hasCategory) {
                 continue; // 카테고리가 일치하지 않으면 무시
             }
@@ -191,7 +198,10 @@ public class UsersStoreService {
     }
 
     public UsersStoreResponseDto getStoreDetails(String storeId) {
+        List<MenuGroup> menuGroup=menuGroupRepository.findByStoreId(storeId);
         Optional<StoreManagement> store = storeManagementRepository.findById(storeId);
-        return UsersStoreResponseDto.toStoreResponseDto(Objects.requireNonNull(store.orElse(null)));
+        List<MenuManagement> menu=menuRepository.findAllByStoreId(storeId);
+
+        return UsersStoreResponseDto.toStoreResponseDto(Objects.requireNonNull(store.orElse(null)),menuGroup,menu);
     }
 }

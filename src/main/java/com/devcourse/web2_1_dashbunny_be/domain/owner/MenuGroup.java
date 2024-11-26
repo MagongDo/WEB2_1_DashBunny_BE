@@ -24,9 +24,8 @@ public class MenuGroup {
     private Long groupId;
 
     // 가게 ID (필수)
-    @ManyToOne
-    @JoinColumn(name = "store_id", nullable = false)
-    private StoreManagement storeId;
+    @Column(nullable = false)
+    private String storeId;
 
     // 그룹 이름 (필수, 최대 길이 255자)
     @Column(nullable = false, length = 255)

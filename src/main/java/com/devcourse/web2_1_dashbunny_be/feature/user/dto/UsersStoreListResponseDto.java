@@ -22,7 +22,7 @@ public class UsersStoreListResponseDto {
     private Long baseDeliveryTip;
     private String minDeliveryTime;
     private String maxDeliveryTime;
-    private BigDecimal discountPrice;
+    private Long discountPrice;
     private StoreStatus status;
 
     public void toUsersStoreListResponseDto(StoreManagement store) {
@@ -41,7 +41,7 @@ public class UsersStoreListResponseDto {
             this.baseDeliveryTip = store.getDeliveryInfo().getBaseDeliveryTip();
             this.minDeliveryTime = store.getDeliveryInfo().getMinDeliveryTime();
             this.maxDeliveryTime = store.getDeliveryInfo().getMaxDeliveryTime();
-            this.discountPrice = store.maxDiscountPrice(); // 실제 할인 가격 필드로 수정
+            this.discountPrice = store.maxDiscountPrice().orElseThrow(IllegalAccessError::new); // 실제 할인 가격 필드로 수정
         }
 
         this.status = store.getStoreStatus();

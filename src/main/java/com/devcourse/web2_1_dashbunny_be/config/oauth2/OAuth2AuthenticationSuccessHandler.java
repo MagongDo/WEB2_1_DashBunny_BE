@@ -2,9 +2,7 @@ package com.devcourse.web2_1_dashbunny_be.config.oauth2;
 
 
 import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
-import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDTO;
-import com.devcourse.web2_1_dashbunny_be.feature.user.repository.SocialUserRepository;
-import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
+
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

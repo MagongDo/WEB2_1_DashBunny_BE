@@ -22,11 +22,11 @@ public class Cart {
     private Long cartId;
 
     @OneToOne
-    @Column(name = "userId", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private User user;
 
     @OneToOne
-    @Column(name = "storeId")
+    @JoinColumn(name = "storeId")
     private StoreManagement storeId;
 
     @Column(name = "userCouponId")
@@ -35,9 +35,7 @@ public class Cart {
     @Column(name = "totalPrice")
     private Long totalPrice;
 
-    @OneToMany(mappedBy = "cartId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cartItemId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> cartItems;
 
-    @OneToOne(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Payment payment; // 결제와의 관계
 }

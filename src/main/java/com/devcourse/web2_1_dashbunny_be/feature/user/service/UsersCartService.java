@@ -5,8 +5,9 @@ import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
 import com.devcourse.web2_1_dashbunny_be.domain.user.CartItem;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreManagementRepository;
+
 import com.devcourse.web2_1_dashbunny_be.feature.owner.repository.MenuManagementRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UsersCartRepository;
 import lombok.RequiredArgsConstructor;

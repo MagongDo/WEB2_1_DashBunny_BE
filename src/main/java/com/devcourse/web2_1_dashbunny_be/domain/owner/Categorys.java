@@ -26,6 +26,7 @@ public class Categorys {
     @ManyToOne
     @JoinColumn(name = "store_id", nullable = false)
     private StoreManagement storeManagement;
+
     public Categorys(CategoryType categoryType) {
         this.categoryType = categoryType;
     }

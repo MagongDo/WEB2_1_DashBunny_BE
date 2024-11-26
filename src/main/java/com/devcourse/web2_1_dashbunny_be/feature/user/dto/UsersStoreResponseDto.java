@@ -1,11 +1,10 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.dto;
 
+import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuGroup;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -14,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UsersStoreResponseDto {
+
 
     private String storeId;                     // 가게 ID
     private String storeName;                 // 가게 이름
@@ -29,7 +29,8 @@ public class UsersStoreResponseDto {
     private List<UsersMenuGroupDto> usersMenuGroup;    // 메뉴 그룹 리스트
     private List<UsersMenuDto> usersMenus;              // 독립 메뉴 리스트
 
-    public static UsersStoreResponseDto toStoreResponseDto(StoreManagement store) {
+    public static UsersStoreResponseDto toStoreResponseDto(StoreManagement store,List<MenuGroup> menuGroup,List<MenuManagement> usersMenu) {
+
         return UsersStoreResponseDto.builder()
                 .storeId(store.getStoreId())
                 .storeName(store.getStoreName())
@@ -40,17 +41,17 @@ public class UsersStoreResponseDto {
                 .maxDeliveryTime(store.getDeliveryInfo().getMaxDeliveryTime())
                 .storeImage(store.getStoreLogo())
                 .minimumOrderPrice(store.getDeliveryInfo().getMinOrderAmount())
-                .ownerCouponId(store.getOwnerCoupon() != null && !store.getOwnerCoupon().isEmpty()
-                        ? store.getOwnerCoupon().get(0).getCouponId() : null)
+                .ownerCouponId(store.getCouponList() != null && !store.getCouponList().isEmpty()
+                        ? store.getCouponList().get(0).getCouponId() : null)
                 .storeStatus(store.getStoreStatus())
-                .usersMenuGroup(store.getMenuGroup() != null
-                        ? store.getMenuGroup().stream()
+                .usersMenuGroup(menuGroup != null
+                        ? menuGroup.stream()
                         .map(UsersMenuGroupDto::toMenuGroupDto)
                         .toList()
                         : null)
-                .usersMenus(store.getMenuManagements() != null
-                        ? store.getMenuManagements().stream()
-                        .filter(menu -> menu.getMenuGroup() == null) // 메뉴 그룹에 속하지 않은 메뉴만 선택
+                .usersMenus(usersMenu != null
+                        ? usersMenu.stream()
+                        .filter(menu -> menuGroup == null) // 메뉴 그룹에 속하지 않은 메뉴만 선택
                         .map(UsersMenuDto::toMenuDto)
                         .toList()
                         : null)

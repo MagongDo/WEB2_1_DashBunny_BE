@@ -1,4 +1,3 @@
-/*
 package com.devcourse.web2_1_dashbunny_be.domain.user;
 
 import jakarta.persistence.*;
@@ -56,8 +55,12 @@ public class User implements UserDetails {
 
     private LocalDateTime modifiedDate;
 
-    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
-    private String isWithdrawn;
+ /*   @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
+    private String isWithdrawn;*/
+
+    @Column(nullable = false, length = 1)
+    @Builder.Default
+    private String isWithdrawn = "N";
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -88,4 +91,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
-}*/
+}

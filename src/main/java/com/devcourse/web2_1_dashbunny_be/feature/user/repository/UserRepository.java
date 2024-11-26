@@ -1,4 +1,3 @@
-/*
 package com.devcourse.web2_1_dashbunny_be.feature.user.repository;
 
 
@@ -15,6 +14,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByPhone(String phone);
 
-
 }
-*/
