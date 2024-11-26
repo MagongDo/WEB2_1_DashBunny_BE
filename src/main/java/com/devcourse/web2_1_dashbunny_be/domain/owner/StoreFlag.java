@@ -1,6 +1,8 @@
 package com.devcourse.web2_1_dashbunny_be.domain.owner;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -8,47 +10,22 @@ import java.time.LocalDateTime;
 // 가게의 배달 범위를 정하는 깃발 엔티티
 @Entity
 @Table(name = "flag")
+@Getter
+@Setter
 public class StoreFlag {
 
     // 깃발 ID (자동 생성)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "flag_id", nullable = false)  // 명시적으로 매핑
     private Long flagId;
 
-    // 가게 ID (필수)
-    @Column(nullable = false)
-    private Long storeId;
+    // 가게 관리 엔티티와 연관 관계 설정
+    @ManyToOne
+    @JoinColumn(name = "store_id", nullable = false)
+    private StoreManagement storeManagement;
 
-    // 깃발 레벨 ENUM (레벨에 따라, 배달 범위 증가, 원을 기준으로, lv1 = 1km)
-    @Column(nullable = false)
-    private Long flagLevel;
+    private double latitude;
 
-    // 위치 정확도 (소수점 6자리까지)
-    @Column(nullable = false, precision = 10, scale = 6)
-    private BigDecimal accuracy;
-
-    // 고도 (소수점 6자리까지)
-    @Column(nullable = false, precision = 10, scale = 6)
-    private BigDecimal altitude;
-
-    // 고도 정확도 (소수점 6자리까지)
-    @Column(nullable = false, precision = 10, scale = 6)
-    private BigDecimal altitudeAccuracy;
-
-    // 방향 (소수점 6자리까지)
-    @Column(nullable = false, precision = 10, scale = 6)
-    private BigDecimal heading;
-
-    // 위도 (소수점 6자리까지)
-    @Column(nullable = false, precision = 10, scale = 6)
-    private BigDecimal latitude;
-
-    // 경도 (소수점 6자리까지)
-    @Column(nullable = false, precision = 10, scale = 6)
-    private BigDecimal longitude;
-
-    // 데이터 기록 시간 (필수)
-    @Column(nullable = false)
-    private LocalDateTime recordedTime;
-
+    private double longitude;
 }
