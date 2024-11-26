@@ -110,11 +110,11 @@ public class StoreManagement {
 
 
 
-    public Optional<Long> maxDiscountPrice() {
+    public Long maxDiscountPrice() {
         return couponList.stream()
-                .map(OwnerCoupon::getDiscountPrice) // OwnerCoupon에서 할인 금액을 가져옴
-                .max(Long::compareTo); // 가장 큰 할인 금액 찾기
-
+                .map(OwnerCoupon::getDiscountPrice) // OwnerCoupon에서 할인 금액 가져오기
+                .max(Long::compareTo) // 가장 큰 할인 금액 찾기
+                .orElse(null); // 없으면 null 반환
     }
 
     //가게 등록 승인 날짜

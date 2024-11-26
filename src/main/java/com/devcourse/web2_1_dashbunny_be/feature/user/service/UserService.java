@@ -43,10 +43,10 @@ public class UserService {
     private final SmsVerificationRepository smsVerificationRepository;
 
 
-    public SocialUser getCurrentUser() {
+    public String getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof SocialUser) {
-            return (SocialUser) authentication.getPrincipal();
+            return (String) authentication.getPrincipal();
         }
         return null;
     }
