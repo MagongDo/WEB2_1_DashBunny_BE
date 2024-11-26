@@ -1,18 +1,16 @@
 package com.devcourse.web2_1_dashbunny_be.feature.admin.store.controller;
 
-import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreListResponseDto;
+import com.devcourse.web2_1_dashbunny_be.config.s3.FileUploadService;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreApplicationService;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreManagementService;
-import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.StoreCreateRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.CreateStoreRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 사장님: 가게 등록/폐업 신청 & 관리자: 승인/거절 repository.
@@ -25,7 +23,7 @@ import java.util.List;
 public class StoreRequestController {
   private final StoreManagementService storeManagementService;
   private final StoreApplicationService storeApplicationService;
-
+  private final FileUploadService fileUploadService;
 
 
   /**
@@ -33,9 +31,23 @@ public class StoreRequestController {
    */
 
   @PostMapping("/create")
-  public ResponseEntity<String> createStore(@RequestBody StoreCreateRequestDto request) {
-    storeManagementService.create(request);
-    return ResponseEntity.ok("가게 등록 승인 요청을 성공했습니다.");
+  public ResponseEntity<String> createStore(
+          @RequestParam(name = "bannerImageFile") MultipartFile bannerImageFile,
+          @RequestParam(name = "logoImageFile") MultipartFile logoImageFile,
+          @RequestPart(name = "request") CreateStoreRequestDto request) {
+      try{
+          log.info("Creating a new store request{}",request.toString());
+          String bannerImageFileUrl = fileUploadService.uploadFile(bannerImageFile,"storeBannerImage");
+          String logoImageFileUrl = fileUploadService.uploadFile(logoImageFile,"storeLogoImage");
+          log.info("url{}",bannerImageFileUrl);
+          log.info("url{}",logoImageFileUrl);
+          request.setStoreBannerImage(bannerImageFileUrl);
+          request.setStoreLogo(logoImageFileUrl);
+          storeManagementService.create(request);
+          return ResponseEntity.ok("가게 등록 승인 요청을 성공했습니다.");
+      }catch (Exception e){
+         return ResponseEntity.internalServerError().body("파일 업로드 실패: " + e.getMessage());
+      }
   }
 
 
@@ -45,7 +57,7 @@ public class StoreRequestController {
    */
 
   @PostMapping("/recreate/{storeId}")
-  public ResponseEntity<String> recreateStore(@PathVariable String storeId, @RequestBody StoreCreateRequestDto storeCreateRequestDto) {
+  public ResponseEntity<String> recreateStore(@PathVariable String storeId, @RequestBody CreateStoreRequestDto storeCreateRequestDto) {
     storeManagementService.reCreate(storeId, storeCreateRequestDto);
     return ResponseEntity.ok("가게 등록 재승인 요청을 성공했습니다.");
   }

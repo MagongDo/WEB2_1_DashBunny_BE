@@ -68,7 +68,7 @@ public class StoreManagement {
     private String address;
 
     // 2.가게 위치 [위도와 경도 (필수, JSON 형태로 저장)]
-    @Column(columnDefinition = "JSON", nullable = false)
+    @Column(columnDefinition = "JSON", nullable = true)
     private String location = "{}";
 
     //2. 가게 위치
