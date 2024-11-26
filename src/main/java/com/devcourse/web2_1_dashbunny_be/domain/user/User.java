@@ -17,7 +17,7 @@ import java.util.List;
 @Table(name = "users")
 @Entity
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @ToString
 @EntityListeners(AuditingEntityListener.class) // Date를 등록, 수정 일시 자동 반영 중요!!
 @NoArgsConstructor
@@ -46,6 +46,9 @@ public class User implements UserDetails {
 
     @Column(nullable = false, length = 11)
     private String role;
+
+    @Column(length = 255)
+    private String profileImageUrl;
 
     @Column(nullable = false)
     private LocalDateTime createdDate;

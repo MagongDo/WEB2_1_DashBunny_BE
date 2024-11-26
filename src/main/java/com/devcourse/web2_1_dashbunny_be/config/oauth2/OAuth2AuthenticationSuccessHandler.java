@@ -2,6 +2,7 @@ package com.devcourse.web2_1_dashbunny_be.config.oauth2;
 
 
 import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDTO;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.SocialUserRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
@@ -43,6 +44,8 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
         try {
             if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {
+
+
                 OAuth2User oauth2User = oauth2Token.getPrincipal();
                 String provider = oauth2Token.getAuthorizedClientRegistrationId();
                 SocialUser socialUser = userService.registerSocialUser(oauth2User, provider);

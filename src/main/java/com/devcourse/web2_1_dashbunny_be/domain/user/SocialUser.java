@@ -30,6 +30,9 @@ public class SocialUser {
     @Column(nullable = false, length = 11)
     private String role = "ROLE_USER";
 
+    @Column(length = 255)
+    private String profileImageUrl;
+
     @CreatedDate
     private LocalDateTime createdDate;
 

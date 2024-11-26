@@ -14,15 +14,15 @@ public class SocialUserDTO {
 
     private String provider;
 
-    private Long userId;
+    private String profileImageUrl;
 
     private String userName;
 
     public SocialUserDTO(SocialUser socialUser) {
         this.providerId = socialUser.getProviderId();
         this.provider = socialUser.getProvider();
-        this.userId = socialUser.getUserId();
         this.userName = socialUser.getUserName();
+        this.profileImageUrl = socialUser.getProfileImageUrl();
 
     }
 
@@ -30,8 +30,8 @@ public class SocialUserDTO {
         return SocialUser.builder()
                 .providerId(providerId)
                 .provider(provider)
-                .userId(userId)
                 .userName(userName)
+                .profileImageUrl(profileImageUrl)
                 .build();
     }
 

@@ -25,17 +25,6 @@ public class MainController {
         return "login";
     }
 
-//    @GetMapping("/oauth/kakao")
-//    public ResponseEntity<?> oauthKakao(@RequestParam("code") String code) {
-//
-//        String accessToken = kakaoService.getAccessTokenFromKakao(code);
-//        log.info(accessToken);
-//        KakaoUserInfoResponseDTO userInfo = kakaoService.getUserInfo(accessToken);
-//        // User 로그인, 또는 회원가입 로직 추가
-//        log.info(userInfo);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-
     @GetMapping("/main")
     public String main(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

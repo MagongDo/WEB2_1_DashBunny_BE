@@ -25,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
-        // 'phone'을 사용자명으로 사용한다고 가정. 필요에 따라 변경.
+        // 'phone'을 사용자명으로 사용한다고 가정.
         return userRepository.findByPhone(phone)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + phone));
     }

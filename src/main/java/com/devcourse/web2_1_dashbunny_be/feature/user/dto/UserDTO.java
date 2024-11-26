@@ -30,12 +30,15 @@ public class UserDTO {
     @Email
     private String email;
 
+    private String profileImageUrl;
+
     public UserDTO(User user) {
         this.phone = user.getPhone();
         this.password = user.getPassword();
         this.name = user.getName();
         this.birthday = user.getBirthday();
         this.email = user.getEmail();
+        this.profileImageUrl = user.getProfileImageUrl();
     }
 
     public User toEntity() {
@@ -45,6 +48,7 @@ public class UserDTO {
                 .name(name)
                 .birthday(birthday)
                 .email(email)
+                .profileImageUrl(profileImageUrl)
                 .build();
     }
 
