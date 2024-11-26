@@ -57,9 +57,9 @@ public class GlobalExceptionHandler {
   /**
    * Exception.
    */
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<String> handleAllExceptions(Exception ex) {
-    return new ResponseEntity<>("서버 오류가 발생했습니다. 관리자에게 문의해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
-  }
+//  @ExceptionHandler(Exception.class)
+//  public ResponseEntity<String> handleAllExceptions(Exception ex) {
+//    return new ResponseEntity<>("서버 오류가 발생했습니다. 관리자에게 문의해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
+//  }
 
 }

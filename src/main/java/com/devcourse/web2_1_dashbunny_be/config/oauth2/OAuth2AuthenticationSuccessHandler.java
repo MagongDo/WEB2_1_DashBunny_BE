@@ -3,6 +3,8 @@ package com.devcourse.web2_1_dashbunny_be.config.oauth2;
 
 import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
 
+import com.devcourse.web2_1_dashbunny_be.domain.user.User;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDTO;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +36,7 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws ServletException, IOException {
+        // Authentication 객체는 이미 SecurityContextHolder에 설정됨
         Object principal = authentication.getPrincipal();
         log.info("OAuth2 authentication success: {}", principal);
 
@@ -45,10 +48,14 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
         try {
             if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {
 
-
                 OAuth2User oauth2User = oauth2Token.getPrincipal();
                 String provider = oauth2Token.getAuthorizedClientRegistrationId();
-                SocialUser socialUser = userService.registerSocialUser(oauth2User, provider);
+
+                UserDTO userDTO = (UserDTO) request.getSession().getAttribute("AdditionalInfoUser");
+                System.out.println("세션 저장된 유저 정보 : " + userDTO);
+                User user = userService.registerUser(userDTO);
+
+                SocialUser socialUser = userService.registerSocialUser(oauth2User, provider, user);
 
                 // 사용자 정보를 세션에 등록
                 HttpSession session = request.getSession(true);
@@ -76,10 +83,6 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
         }
         // 기본 인증 성공 동작 수행
         super.onAuthenticationSuccess(request, response, authentication);
-    }
-
-    private SocialUser processUserOAuth2UserJoin(OAuth2User oauth2User, String provider) {
-        return userService.registerSocialUser(oauth2User, provider);
     }
 
 }

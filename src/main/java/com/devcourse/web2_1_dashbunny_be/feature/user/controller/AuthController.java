@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +49,13 @@ public class AuthController {
         SocialUser socialUser = (SocialUser) session.getAttribute(SESSION_USER_KEY);
         log.info("/session-user : " + socialUser);
         return socialUser;
+    }
+
+    @GetMapping("/user/info")
+    public String getUserInfo(@AuthenticationPrincipal User user) {
+        String username = user.getUsername();
+        // 추가 정보 사용 가능
+        return "Logged in user: " + username;
     }
 
     /**

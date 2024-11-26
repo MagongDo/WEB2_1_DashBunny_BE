@@ -1,6 +1,7 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.user.SmsVerification;
+import com.devcourse.web2_1_dashbunny_be.feature.user.Util.SecurityUtil;
 import com.devcourse.web2_1_dashbunny_be.feature.user.Util.SmsUtil;
 import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
@@ -24,10 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Log4j2
 @Service
@@ -56,9 +54,23 @@ public class UserService {
             throw new Exception("이미 존재하는 전화번호입니다.");
         }
 
+        // 비밀번호가 있는지 확인
+        String rawPassword = userDTO.getPassword();
+        String encodedPassword;
+
+        if (rawPassword != null && !rawPassword.isEmpty()) {
+            encodedPassword = passwordEncoder.encode(rawPassword);
+        } else {
+            // 비밀번호가 없으면 랜덤 비밀번호 생성
+            String randomPassword = UUID.randomUUID().toString();
+            encodedPassword = passwordEncoder.encode(randomPassword);
+            log.info("비밀번호가 제공되지 않아 랜덤 비밀번호를 생성했습니다: {}", randomPassword);
+            // 필요시, 사용자에게 랜덤 비밀번호를 이메일 등으로 전송하는 로직을 추가할 수 있습니다.
+        }
+
         User user = User.builder()
                 .phone(userDTO.getPhone())
-                .password(passwordEncoder.encode(userDTO.getPassword()))
+                .password(encodedPassword)
                 .name(userDTO.getName())
                 .birthday(userDTO.getBirthday())
                 .email(userDTO.getEmail())
@@ -76,7 +88,7 @@ public class UserService {
     }
 
 
-    public SocialUser registerSocialUser(OAuth2User oauth2User, String provider) {
+    public SocialUser registerSocialUser(OAuth2User oauth2User, String provider, User user) {
         /**
          * provider - 파라미터
          * providerId - oauth2User
@@ -98,8 +110,12 @@ public class UserService {
                     log.info("findByProviderId - properties: {}", properties);
 
                     String nickname = (String) properties.get("nickname");
+                    // 유저 아이디에 해당하는 user테이블의 is_social 을 Y로 변경 후 소셜유저에 저장
+                    Long userId = user.getUserId();
+                    userRepository.updateIsSocialToY(userId);
 
                     SocialUser socialUser = SocialUser.builder()
+                            .userId(userId)
                             .providerId(providerId)
                             .provider(provider)
                             .userName(nickname)
@@ -194,6 +210,11 @@ public class UserService {
                 .build();
 
         userRepository.save(updatedUser);
+    }
+
+    // 일반 로그인된 사용자 정보
+    public String getCurrentUsername() {
+        return SecurityUtil.getCurrentUsername();
     }
 
 }

@@ -2,6 +2,7 @@ package com.devcourse.web2_1_dashbunny_be.domain.user;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
@@ -57,7 +58,13 @@ public class User implements UserDetails {
 
     @Column(nullable = false, length = 1)
     @Builder.Default
+    @Pattern(regexp = "[YN]")
     private String isWithdrawn = "N";
+
+    @Column(nullable = false, length = 1)
+    @Builder.Default
+    @Pattern(regexp = "[YN]")
+    private String is_social = "N";
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
