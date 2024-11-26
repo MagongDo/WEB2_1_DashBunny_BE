@@ -1,7 +1,7 @@
 package com.devcourse.web2_1_dashbunny_be.domain.admin.role;
 
 /**
- * 쿠폰 상태를 나타내는 enum.
+ * 관리자 쿠폰 상태를 나타내는 enum.
  */
 public enum CouponStatus {
     PENDING, //대기

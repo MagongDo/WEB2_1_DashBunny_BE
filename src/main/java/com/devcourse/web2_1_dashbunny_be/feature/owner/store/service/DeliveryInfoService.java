@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.feature.owner.store.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.DeliveryOperatingInfo;
@@ -36,4 +37,4 @@ public class DeliveryInfoService {
         DeliveryOperatingInfo updatedEntity = requestDto.toEntity(existingEntity);
         repository.save(updatedEntity);
     }
-}
+}*/

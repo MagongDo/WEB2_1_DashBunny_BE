@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * 관리자 쿠폰 레포지토리.
  */
-public interface AdminCouponRepository extends JpaRepository<AdminCoupon, String> {
+public interface AdminCouponRepository extends JpaRepository<AdminCoupon, Long> {
 
 }
