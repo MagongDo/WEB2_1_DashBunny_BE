@@ -14,7 +14,9 @@ import java.io.IOException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -58,6 +60,17 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
                 // 세션에 저장된 사용자 정보 로그로 출력
                 SocialUser sessionUser = (SocialUser) session.getAttribute(SESSION_USER_KEY);
                 log.info("세션에 저장된 사용자 정보: {}", sessionUser);
+
+                // SecurityContext에 SocialUser 설정
+                // SecurityContextHolder에 설정된 Authentication의 principal을 SocialUser로 대체
+                UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
+                        socialUser, authentication.getCredentials(), authentication.getAuthorities());
+
+                SecurityContextHolder.getContext().setAuthentication(newAuth);
+
+                log.info("SecurityContextHolder의 Authentication principal이 SocialUser로 설정되었습니다.");
+
+
             }
         } catch (Exception e) {
             log.error("사용자 세션 등록 중 오류 발생", e);

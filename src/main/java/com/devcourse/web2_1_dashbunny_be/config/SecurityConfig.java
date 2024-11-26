@@ -5,9 +5,7 @@ import com.devcourse.web2_1_dashbunny_be.config.oauth2.OAuth2AuthenticationSucce
 import com.devcourse.web2_1_dashbunny_be.feature.user.handler.CustomAuthenticationFailureHandler;
 import com.devcourse.web2_1_dashbunny_be.feature.user.handler.CustomAuthenticationSuccessHandler;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.CustomUserDetailsService;
-import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -58,21 +56,21 @@ public class SecurityConfig {
                 // 요청에 대한 권한 설정
                 // 권한순서는 위에서부터 아래로 내려감
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/user/upload-profile-picture").permitAll()
-                        .requestMatchers("/api/auth/session-user").hasRole("USER")
-//                        .requestMatchers("/uploads/upload-profile-picture").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(
-                                "/api/auth/**",
-                                "/login",
-                                "/main",
-                                "/test",
-                                "/error",
-                                "/favicon.ico",
-                                "/images/**",
-                                "/css/**",
-                                "/js/**"
-                        ).permitAll()
-                        .requestMatchers("/api/user/**").hasRole("USER")
+//                        .requestMatchers("/api/user/upload-profile-picture").permitAll()
+//                        .requestMatchers("/api/auth/session-user").hasRole("USER")
+////                        .requestMatchers("/uploads/upload-profile-picture").hasAnyRole("ADMIN", "USER")
+//                        .requestMatchers(
+//                                "/api/auth/**",
+//                                "/login",
+//                                "/main",
+//                                "/test",
+//                                "/error",
+//                                "/favicon.ico",
+//                                "/images/**",
+//                                "/css/**",
+//                                "/js/**"
+//                        ).permitAll()
+//                        .requestMatchers("/api/user/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2

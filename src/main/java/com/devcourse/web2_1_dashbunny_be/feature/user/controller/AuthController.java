@@ -46,6 +46,7 @@ public class AuthController {
     @GetMapping("/session-user")
     public SocialUser getSessionUser(HttpSession session) {
         SocialUser socialUser = (SocialUser) session.getAttribute(SESSION_USER_KEY);
+        log.info("/session-user : " + socialUser);
         return socialUser;
     }
 
