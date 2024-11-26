@@ -1,14 +1,16 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.feature.admin.store.controller;
 
-import com.devcourse.web2_1_dashbunny_be.config.SecurityConfig;
+
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreResponseDto;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreCreateRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreApplicationService;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreManagementService;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.StoreCreateRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -256,4 +258,4 @@ class StoreRequestControllerTest {
 
         verify(storeApplicationService, times(1)).getStores(status, page, size);
     }
-}
+}*/

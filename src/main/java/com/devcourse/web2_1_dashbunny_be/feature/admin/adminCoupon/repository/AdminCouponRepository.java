@@ -6,12 +6,13 @@ import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponType;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
-
+import org.springframework.stereotype.Repository;
 
 
 /**
  * 관리자 쿠폰 레포지토리.
  */
+@Repository
 public interface AdminCouponRepository extends JpaRepository<AdminCoupon, Long> {
 
   /**

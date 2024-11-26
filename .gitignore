@@ -9,7 +9,7 @@ build/
 # 환경 설정 파일
 src/main/resources/application.properties
 application.properties
-.properties
+*.properties
 
 ### STS ###
 .apt_generated

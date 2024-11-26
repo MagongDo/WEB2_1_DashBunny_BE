@@ -5,6 +5,7 @@ import com.devcourse.web2_1_dashbunny_be.annotation.config.TSID;
 import com.devcourse.web2_1_dashbunny_be.annotation.config.lifecycle.TSIDListener;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.StoreApplication;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
+import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,6 +13,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 // 가게 관리 및 가게 정보를 저장하는 엔티티 클래스
 @Entity
@@ -50,7 +52,7 @@ public class StoreManagement {
 
     // 가게 소개 내용 (TEXT 타입)
     @Column(columnDefinition = "TEXT")
-    private String description;
+    private String storeDescription;
 
     // 가게 전화번호 (필수, 최대 길이 13자)
     @Column(nullable = false, length = 13)
@@ -67,7 +69,7 @@ public class StoreManagement {
     private String address;
 
     // 2.가게 위치 [위도와 경도 (필수, JSON 형태로 저장)]
-    @Column(columnDefinition = "JSON", nullable = false)
+    @Column(columnDefinition = "JSON", nullable = true)
     private String location = "{}";
 
     //2. 가게 위치
@@ -83,9 +85,48 @@ public class StoreManagement {
     @Column(nullable = false, length = 255)
     private String storeRegistrationDocs;
 
+    //--------------------------------------데이터 추가
+
+    @OneToOne
+    @JoinColumn(name="feedback_id")
+    @ToString.Exclude
+    private StoreFeedBack storeFeedback;
+
+    @OneToOne(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private DeliveryOperationInfo deliveryInfo;
+
+    @OneToOne
+    @JoinColumn(name="cart_id")
+    @ToString.Exclude
+    private Cart cartId;
+
+    @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<StoreFlag> storeFlags;
+
+    @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Categorys> category = new ArrayList<>();
+
+
+
+    public Long maxDiscountPrice() {
+        return couponList.stream()
+                .map(OwnerCoupon::getDiscountPrice) // OwnerCoupon에서 할인 금액 가져오기
+                .max(Long::compareTo) // 가장 큰 할인 금액 찾기
+                .orElse(null); // 없으면 null 반환
+    }
+
     //가게 등록 승인 날짜
     private LocalDateTime approvedDate;
 
-    @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL)
+
+  //스토어가 가진 쿠폰 리스트
+  //쿠폰이 없어도 스토어는 생성될 수 있어야한다. 리스트 초기화 진행
+  @OneToMany(mappedBy = "storeManagement",cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<OwnerCoupon> couponList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StoreApplication> storeApplications = new ArrayList<>();
+
 }
