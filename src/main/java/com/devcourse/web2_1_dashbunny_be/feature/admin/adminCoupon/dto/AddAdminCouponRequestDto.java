@@ -27,6 +27,7 @@ public class AddAdminCouponRequestDto {
   private Long maxIssuance; //발급한도
   private LocalDateTime expiredDate; //만료기한
   private String couponDescription; //쿠폰 설명
+  private LocalDateTime downloadStartDate; //쿠폰 오픈일(선착순 쿠폰일경우)
 
   /**
    * AdminCoupon 객체 생성 메서드.
@@ -42,6 +43,7 @@ public class AddAdminCouponRequestDto {
             .maxIssuance(maxIssuance)
             .expiredDate(expiredDate)
             .couponDescription(couponDescription)
+            .downloadStartDate(downloadStartDate)
             .couponStatus(CouponStatus.PENDING) //쿠폰상태: PENDING (대기)
             .build();
 
