@@ -3,12 +3,15 @@ package com.devcourse.web2_1_dashbunny_be.domain.owner;
 
 import com.devcourse.web2_1_dashbunny_be.annotation.config.TSID;
 import com.devcourse.web2_1_dashbunny_be.annotation.config.lifecycle.TSIDListener;
+import com.devcourse.web2_1_dashbunny_be.domain.admin.StoreApplication;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 // 가게 관리 및 가게 정보를 저장하는 엔티티 클래스
 @Entity
@@ -83,4 +86,6 @@ public class StoreManagement {
     //가게 등록 승인 날짜
     private LocalDateTime approvedDate;
 
+    @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL)
+    private List<StoreApplication> storeApplications = new ArrayList<>();
 }
