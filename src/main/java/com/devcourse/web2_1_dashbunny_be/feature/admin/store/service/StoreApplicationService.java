@@ -7,8 +7,10 @@ import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreApplicationRepository;
-import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreManagementRepository;
+
 import java.util.List;
+
+import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;

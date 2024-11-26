@@ -29,16 +29,6 @@ public class MenuController {
   private final MenuService menuService;
 
   /**
-   *전체 메뉴 조회.
-   */
-  @GetMapping("/menu/{storeId}")
-  public ResponseEntity<List<MenuListResponseDto>> readMenu(@PathVariable String storeId) {
-    List<MenuManagement> menus = menuService.findStoreAllMenu(storeId);
-    List<MenuListResponseDto> result = menus.stream().map(MenuListResponseDto::fromEntity).toList();
-    return ResponseEntity.ok(result);
-  }
-
-  /**
    * 그룹별 메뉴 조회.
    */
   @GetMapping("/group-menu/{groupId}")
@@ -49,16 +39,15 @@ public class MenuController {
     return ResponseEntity.ok(responseDto);
   }
 
+
   /**
-   *메뉴명 검색.
+   *전체 메뉴 조회.
    */
-  @GetMapping("/menu/search")
-  public ResponseEntity<List<MenuListResponseDto>> searchMenu(
-          @RequestParam("menuName") String menuName) {
-    List<MenuManagement> groupMenus = menuService.findSearchMenuName(menuName);
-    List<MenuListResponseDto> responseDto = groupMenus.stream()
-            .map(MenuListResponseDto::fromEntity).toList();
-    return ResponseEntity.ok(responseDto);
+  @GetMapping("/menu/{storeId}")
+  public ResponseEntity<List<MenuListResponseDto>> readMenu(@PathVariable String storeId) {
+    List<MenuManagement> menus = menuService.findStoreAllMenu(storeId);
+    List<MenuListResponseDto> result = menus.stream().map(MenuListResponseDto::fromEntity).toList();
+    return ResponseEntity.ok(result);
   }
 
   /**
@@ -72,20 +61,21 @@ public class MenuController {
     return ResponseEntity.ok( "메뉴 이미지가 성공적으로 업데이트되었습니다.");
   }
 
+
   /**
    * 다중 삭제 및 품절 처리.
    */
-  @PatchMapping("/menu/action/{menuId}")
+  @PatchMapping("/menu/action")
   public ResponseEntity<String> updateAction(
-          @PathVariable("menuId") Long menuId,
           @RequestBody UpdateActionRequestDto actionRequestDto) {
     if (actionRequestDto.getAction().equals("delete")) {
       menuService.delete(actionRequestDto);
     } else if (actionRequestDto.getAction().equals("SoldOut")) {
-      menuService.updateActionIsSoldOut(menuId, actionRequestDto);
+      menuService.updateActionIsSoldOut(actionRequestDto);
     }
     return ResponseEntity.ok("성공적으로 업데이트되었습니다.");
   }
+
 
   /**
    *단 건 품절 처리.
@@ -97,5 +87,24 @@ public class MenuController {
     menuService.updateIsSoldOut(menuId, updateSoldOutRequestDto);
     return ResponseEntity.ok("품절 처리 완료되었습니다.");
   }
+
+
+  /**
+   *메뉴명 검색.
+   */
+  @GetMapping("/menu/search")
+  public ResponseEntity<List<MenuListResponseDto>> searchMenu(
+          @RequestParam("menuName") String menuName) {
+    List<MenuManagement> groupMenus = menuService.findSearchMenuName(menuName);
+    List<MenuListResponseDto> responseDto = groupMenus.stream()
+            .map(MenuListResponseDto::fromEntity).toList();
+    return ResponseEntity.ok(responseDto);
+  }
+
+
+
+
+
+
 
 }

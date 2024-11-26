@@ -7,20 +7,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class GroupService {
 
-    public List<MenuGroup> read(String storeId) {
-        return null;
-    }
+public interface GroupService {
 
-    public void save(MenuGroup menuGroup) {
-    }
+    List<MenuGroup> read(String storeId);
 
-    public void update(String groupId, UpdateMenuGroupRequestDto menuGroup) {
-    }
+    void save(String storeId, MenuGroup menuGroup);
 
-    public void delete(String groupId) {
-    }
+    void update(Long groupId, UpdateMenuGroupRequestDto menuGroup) ;
+
+    void delete(Long groupId);
 
 }

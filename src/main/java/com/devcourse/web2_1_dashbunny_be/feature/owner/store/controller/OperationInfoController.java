@@ -5,6 +5,7 @@ import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.OperationInfoLi
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.UpdatePauseTimeRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 가게 운영정보 컨트롤러.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/store")
 @RequiredArgsConstructor
@@ -30,6 +32,7 @@ public class OperationInfoController {
   @GetMapping("/operation-info/{storeId}")
   public ResponseEntity<OperationInfoListResponseDto> getOperationInfo(
           @PathVariable("storeId") String storeId) {
+    log.info("Get operation info for store {}", storeId);
     OperationInfoListResponseDto operationInfo = storeService.findOperationInfo(storeId);
     return ResponseEntity.ok(operationInfo);
   }

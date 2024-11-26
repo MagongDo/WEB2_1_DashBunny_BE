@@ -1,6 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.feature.owner.store.controller;
 
-import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.BasicInfoListResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.BasicInfoProjection;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.UpdateBasicInfoRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +26,9 @@ public class BasicInfoController {
    * 특정 가게의 기본 정보를 반환합니다.
    */
   @GetMapping("/basic-info/{storeId}")
-  public ResponseEntity<BasicInfoListResponseDto> getBasicInfo(
+  public ResponseEntity<BasicInfoProjection> getBasicInfo(
           @PathVariable("storeId") String storeId) {
-    BasicInfoListResponseDto basicInfoResponse = storeService.findBasicInfo(storeId);
+    BasicInfoProjection basicInfoResponse = storeService.findBasicInfo(storeId);
     return ResponseEntity.ok(basicInfoResponse);
   }
 
@@ -39,7 +39,7 @@ public class BasicInfoController {
   public ResponseEntity<String> updateBasicInfo(
           @PathVariable("storeId") String storeId,
           @RequestBody UpdateBasicInfoRequestDto updateBasicInfo) {
-    storeService.updateBasicInfo(updateBasicInfo);
+    storeService.updateBasicInfo(storeId, updateBasicInfo);
     return ResponseEntity.ok("정보 수정이 완료되었습니다.");
   }
 

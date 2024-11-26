@@ -4,11 +4,13 @@ package com.devcourse.web2_1_dashbunny_be.domain.owner;
 import com.devcourse.web2_1_dashbunny_be.annotation.config.TSID;
 import com.devcourse.web2_1_dashbunny_be.annotation.config.lifecycle.TSIDListener;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
-import com.devcourse.web2_1_dashbunny_be.domain.user.User;
+/*import com.devcourse.web2_1_dashbunny_be.domain.user.User;*/
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 // 가게 관리 및 가게 정보를 저장하는 엔티티 클래스
 @Entity
@@ -26,10 +28,12 @@ public class StoreManagement {
     @Column(name = "store_id", nullable = false)
     private String storeId;
 
+/*
     // userid 빠져있음
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private User user;
+*/
 
     // operationid 빠져있음
     @OneToOne(mappedBy = "store", cascade = CascadeType.ALL)
@@ -47,7 +51,7 @@ public class StoreManagement {
 
     // 가게 소개 내용 (TEXT 타입)
     @Column(columnDefinition = "TEXT")
-    private String description;
+    private String storeDescription;
 
     // 가게 전화번호 (필수, 최대 길이 13자)
     @Column(nullable = false, length = 13)
@@ -64,7 +68,7 @@ public class StoreManagement {
     private String address;
 
     // 2.가게 위치 [위도와 경도 (필수, JSON 형태로 저장)]
-    @Column(columnDefinition = "JSON", nullable = false)
+    @Column(columnDefinition = "JSON", nullable = true)
     private String location = "{}";
 
     //2. 가게 위치
@@ -82,5 +86,10 @@ public class StoreManagement {
 
     //가게 등록 승인 날짜
     private LocalDateTime approvedDate;
+
+  //스토어가 가진 쿠폰 리스트
+  //쿠폰이 없어도 스토어는 생성될 수 있어야한다. 리스트 초기화 진행
+  @OneToMany(mappedBy = "storeManagement",cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<OwnerCoupon> couponList = new ArrayList<>();
 
 }

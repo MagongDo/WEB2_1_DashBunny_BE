@@ -1,12 +1,14 @@
 package com.devcourse.web2_1_dashbunny_be.domain.owner;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 // 가게의 운영정보를 관리하는 엔티티
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 @Entity
 public class StoreOperationInfo {
 
