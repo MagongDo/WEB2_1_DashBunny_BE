@@ -24,30 +24,23 @@ public class UserStoreController {
 
     @GetMapping("/stores/{category}")
     public ResponseEntity<List<UsersStoreListResponseDto>> getUsersByCategory(@PathVariable String category,
-                                                                              Authentication principal,
+                                                                              Principal principal,
                                                                              @RequestParam String address) {
-        String username = "lpok2402@naver.com";
-        if (principal != null) {
-            username = principal.getName();
-        }
-        log.info(userService.getCurrentUser());
-        List<UsersStoreListResponseDto> storeList= usersStoreService.usersStoreListResponse(username, address, category);
+
+        log.info(principal.getName());
+        List<UsersStoreListResponseDto> storeList= usersStoreService.usersStoreListResponse(principal.getName(), address, category);
         return ResponseEntity.ok(storeList);
     }
 
     @PostMapping("/stores/checking")
     public ResponseEntity<Void> getUsersStoreChecking(@RequestParam String address,
-                                                      Authentication principal) {
+                                                      Principal principal) {
 
-        String username = "lpok2402@naver.com";
-        if (principal != null) {
-            username = principal.getName();
-        }
 
         log.info(userService.getCurrentUser());
-        if (!usersStoreService.checkRedisData(username,address)) {
+        if (!usersStoreService.checkRedisData(principal.getName(),address)) {
             // Redis 키가 없으면 데이터를 새로 추가
-            usersStoreService.redisAddStoreList(username, address);
+            usersStoreService.redisAddStoreList(principal.getName(), address);
         }
 
         return ResponseEntity.ok().build();
