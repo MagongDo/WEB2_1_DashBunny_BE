@@ -1,5 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 
+import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -33,6 +34,12 @@ public class MainController {
             if (principal instanceof User) {
                 User user = (User) principal;
                 model.addAttribute("user", user);
+                log.info("user model : " + model.getAttribute("user"));
+            }// OAuth2 카카오 로그인 사용자 처리
+            else if (principal instanceof SocialUser) {
+                SocialUser socialUser = (SocialUser) principal;
+                model.addAttribute("user", socialUser);
+                log.info("socialUser model : " + model.getAttribute("user"));
             }
         }
         return "main"; // main.html로 이동

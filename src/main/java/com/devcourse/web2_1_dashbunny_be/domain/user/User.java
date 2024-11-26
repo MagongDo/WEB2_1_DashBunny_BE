@@ -55,9 +55,6 @@ public class User implements UserDetails {
 
     private LocalDateTime modifiedDate;
 
- /*   @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
-    private String isWithdrawn;*/
-
     @Column(nullable = false, length = 1)
     @Builder.Default
     private String isWithdrawn = "N";
