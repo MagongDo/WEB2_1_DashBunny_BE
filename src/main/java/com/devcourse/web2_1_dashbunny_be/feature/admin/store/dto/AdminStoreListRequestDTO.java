@@ -28,7 +28,7 @@ public class AdminStoreListRequestDTO {
         this.storeId = storeManagement.getStoreId();
         this.storeName = storeManagement.getStoreName();
         this.contactNumber = storeManagement.getContactNumber();
-        this.description = storeManagement.getDescription();
+        this.description = storeManagement.getStoreDescription();
         this.address = storeManagement.getAddress();
         this.storeStatus = storeManagement.getStoreStatus();
         this.storeLogo = storeManagement.getStoreLogo();
