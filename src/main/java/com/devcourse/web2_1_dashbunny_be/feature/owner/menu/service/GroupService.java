@@ -1,26 +1,21 @@
 package com.devcourse.web2_1_dashbunny_be.feature.owner.menu.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuGroup;
-import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.menu.UpdateMenuGroupRequestDTO;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.menu.UpdateMenuGroupRequestDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class GroupService {
 
-    public List<MenuGroup> read(String storeId) {
-        return null;
-    }
+public interface GroupService {
 
-    public void save(MenuGroup menuGroup) {
-    }
+    List<MenuGroup> read(String storeId);
 
-    public void update(String groupId, UpdateMenuGroupRequestDTO menuGroup) {
-    }
+    void save(String storeId, MenuGroup menuGroup);
 
-    public void delete(String groupId) {
-    }
+    void update(Long groupId, UpdateMenuGroupRequestDto menuGroup) ;
+
+    void delete(Long groupId);
 
 }

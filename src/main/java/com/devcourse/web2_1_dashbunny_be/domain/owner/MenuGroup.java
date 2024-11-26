@@ -38,6 +38,7 @@ public class MenuGroup {
 
     // MenuManagement와의 연관관계 (1:N)
     @OneToMany(mappedBy = "menuGroup", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Column(nullable = true)
     private List<MenuManagement> menuList = new ArrayList<>();
 
 

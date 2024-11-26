@@ -1,5 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 
+/*
 
 import com.devcourse.web2_1_dashbunny_be.domain.user.SmsVerification;
 import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
@@ -106,3 +107,4 @@ public class AuthController {
 
 
 }
+*/
