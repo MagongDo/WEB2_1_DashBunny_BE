@@ -10,6 +10,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -61,6 +62,7 @@ public class AdminCouponService {
   /**
    * 쿠폰 상태 변경.
    */
+  @Transactional
   public AdminCoupon finAdminCouponStatusChange(Long couponId, ChangeAdminCouponStatusRequestDto status) {
     AdminCoupon coupon = adminCouponRepository.findById(couponId)
             .orElseThrow(() -> new IllegalArgumentException("not found couponId: " + couponId));

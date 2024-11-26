@@ -6,6 +6,8 @@ import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 사용자 쿠폰 엔티티.
@@ -23,11 +25,12 @@ public class UserCoupon {
   @UuidGenerator
   private String userCouponId; //사용자 쿠폰 아이디
 
-  @Column(nullable = false)
-  private Long userId; // 사용자 아이다
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user; // 사용자 엔티티와 연관관계
 
   @Column(nullable = false)
-  private String couponId; //쿠폰 아이디
+  private Long couponId; //쿠폰 아이디
 
 //  @Column(nullable = false)
 //  private String couponName; //쿠폰명
@@ -51,11 +54,17 @@ public class UserCoupon {
 
   private LocalDateTime usedDate; //쿠폰 사용일자
 
-//  @Column(nullable = false)
-//  private boolean couponUsed = false; //쿠폰 사용 여부
-//
+  @Column(nullable = false)
+  private boolean couponUsed = false; //쿠폰 사용 여부
+
 //  private String couponDescription; //쿠폰 상세내용
 
 
 
 }
+
+//User엔티티에
+//
+//@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+//private List<UserCoupon> userCoupons = new ArrayList<>(); // 사용자가 소유한 쿠폰
+//달아야함
