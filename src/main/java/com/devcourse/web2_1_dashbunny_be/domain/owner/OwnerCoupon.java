@@ -1,8 +1,8 @@
 package com.devcourse.web2_1_dashbunny_be.domain.owner;
 
 
+import com.devcourse.web2_1_dashbunny_be.domain.common.role.DiscountType;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.CouponStatus;
-import com.devcourse.web2_1_dashbunny_be.domain.owner.role.DiscountType;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 

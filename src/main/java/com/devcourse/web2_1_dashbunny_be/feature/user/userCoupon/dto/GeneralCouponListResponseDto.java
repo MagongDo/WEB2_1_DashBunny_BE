@@ -1,7 +1,7 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.dto;
 
 import com.devcourse.web2_1_dashbunny_be.domain.admin.AdminCoupon;
-import com.devcourse.web2_1_dashbunny_be.domain.admin.role.DiscountType;
+import com.devcourse.web2_1_dashbunny_be.domain.common.role.DiscountType;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

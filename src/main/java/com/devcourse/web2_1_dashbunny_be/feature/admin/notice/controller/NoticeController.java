@@ -7,6 +7,8 @@ import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.AdminNoticeLis
 import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.AdminNoticeResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.dto.AdminUpdateNoticeRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.notice.service.NoticeService;
+
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,10 +35,13 @@ public class NoticeController {
    * 공지사항 등록 api (POST).
    */
   @PostMapping("/admin")
-  public ResponseEntity<Notice> addNotice(@RequestBody AdminAddNoticeRequestDto request) {
+  public ResponseEntity<Notice> addNotice(@RequestBody AdminAddNoticeRequestDto request,
+                                          Principal principal) {
     String currentUser= SecurityContextHolder.getContext().getAuthentication().getName();
 
     log.info("------------currentUser: "+currentUser);
+
+    log.info("------------currentUserPrincipal: "+principal.getName());
 
     Notice saveNotice = noticeService.saveNotice(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(saveNotice);
@@ -51,14 +56,9 @@ public class NoticeController {
   @GetMapping("")
   public ResponseEntity<List<AdminNoticeListResponseDto>> getNotices()  {
     String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-    String currentUserRole; //현재 사용자 권한
     log.info("------------currentUser: " + currentUser);
 
-    if (!noticeService.socialUserRole(currentUser).isEmpty()) { //소셜 로그인 사용자인지 확인 후 권한 가져오기
-      currentUserRole = noticeService.socialUserRole(currentUser);
-    } else { //일반 로그인 사용자 권한 가져오기
-      currentUserRole = noticeService.generalUserRole(currentUser);
-    }
+    String currentUserRole = noticeService.getCurrentUserRole(currentUser);
     log.info("------------currentUserRole: " + currentUserRole);
 
     List<AdminNoticeListResponseDto> notices;
