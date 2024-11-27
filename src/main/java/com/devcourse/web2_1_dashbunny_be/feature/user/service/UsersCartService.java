@@ -6,7 +6,7 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
 import com.devcourse.web2_1_dashbunny_be.domain.user.CartItem;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 
-import com.devcourse.web2_1_dashbunny_be.feature.owner.repository.MenuManagementRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UsersCartRepository;
@@ -21,7 +21,7 @@ import java.util.Optional;
 public class UsersCartService {
 
     private final UsersCartRepository cartRepository;
-    private final MenuManagementRepository menuManagementRepository;
+    private final MenuRepository menuRepository;
     private final StoreManagementRepository storeManagementRepository;
     private final UserRepository userRepository;
     // 장바구니 생성
@@ -45,7 +45,7 @@ public class UsersCartService {
     public Cart addMenuToCart(String userId, Long menuId, Long quantity) {
         User user= userRepository.findByPhone(userId).orElseThrow(IllegalArgumentException::new);
         Cart cart = cartRepository.findByUser(user);
-        MenuManagement menu = menuManagementRepository.findById(menuId).orElseThrow(() -> new RuntimeException("Menu not found"));
+        MenuManagement menu = menuRepository.findById(menuId).orElseThrow(() -> new RuntimeException("Menu not found"));
 
         Optional<CartItem> existingItem = cart.getCartItems().stream()
                 .filter(item -> item.getMenuManagement().getMenuId().equals(menuId))

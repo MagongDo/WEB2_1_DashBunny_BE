@@ -11,8 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequiredArgsConstructor
+@Log4j2
 @RequestMapping("/api/notice")
 public class NoticeController {
   private final NoticeService noticeService;
@@ -31,6 +34,10 @@ public class NoticeController {
    */
   @PostMapping("/admin")
   public ResponseEntity<Notice> addNotice(@RequestBody AdminAddNoticeRequestDto request) {
+    String currentUser= SecurityContextHolder.getContext().getAuthentication().getName();
+
+    log.info("------------currentUser: "+currentUser);
+
     Notice saveNotice = noticeService.saveNotice(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(saveNotice);
   }
@@ -42,22 +49,28 @@ public class NoticeController {
    */
   //http://localhost:8080/api/notice/admin?role=OWNER이게 아님..
   @GetMapping("")
-  public ResponseEntity<List<AdminNoticeListResponseDto>> getNotices(@RequestParam String role)  {
+  public ResponseEntity<List<AdminNoticeListResponseDto>> getNotices()  {
+    String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+    String currentUserRole; //현재 사용자 권한
+    log.info("------------currentUser: " + currentUser);
+
+    if (!noticeService.socialUserRole(currentUser).isEmpty()) { //소셜 로그인 사용자인지 확인 후 권한 가져오기
+      currentUserRole = noticeService.socialUserRole(currentUser);
+    } else { //일반 로그인 사용자 권한 가져오기
+      currentUserRole = noticeService.generalUserRole(currentUser);
+    }
+    log.info("------------currentUserRole: " + currentUserRole);
+
     List<AdminNoticeListResponseDto> notices;
 
-    if (!role.equals("admin")) { //사장님, 사용자가 조회
-      notices = noticeService.getAllNoticesByRole(role);
+    if (!currentUserRole.equals("ADMIN")) { //사장님, 사용자가 조회
+      notices = noticeService.getAllNoticesByRole(currentUserRole);
     } else { //관리자 조회
       notices = noticeService.getAllNotices();
     }
     return ResponseEntity.ok().body(notices);
   }
 
-//  @GetMapping()
-//  public ResponseEntity<List<AdminNoticeListResponseDto>> getNotices() {
-//      List<AdminNoticeListResponseDto> notices=noticeService.getAllNotices();
-//      return ResponseEntity.ok().body(notices);
-//  }
 
   /**
    *단일 공지사항 조회 api (GET).

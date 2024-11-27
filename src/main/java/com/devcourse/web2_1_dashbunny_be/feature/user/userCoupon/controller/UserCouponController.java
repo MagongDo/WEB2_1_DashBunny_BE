@@ -51,36 +51,37 @@ public class UserCouponController {
     /**
      * 일반 쿠폰 다운로드 api (POST).
      */
-//    @PostMapping("/download/general/{couponId}")
-//    public ResponseEntity<?> downloadGeneralCoupon(@PathVariable Long couponId) {
-//        //현재 사용자의 userId를 가져와야함
-//        userCouponService.downloadCoupon(couponId, IssuedCouponType.ADMIN);
-//
-//    }
-//
-//    /**
-//     * 가게 쿠폰 다운로드 api (POST).
-//     */
-//    @PostMapping("/download/owner/{couponId}")
-//    public ResponseEntity<?> downloadGeneralCoupon(@PathVariable Long couponId) {
-//        //현재 사용자의 userId를 가져와야함
-//        userCouponService.downloadCoupon(couponId, IssuedCouponType.OWNER);
-//
-//    }
-//
-//    /**
-//     * 선착순 쿠폰 다운로드 api (POST).
-//     */
-//    @PostMapping("/download/firstCome/{couponId}")
-//    public ResponseEntity<?> downloadGeneralCoupon(@PathVariable Long couponId) {
-//        //현재 사용자의 userId를 가져와야함
-//        userCouponService.downloadCoupon(couponId, IssuedCouponType.ADMIN);
-//
-//    }
+    @PostMapping("/download/general/{couponId}")
+    public ResponseEntity<?> downloadGeneralCoupon(@PathVariable Long couponId) {
+        //현재 사용자의 userId를 가져와야함
+        userCouponService.downloadCoupon(couponId, IssuedCouponType.ADMIN);
+
+    }
+
+    /**
+     * 가게 쿠폰 다운로드 api (POST).
+     */
+    @PostMapping("/download/owner/{couponId}")
+    public ResponseEntity<?> downloadGeneralCoupon(@PathVariable Long couponId) {
+        //현재 사용자의 userId를 가져와야함
+        userCouponService.downloadCoupon(couponId, IssuedCouponType.OWNER);
+
+    }
+
+    /**
+     * 선착순 쿠폰 다운로드 api (POST).
+     */
+    @PostMapping("/download/firstCome/{couponId}")
+    public ResponseEntity<?> downloadGeneralCoupon(@PathVariable Long couponId) {
+        //현재 사용자의 userId를 가져와야함
+        userCouponService.downloadCoupon(couponId, IssuedCouponType.ADMIN);
+
+    }
 
     /**
      * 사용자 쿠폰함 쿠폰 목록 조회 api (GET)
      */
+
 
 
 

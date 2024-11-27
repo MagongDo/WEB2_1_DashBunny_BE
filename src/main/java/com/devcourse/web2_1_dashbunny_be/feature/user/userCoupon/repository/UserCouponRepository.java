@@ -13,5 +13,5 @@ public interface UserCouponRepository extends JpaRepository<UserCoupon, String> 
     /**
      * 사용자가 같은 쿠폰을 발급했는지 확인.
      */
-//    boolean existsByUser_IdAndCouponIdAndIssuedCouponType(Long userId, Long couponId, IssuedCouponType issuedCouponType);
+    boolean existsByUser_IdAndCouponIdAndIssuedCouponType(Long userId, Long couponId, IssuedCouponType issuedCouponType);
 }
