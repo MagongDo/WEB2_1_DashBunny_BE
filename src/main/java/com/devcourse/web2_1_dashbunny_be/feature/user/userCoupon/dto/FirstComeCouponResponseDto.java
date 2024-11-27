@@ -1,6 +1,8 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.dto;
 
 import com.devcourse.web2_1_dashbunny_be.domain.admin.AdminCoupon;
+import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponType;
+import com.devcourse.web2_1_dashbunny_be.domain.common.role.DiscountType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 public class FirstComeCouponResponseDto {
   private Long couponId; //쿠폰 아이디
   private String couponName; //쿠폰명
+  private DiscountType discountType; //할인 유형
   private Long maximumDiscount; //최대 할인 금액 (정률 방식에만)
   private LocalDateTime downloadStartDate; // (선착순 쿠폰일 경우)다운로드 시작 시간
 
@@ -26,6 +29,7 @@ public class FirstComeCouponResponseDto {
   public FirstComeCouponResponseDto(AdminCoupon adminCoupon) {
     this.couponId = adminCoupon.getCouponId();
     this.couponName = adminCoupon.getCouponName();
+    this.discountType = adminCoupon.getDiscountType();
     this.maximumDiscount = adminCoupon.getMaximumDiscount();
     this.downloadStartDate = adminCoupon.getDownloadStartDate();
   }
