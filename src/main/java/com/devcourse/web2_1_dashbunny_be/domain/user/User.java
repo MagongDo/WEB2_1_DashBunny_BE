@@ -27,6 +27,7 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long userId;
 
     @NotBlank
@@ -64,7 +65,7 @@ public class User implements UserDetails {
     @Column(nullable = false, length = 1)
     @Builder.Default
     @Pattern(regexp = "[YN]")
-    private String is_social = "N";
+    private String isSocial = "N";
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

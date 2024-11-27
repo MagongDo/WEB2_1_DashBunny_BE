@@ -51,15 +51,15 @@ public class SecurityConfig {
                 // CSRF 보호 비활성화 (실제 운영 환경에서는 활성화 권장)
                 .csrf(AbstractHttpConfigurer::disable)
                 // 인증 제공자 설정
-                .authenticationProvider(authenticationProvider())
-
-                // 요청에 대한 권한 설정
-                // 권한순서는 위에서부터 아래로 내려감
+//                .authenticationProvider(authenticationProvider())
+//
+//                // 요청에 대한 권한 설정
+//                // 권한순서는 위에서부터 아래로 내려감
 //                .authorizeHttpRequests(authorize -> authorize
 //                        .requestMatchers("/api/user/upload-profile-picture").permitAll()
 //                        .requestMatchers("/api/auth/session-user").hasRole("USER")
 //                        .requestMatchers("/api/user/**").hasRole("USER")
-////                        .requestMatchers("/uploads/upload-profile-picture").hasAnyRole("ADMIN", "USER")
+//                        .requestMatchers("/uploads/upload-profile-picture").hasAnyRole("ADMIN", "USER")
 //                        .requestMatchers(
 //                                "/api/auth/**",
 //                                "/login",

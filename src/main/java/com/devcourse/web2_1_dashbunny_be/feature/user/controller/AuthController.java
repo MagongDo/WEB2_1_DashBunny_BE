@@ -51,12 +51,6 @@ public class AuthController {
         return socialUser;
     }
 
-    @GetMapping("/user/info")
-    public String getUserInfo(@AuthenticationPrincipal User user) {
-        String username = user.getUsername();
-        // 추가 정보 사용 가능
-        return "Logged in user: " + username;
-    }
 
     /**
      * 사용자의 전화번호로 인증 코드를 SMS로 전송하는 엔드포인트입니다.
@@ -104,12 +98,15 @@ public class AuthController {
         }
     }
 
-//    @PostMapping("/save-additional-data")
-//    public String saveAdditionalData(@RequestBody UserDTO userDTO, HttpSession session) {
-//        session.setAttribute(SESSION_ADDITIONAL_DATA_KEY, userDTO.getPhone());
-//        log.info("저장된 세션 번호 {}", session.getAttribute(SESSION_ADDITIONAL_DATA_KEY));
-//        return "Additional data saved in session.";
-//    }
+
+
+
+    @GetMapping("/test")
+    public ResponseEntity<?> getTest() {
+        Object a = userService.getCurrentUser();
+        System.out.println("getCurrentUser : " + a);
+        return ResponseEntity.ok(userService.getCurrentUser());
+    }
 
 
 

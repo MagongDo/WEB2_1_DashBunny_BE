@@ -25,7 +25,11 @@ public class SocialUser implements Serializable { // 변경
 
     private String provider;
 
-    private Long userId;
+//    private Long userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    private User user;
 
     private String userName;
 

@@ -18,7 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // userId에 해당하는 is_social을 'Y'로 업데이트하는 메서드
     @Modifying
-    @Query("UPDATE User u SET u.is_social = 'Y' WHERE u.userId = :userId")
+    @Query("UPDATE User u SET u.isSocial = 'Y' WHERE u.userId = :userId")
     int updateIsSocialToY(@Param("userId") Long userId);
 
 }

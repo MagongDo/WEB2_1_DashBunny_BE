@@ -31,7 +31,10 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
     private static final String SESSION_USER_KEY = "SESSION_USER";
 
     private final UserService userService;
-
+    /**
+     * 사용자 세션에 등록
+     * 사용자를 가입시키는 처리
+     */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -40,40 +43,53 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
         Object principal = authentication.getPrincipal();
         log.info("OAuth2 authentication success: {}", principal);
 
-        /**
-         * 사용자 세션에 등록
-         * 사용자를 가입시키는 처리
-         */
-
         try {
             if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {
 
                 OAuth2User oauth2User = oauth2Token.getPrincipal();
+                String providerId = oauth2User.getName();
+                log.info("oauth2User :  {}", oauth2User.getName());
+                // providerId = 3800475876
                 String provider = oauth2Token.getAuthorizedClientRegistrationId();
+                // provider = kakao;
 
-                UserDTO userDTO = (UserDTO) request.getSession().getAttribute("AdditionalInfoUser");
-                System.out.println("세션 저장된 유저 정보 : " + userDTO);
-                User user = userService.registerUser(userDTO);
+                SocialUser socialUser;
+                User user;
+                if(userService.findByProviderId(providerId).isEmpty()) {
+                    UserDTO userDTO = (UserDTO) request.getSession().getAttribute("AdditionalInfoUser");
+                    System.out.println("세션 저장된 유저 정보 : " + userDTO);
+                    user = userService.registerUser(userDTO);
 
-                SocialUser socialUser = userService.registerSocialUser(oauth2User, provider, user);
-
+                    socialUser = userService.registerSocialUser(oauth2User, provider, user);
+                }else {
+                    // 기존 사용자 조회
+                    socialUser = userService.findByProviderId(providerId)
+                            .orElseThrow(() -> new IllegalArgumentException("SocialUser not found"));
+                    user = userService.findUserByProviderId(providerId);
+                }
+                // 탈퇴 상태 확인
+                if ("Y".equals(user.getIsWithdrawn())) {
+                    log.warn("탈퇴한 사용자 로그인 시도. User ID: {}", user.getUserId());
+                    response.sendRedirect("/login?error=탈퇴한 사용자 로그인 시도.");
+                    return;
+                }
                 // 사용자 정보를 세션에 등록
                 HttpSession session = request.getSession(true);
-                session.setAttribute(SESSION_USER_KEY, socialUser);
+//                session.setAttribute(SESSION_USER_KEY, socialUser);
+                session.setAttribute(SESSION_USER_KEY, user);
                 log.info("사용자가 세션에 '{}' 키로 등록되었습니다.", SESSION_USER_KEY);
 
                 // 세션에 저장된 사용자 정보 로그로 출력
-                SocialUser sessionUser = (SocialUser) session.getAttribute(SESSION_USER_KEY);
-                log.info("세션에 저장된 사용자 정보: {}", sessionUser);
+                log.info("세션에 저장된 사용자 정보: {}", session.getAttribute(SESSION_USER_KEY));
 
                 // SecurityContext에 SocialUser 설정
                 // SecurityContextHolder에 설정된 Authentication의 principal을 SocialUser로 대체
-                UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
-                        socialUser, authentication.getCredentials(), authentication.getAuthorities());
-
-                SecurityContextHolder.getContext().setAuthentication(newAuth);
-
-                log.info("SecurityContextHolder의 Authentication principal이 SocialUser로 설정되었습니다.");
+//                UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
+//                        socialUser, authentication.getCredentials(), authentication.getAuthorities());
+//
+//                SecurityContextHolder.getContext().setAuthentication(newAuth);
+//
+//                log.info("SecurityContextHolder의 Authentication principal이 SocialUser로 설정되었습니다.");
 
 
             }
