@@ -136,6 +136,14 @@ public class UserCouponService {
      * 현재 사용자 쿠폰 목록을 조회하는 메소드
      */
 
+    /**
+     * 현재 사용자의 로그인 정보를 조회.
+     */
+    public String currentUserValidation(){
+//        String currentUser=;
+
+    }
+
 
 
 
