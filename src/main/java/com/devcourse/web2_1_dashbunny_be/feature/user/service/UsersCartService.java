@@ -2,11 +2,12 @@ package com.devcourse.web2_1_dashbunny_be.feature.user.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.DeliveryOperatingInfo;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
 import com.devcourse.web2_1_dashbunny_be.domain.user.CartItem;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
-import com.devcourse.web2_1_dashbunny_be.feature.owner.repository.DeliveryOperationInfoRepository;
-import com.devcourse.web2_1_dashbunny_be.feature.owner.repository.MenuManagementRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.DeliveryOperatingInfoRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCartResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
@@ -26,7 +27,7 @@ public class UsersCartService {
     private final UsersCartRepository cartRepository;
     private final MenuRepository menuRepository;
     private final StoreManagementRepository storeManagementRepository;
-    private final DeliveryOperationInfoRepository deliveryOperationInfoRepository;
+    private final DeliveryOperatingInfoRepository deliveryOperatingInfoRepository;
     private final UserRepository userRepository;
 
     public void createCart(String userId) {
@@ -49,7 +50,7 @@ public class UsersCartService {
             return null;
         } else {
             StoreManagement store = storeManagementRepository.findById(cart.getStoreId()).orElseThrow(IllegalArgumentException::new);
-            DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperationInfoRepository.findByStoreId(store.getStoreId());
+            DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperatingInfoRepository.findByStoreId(store.getStoreId());
             return UsersCartResponseDto.toUsersCartDto(cart, store.getStoreName(), deliveryOperatingInfo.getDeliveryTip());
 
         }
@@ -76,11 +77,11 @@ public class UsersCartService {
             cartRepository.save(cart);
         }
 
-        MenuManagement menu = menuManagementRepository.findById(menuId)
+        MenuManagement menu = menuRepository.findById(menuId)
                 .orElseThrow(() -> new RuntimeException("메뉴를 찾을 수 없습니다."));
         StoreManagement store = storeManagementRepository.findById(menu.getStoreId())
                 .orElseThrow(IllegalArgumentException::new);
-        DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperationInfoRepository.findByStoreId(store.getStoreId());
+        DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperatingInfoRepository.findByStoreId(store.getStoreId());
 
         if (cart.getStoreId() == null || cart.getStoreId().equals(store.getStoreId())) {
             // 카트에 가게 정보가 없거나, 가게가 동일한 경우
@@ -125,9 +126,9 @@ public class UsersCartService {
 
         User user = userRepository.findByPhone(userId).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         Cart cart = cartRepository.findByUser(user);
-        MenuManagement menu = menuManagementRepository.findById(menuId).orElseThrow(IllegalArgumentException::new);
+        MenuManagement menu = menuRepository.findById(menuId).orElseThrow(IllegalArgumentException::new);
         StoreManagement store = storeManagementRepository.findById(menu.getStoreId()).orElseThrow(IllegalArgumentException::new);
-        DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperationInfoRepository.findByStoreId(store.getStoreId());
+        DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperatingInfoRepository.findByStoreId(store.getStoreId());
         List<CartItem> itemsToRemove = new ArrayList<>();
 
         cart.getCartItems().forEach(item -> {
