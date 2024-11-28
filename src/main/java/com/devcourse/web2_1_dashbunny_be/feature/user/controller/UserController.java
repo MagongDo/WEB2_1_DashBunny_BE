@@ -78,7 +78,7 @@ public class UserController {
 //    }
 
     // 닉네임 변경
-    @PutMapping("/update-name")
+    @PostMapping("/update-name")
     public ResponseEntity<?> updateName(@RequestBody User user) {
         try {
             userService.updateName(user.getName());

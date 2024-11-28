@@ -103,7 +103,7 @@ public class AuthController {
 
     @GetMapping("/test")
     public ResponseEntity<?> getTest() {
-        Object a = userService.getCurrentUser();
+        User a = userService.getCurrentUser();
         System.out.println("getCurrentUser : " + a);
         return ResponseEntity.ok(userService.getCurrentUser());
     }
