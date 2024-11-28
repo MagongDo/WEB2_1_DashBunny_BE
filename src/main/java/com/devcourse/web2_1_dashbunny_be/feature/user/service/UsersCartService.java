@@ -2,11 +2,13 @@ package com.devcourse.web2_1_dashbunny_be.feature.user.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.DeliveryOperatingInfo;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
 import com.devcourse.web2_1_dashbunny_be.domain.user.CartItem;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
-import com.devcourse.web2_1_dashbunny_be.feature.owner.repository.DeliveryOperationInfoRepository;
-import com.devcourse.web2_1_dashbunny_be.feature.owner.repository.MenuManagementRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
+
+import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.DeliveryOperatingInfoRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCartResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentRequestDto;
@@ -26,9 +28,9 @@ import java.util.Optional;
 public class UsersCartService {
 
     private final UsersCartRepository cartRepository;
-    private final MenuRepository menuRepository;
+    private final MenuRepository menuManagementRepository;
     private final StoreManagementRepository storeManagementRepository;
-    private final DeliveryOperationInfoRepository deliveryOperationInfoRepository;
+    private final DeliveryOperatingInfoRepository deliveryOperationInfoRepository;
     private final UserRepository userRepository;
     private final PaymentService paymentService;
 

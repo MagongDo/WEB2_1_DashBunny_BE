@@ -6,7 +6,7 @@ import com.devcourse.web2_1_dashbunny_be.config.RedisKeyUtil;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.*;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuGroupRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
-import com.devcourse.web2_1_dashbunny_be.feature.owner.repository.DeliveryOperationInfoRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.DeliveryOperatingInfoRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreResponseDto;
@@ -29,7 +29,7 @@ public class UsersStoreService {
     private final StoreManagementRepository storeManagementRepository;
     private final UserRepository userRepository;
     private final RedisTemplate<String, Object> redisTemplate;
-    private final DeliveryOperationInfoRepository deliveryOperationInfoRepository;
+    private final DeliveryOperatingInfoRepository deliveryOperationInfoRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuRepository menuRepository;
     private final KakaoGeocoding kakaoGeocoding; // 추가된 필드

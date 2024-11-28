@@ -1,6 +1,5 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 
-import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCartResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UsersCartService;
 import lombok.RequiredArgsConstructor;
