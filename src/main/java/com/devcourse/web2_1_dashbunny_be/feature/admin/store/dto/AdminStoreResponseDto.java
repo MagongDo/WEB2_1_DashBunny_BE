@@ -21,11 +21,12 @@ public class AdminStoreResponseDto {
   private String category1;          // 대표 카테고리
   private String category2;          // 추가 카테고리 1
   private String category3;          // 추가 카테고리 2
+  private Double latitude;  //위도
+  private Double longitude; //경도
   private String storeRegistrationDocs; // 등록 서류
-  private String storeLogo;          // 가게 매장 로고
   private String storeBannerImage;    // 가게 배너 이미지
-  private StoreStatus storeStatus;
-  //private String userName; //사장님 이름-- StoreManagement엔티티에 아직 없음
+  private StoreStatus storeStatus; //가게 상태
+  private String userName; //사장님 이름-- StoreManagement엔티티에 아직 없음
 
   /**
    * StoreManagement 엔티티에서 DTO로 데이터를 변환을 위한 생성자.
@@ -40,9 +41,9 @@ public class AdminStoreResponseDto {
 //    this.category2 = storeManagement.getCategory2();
 //    this.category3 = storeManagement.getCategory3();
     this.storeRegistrationDocs = storeManagement.getStoreRegistrationDocs();
-    this.storeLogo = storeManagement.getStoreLogo();
     this.storeBannerImage = storeManagement.getStoreBannerImage();
     this.storeStatus = storeManagement.getStoreStatus();
+    this.userName = storeManagement.getUser().getName();
 
   }
 }

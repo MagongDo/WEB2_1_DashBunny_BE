@@ -30,4 +30,11 @@ public interface AdminCouponRepository extends JpaRepository<AdminCoupon, Long> 
    */
   List<AdminCoupon> findByCouponTypeAndCouponStatus(CouponType couponType, CouponStatus couponStatus);
 
+  /**
+   * 관리자가 발급한 활성화된 선착순 쿠폰 조회
+   * @param couponType
+   * @param couponStatus
+   * @return
+   */
+  AdminCoupon findFirstByCouponTypeAndCouponStatus(CouponType couponType, CouponStatus couponStatus);
 }

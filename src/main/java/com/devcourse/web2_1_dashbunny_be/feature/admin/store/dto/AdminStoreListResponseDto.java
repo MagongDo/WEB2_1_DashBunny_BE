@@ -23,8 +23,8 @@ public class AdminStoreListResponseDto {
   private String description;
   private String address;
   private StoreStatus storeStatus;
-  private String storeLogo;    // 가게 배너 이미지
-  private String userName; //사장님 이름-- StoreManagement엔티티에 아직 없음
+  private String storeLogo;    // 가게 로고 이미지
+  private String userName; //사장님 이름
   private LocalDateTime approvedDate; //승인 날짜
   //수정날짜로 받기
 
@@ -40,5 +40,6 @@ public class AdminStoreListResponseDto {
     this.storeStatus = storeManagement.getStoreStatus();
     this.storeLogo = storeManagement.getStoreLogo();
     this.approvedDate = storeManagement.getApprovedDate();
+    this.userName = storeManagement.getUser().getName();
   }
 }

@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 가게 등록 service.
@@ -33,6 +34,7 @@ public class StoreApplicationService {
   /**
    * 가게 등록 승인 메서드.
    */
+  @Transactional
   public void approve(String storeId) {
     StoreManagement storeManagement = storeManagementRepository.findById(storeId)
             .orElseThrow(() -> new IllegalArgumentException("Store not found for ID: " + storeId));
@@ -45,11 +47,11 @@ public class StoreApplicationService {
     log.info("Approving store registration for store ID: {}", storeId);
 
     storeManagement.setStoreStatus(StoreStatus.REGISTERED);
-    storeApplication.approve();
+    storeApplication.approve(); //승인
     storeManagement.setApprovedDate(storeApplication.getApprovedDate()); // 승인 날짜 갱신
     storeManagementRepository.save(storeManagement);
 
-    storeApplication.setStoreIsApproved(StoreIsApproved.APPROVE);
+    storeApplication.setStoreIsApproved(StoreIsApproved.APPROVE); //승인 상태
     storeApplicationRepository.save(storeApplication);
 
     log.info("Store registration approved successfully for store ID: {}", storeId);
@@ -58,6 +60,7 @@ public class StoreApplicationService {
   /**
    * 가게 등록 거절 메서드.
    */
+  @Transactional
   public void reject(String storeId, String reason) {
     StoreManagement storeManagement = storeManagementRepository.findById(storeId)
             .orElseThrow(() -> new IllegalArgumentException("Store not found for ID: " + storeId));

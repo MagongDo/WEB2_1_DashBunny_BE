@@ -45,7 +45,7 @@ public class Notice {
   private NoticeTarget target = NoticeTarget.ENTIRE; //대상 (디폴트:전체)간접참조
 
   @Column(nullable = false)
-  private Long viewCount;
+  private Long viewCount = 0L;
 
   /**
   * setter를 대신한 noticeTile 변경 메서드.
@@ -72,6 +72,6 @@ public class Notice {
    * viewCount 증가 메서드.
    */
   public void isIncrementViewCount() {
-    this.viewCount++;
+    this.viewCount += 1;
   }
 }

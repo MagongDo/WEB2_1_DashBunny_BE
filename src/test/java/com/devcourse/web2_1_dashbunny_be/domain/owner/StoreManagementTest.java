@@ -1,7 +1,7 @@
 //package com.devcourse.web2_1_dashbunny_be.domain.owner;
 //
 //import com.devcourse.dashbunny.domain.owner.role.CouponStatus;
-//import com.devcourse.dashbunny.domain.owner.role.DiscountType;
+//import com.devcourse.dashbunny.domain.common.role.DiscountType;
 //import com.devcourse.dashbunny.domain.owner.role.StoreStatus;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;

@@ -3,7 +3,7 @@ package com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.AdminCoupon;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponStatus;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponType;
-import com.devcourse.web2_1_dashbunny_be.domain.admin.role.DiscountType;
+import com.devcourse.web2_1_dashbunny_be.domain.common.role.DiscountType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
