@@ -29,7 +29,7 @@ public class UsersStoreService {
     private final StoreManagementRepository storeManagementRepository;
     private final UserRepository userRepository;
     private final RedisTemplate<String, Object> redisTemplate;
-    private final DeliveryOperatingInfoRepository deliveryOperationInfoRepository;
+    private final DeliveryOperatingInfoRepository deliveryOperatingInfoRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuRepository menuRepository;
     private final KakaoGeocoding kakaoGeocoding; // 추가된 필드
@@ -167,7 +167,7 @@ public class UsersStoreService {
             }
 
             // DTO로 변환하여 응답 리스트에 추가
-            DeliveryOperatingInfo deliveryOperatingInfo=deliveryOperationInfoRepository.findByStoreId(storeId);
+            DeliveryOperatingInfo deliveryOperatingInfo=deliveryOperatingInfoRepository.findByStoreId(storeId);
             UsersStoreListResponseDto dto = new UsersStoreListResponseDto();
             dto.toUsersStoreListResponseDto(store,deliveryOperatingInfo);
             responseDtos.add(dto);
@@ -201,7 +201,7 @@ public class UsersStoreService {
         List<MenuGroup> menuGroup=menuGroupRepository.findByStoreId(storeId);
         Optional<StoreManagement> store = storeManagementRepository.findById(storeId);
         List<MenuManagement> menu=menuRepository.findAllByStoreId(storeId);
-        DeliveryOperatingInfo deliveryOperatingInfo=deliveryOperationInfoRepository.findByStoreId(storeId);
+        DeliveryOperatingInfo deliveryOperatingInfo=deliveryOperatingInfoRepository.findByStoreId(storeId);
 
         return UsersStoreResponseDto.toStoreResponseDto(Objects.requireNonNull(store.orElse(null)),menuGroup,menu,deliveryOperatingInfo);
     }
