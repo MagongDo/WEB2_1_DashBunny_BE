@@ -30,7 +30,7 @@ public class CreateStoreRequestDto {
   private String storeRegistrationDocs; // 등록 서류
   private String storeLogo;          // 가게 매장 로고
   private String storeBannerImage;    // 가게 배너 이미지
-  private StoreStatus storeStatus;
+//  private StoreStatus storeStatus;
 
   @Size(max = 3, message = "카테고리는 최대 3개까지 선택할 수 있습니다.")
   private List<CategoryType> categories;

@@ -11,10 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.List;
 
 /**
@@ -38,8 +40,10 @@ public class StoreRequestController {
   public ResponseEntity<String> createStore(
           @RequestParam(name = "bannerImageFile") MultipartFile bannerImageFile,
           @RequestParam(name = "logoImageFile") MultipartFile logoImageFile,
-          @RequestPart(name = "request") CreateStoreRequestDto request) {
+          @RequestPart(name = "request") CreateStoreRequestDto request
+ ) {
     try {
+
       log.info("Creating a new store request{}",request.toString());
       String bannerImageFileUrl = fileUploadService.uploadFile(bannerImageFile,"storeBannerImage");
       String logoImageFileUrl = fileUploadService.uploadFile(logoImageFile,"storeLogoImage");
@@ -57,7 +61,7 @@ public class StoreRequestController {
       storeManagementService.create(request);
       return ResponseEntity.ok("가게 등록 승인 요청을 성공했습니다.");
     } catch (Exception e) {
-
+      log.info("-------------------Principal: ", principal.getName());
       return ResponseEntity.internalServerError().body("파일 업로드 실패: " + e.getMessage());
     }
   }
