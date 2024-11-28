@@ -37,5 +37,10 @@ public class UserCartController {
     public ResponseEntity<UsersCartResponseDto> getCart(Principal principal) {
         return ResponseEntity.ok(cartService.getCart(principal.getName()));
     }
+    @PostMapping("/carts/checkout")
+    public ResponseEntity<UsersCartResponseDto> checkoutCart(Principal principal) {
+        UsersCartResponseDto cartDto = cartService.checkoutCart(principal.getName());
+        return ResponseEntity.ok(cartDto);
+    }
 }
 
