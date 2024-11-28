@@ -7,9 +7,12 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
 import com.devcourse.web2_1_dashbunny_be.domain.user.CartItem;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
+
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.DeliveryOperatingInfoRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCartResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UsersCartRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +28,11 @@ import java.util.Optional;
 public class UsersCartService {
 
     private final UsersCartRepository cartRepository;
-    private final MenuRepository menuRepository;
+    private final MenuRepository menuManagementRepository;
     private final StoreManagementRepository storeManagementRepository;
-    private final DeliveryOperatingInfoRepository deliveryOperatingInfoRepository;
+    private final DeliveryOperatingInfoRepository deliveryOperationInfoRepository;
     private final UserRepository userRepository;
+    private final PaymentService paymentService;
 
     public void createCart(String userId) {
         User user = userRepository.findByPhone(userId).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
@@ -50,8 +54,10 @@ public class UsersCartService {
             return null;
         } else {
             StoreManagement store = storeManagementRepository.findById(cart.getStoreId()).orElseThrow(IllegalArgumentException::new);
-            DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperatingInfoRepository.findByStoreId(store.getStoreId());
-            return UsersCartResponseDto.toUsersCartDto(cart, store.getStoreName(), deliveryOperatingInfo.getDeliveryTip());
+
+            DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperationInfoRepository.findByStoreId(store.getStoreId());
+            return UsersCartResponseDto.toUsersCartDto(cart, store.getStoreName(), deliveryOperatingInfo.getDeliveryTip(),null);
+
 
         }
 
@@ -118,7 +124,7 @@ public class UsersCartService {
         cart.setTotalPrice(calculateTotalPrice(cart));
         cartRepository.save(cart);
 
-        return UsersCartResponseDto.toUsersCartDto(cart, store.getStoreName(), deliveryOperatingInfo.getDeliveryTip());
+        return UsersCartResponseDto.toUsersCartDto(cart, store.getStoreName(), deliveryOperatingInfo.getDeliveryTip(),null);
     }
 
     public UsersCartResponseDto updateItemQuantity(String userId, Long menuId, Long counts) {
@@ -150,7 +156,7 @@ public class UsersCartService {
         } else {
             cart.setTotalPrice(calculateTotalPrice(cart));
             cartRepository.save(cart);
-            return UsersCartResponseDto.toUsersCartDto(cart, store.getStoreName(), deliveryOperatingInfo.getDeliveryTip());
+            return UsersCartResponseDto.toUsersCartDto(cart, store.getStoreName(), deliveryOperatingInfo.getDeliveryTip(),null);
         }
     }
 
@@ -159,4 +165,30 @@ public class UsersCartService {
                 .mapToLong(item -> item.getQuantity() * item.getMenuManagement().getPrice())
                 .sum();
     }
+
+    public UsersCartResponseDto checkoutCart(String userId) {
+        UsersCartResponseDto cartDto = getCart(userId);
+        if (cartDto == null || cartDto.getCartItems() == null || cartDto.getCartItems().isEmpty()) {
+            throw new IllegalArgumentException("Cart is empty");
+        }
+
+        PaymentRequestDto paymentRequest = new PaymentRequestDto();
+        paymentRequest.setCartId(cartDto.getCartId());
+        paymentRequest.setOrderName("Order for Cart ID: " + cartDto.getCartId());
+
+        PaymentResponseDto paymentResponse = paymentService.createPayment(paymentRequest);
+
+        // Cart 엔티티 조회
+        Cart cart = cartRepository.findById(cartDto.getCartId())
+                .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
+
+        // 새로운 UsersCartResponseDto 생성하여 반환
+        return UsersCartResponseDto.toUsersCartDto(
+                cart,
+                cartDto.getStoreName(),
+                cartDto.getDeliveryFee(),
+                paymentResponse // 결제 정보 전달
+        );
+    }
+
 }
