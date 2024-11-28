@@ -20,9 +20,9 @@ public class UserCartController {
     public ResponseEntity<UsersCartResponseDto> addItemToCart(
             @RequestParam Long menuId,
             @RequestParam Long quantity,
+            @RequestParam(required = false, defaultValue = "false") boolean overwrite,
             Principal principal) {
-        Cart updatedCart = cartService.addMenuToCart(principal.getName(), menuId, quantity);
-        return ResponseEntity.ok(UsersCartResponseDto.toUsersCartDto(updatedCart));
+        return ResponseEntity.ok(cartService.addMenuToCart(principal.getName(), menuId, quantity, overwrite));
     }
 
     @PatchMapping("/items/{menuId}")
@@ -30,19 +30,12 @@ public class UserCartController {
             @PathVariable Long menuId,
             @RequestParam Long quantity,
             Principal principal) {
-        Cart updatedCart = cartService.updateItemQuantity(principal.getName(), menuId, quantity);
-        return ResponseEntity.ok(UsersCartResponseDto.toUsersCartDto(updatedCart));
+        return ResponseEntity.ok(cartService.updateItemQuantity(principal.getName(), menuId, quantity));
     }
 
     @GetMapping("/carts")
     public ResponseEntity<UsersCartResponseDto> getCart(Principal principal) {
-        Cart cart = cartService.getCart(principal.getName());
-        return ResponseEntity.ok(UsersCartResponseDto.toUsersCartDto(cart));
-    }
-
-    @PostMapping("/carts/create")
-    public ResponseEntity<UsersCartResponseDto> createCart(Principal principal) {
-        Cart newCart = cartService.createCart(principal.getName());
-        return ResponseEntity.ok(UsersCartResponseDto.toUsersCartDto(newCart));
+        return ResponseEntity.ok(cartService.getCart(principal.getName()));
     }
 }
+

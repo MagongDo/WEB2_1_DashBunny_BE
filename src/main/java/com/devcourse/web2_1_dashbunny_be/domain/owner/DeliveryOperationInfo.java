@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.domain.owner;
 
 import jakarta.persistence.*;
@@ -36,4 +37,4 @@ public class DeliveryOperationInfo {
     @Column(nullable = true, length = 255)
     private Long minOrderAmount; // 최소 주문 금액 (단위: 금액)
 
-}
+}*/

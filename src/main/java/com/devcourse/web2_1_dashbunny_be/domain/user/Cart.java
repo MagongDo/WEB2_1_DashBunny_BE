@@ -25,9 +25,8 @@ public class Cart {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @OneToOne
-    @JoinColumn(name = "storeId")
-    private StoreManagement storeId;
+    @Column(name="storeId")
+    private String storeId;
 
     @Column(name = "userCouponId")
     private String userCouponId;
@@ -35,7 +34,7 @@ public class Cart {
     @Column(name = "totalPrice")
     private Long totalPrice;
 
-    @OneToMany(mappedBy = "cartItemId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<CartItem> cartItems;
 
 }
