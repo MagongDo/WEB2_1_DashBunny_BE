@@ -54,13 +54,13 @@ public class GlobalExceptionHandler {
             >("데이터 처리 중 오류가 발생했습니다. 문제가 지속되면 관리자에게 문의하세요.", HttpStatus.BAD_REQUEST);
   }
 
-//** Exception.
-
-
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<String> handleAllExceptions(Exception ex) {
-    return new ResponseEntity<>("서버 오류가 발생했습니다. 관리자에게 문의해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
-  }
+  /**
+   * Exception.
+   */
+//  @ExceptionHandler(Exception.class)
+//  public ResponseEntity<String> handleAllExceptions(Exception ex) {
+//    return new ResponseEntity<>("서버 오류가 발생했습니다. 관리자에게 문의해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
+//  }
 
     @ExceptionHandler(DifferentStoreException.class)
     public ResponseEntity<String> handleDifferentStoreException(DifferentStoreException ex) {
