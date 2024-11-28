@@ -4,6 +4,7 @@ import com.devcourse.web2_1_dashbunny_be.domain.owner.Categorys;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.CategoryType;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
+import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -31,6 +32,7 @@ public class CreateStoreRequestDto {
   private String storeLogo;          // 가게 매장 로고
   private String storeBannerImage;    // 가게 배너 이미지
   private StoreStatus storeStatus;
+  private String userName; //사장님 이름-- StoreManagement엔티티에 아직 없음
 
   @Size(max = 3, message = "카테고리는 최대 3개까지 선택할 수 있습니다.")
   private List<CategoryType> categories;
@@ -38,7 +40,7 @@ public class CreateStoreRequestDto {
   /**
    * StoreManagement 객체 생성 메소드.
    */
-  public StoreManagement toEntity() {
+  public StoreManagement toEntity(User user) {
     StoreManagement storeManagement = new StoreManagement();
     storeManagement.setStoreName(this.storeName);
     storeManagement.setContactNumber(this.contactNumber);
@@ -50,6 +52,7 @@ public class CreateStoreRequestDto {
     storeManagement.setLatitude(this.latitude);
     storeManagement.setLongitude(this.longitude);
     storeManagement.setStoreStatus(StoreStatus.PENDING);
+    storeManagement.setUser(user);
 
     if (this.categories != null) {
       List<Categorys> categoryEntities = this.categories.stream()

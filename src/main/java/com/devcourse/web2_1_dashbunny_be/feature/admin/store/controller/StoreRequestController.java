@@ -1,20 +1,25 @@
 package com.devcourse.web2_1_dashbunny_be.feature.admin.store.controller;
 
 import com.devcourse.web2_1_dashbunny_be.config.s3.FileUploadService;
+import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreApplicationService;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreManagementService;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.CreateStoreRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.store.service.StoreService;
+import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.List;
 
 /**
@@ -29,7 +34,7 @@ public class StoreRequestController {
   private final StoreManagementService storeManagementService;
   private final StoreApplicationService storeApplicationService;
   private final FileUploadService fileUploadService;
-
+  private final UserService userService;
 
   /**
    * 사장님 - 가게 등록 신청 api (POST).
@@ -38,15 +43,33 @@ public class StoreRequestController {
   public ResponseEntity<String> createStore(
           @RequestParam(name = "bannerImageFile") MultipartFile bannerImageFile,
           @RequestParam(name = "logoImageFile") MultipartFile logoImageFile,
-          @RequestPart(name = "request") CreateStoreRequestDto request) {
+          @RequestPart(name = "request") CreateStoreRequestDto request
+          /*Principal principa*/) {
+
+    Object userType= userService.getCurrentUser();
+    User user = null;
+    String providerId;
+
+    if (userType instanceof User) {
+      user = (User) userType;
+    } else if (userType instanceof OAuth2User) { // OAuth2 카카오 로그인 사용자 처리
+      OAuth2User oauth2User = (OAuth2User) user;
+      // getName()으로 Name 값 가져오기
+      // provider_id 가져옴
+      providerId = oauth2User.getName();
+      user = null;
+    }
+
+    log.info("user{{}",user.getName());
     try {
       log.info("Creating a new store request{}",request.toString());
+      log.info("name{}",user.getName());
       String bannerImageFileUrl = fileUploadService.uploadFile(bannerImageFile,"storeBannerImage");
       String logoImageFileUrl = fileUploadService.uploadFile(logoImageFile,"storeLogoImage");
 
       log.info("url{}",bannerImageFileUrl);
       log.info("url{}",logoImageFileUrl);
-
+      request.setUserName(user.getName());
       request.setStoreBannerImage(bannerImageFileUrl);
       request.setStoreLogo(logoImageFileUrl);
       // 디버그 로그 추가

@@ -6,10 +6,12 @@ import com.devcourse.web2_1_dashbunny_be.domain.admin.role.StoreApplicationType;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.StoreIsApproved;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
+import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreApplicationRepository;
 
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.CreateStoreRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,14 +26,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class StoreManagementService {
   private final StoreManagementRepository storeManagementRepository;
   private final StoreApplicationRepository storeApplicationRepository;
+  private final UserRepository userRepository;
 
   /**
    * 가게 등록 신청 메서드.
    */
   @Transactional
   public StoreManagement create(CreateStoreRequestDto storeCreateRequestDto) {
+    User user = userRepository.findByPhone(storeCreateRequestDto.getUserName()).orElseThrow();
     // 가게 객체 생성
-    StoreManagement savedStoreManagement = storeManagementRepository.save(storeCreateRequestDto.toEntity());
+    StoreManagement savedStoreManagement = storeManagementRepository.save(storeCreateRequestDto.toEntity(user));
 
     //가게 신청 유형을 CREATE 으로 객체 생성
     storeApplicationRepository.save(
