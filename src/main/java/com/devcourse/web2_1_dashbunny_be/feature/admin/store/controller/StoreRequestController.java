@@ -61,7 +61,6 @@ public class StoreRequestController {
       storeManagementService.create(request);
       return ResponseEntity.ok("가게 등록 승인 요청을 성공했습니다.");
     } catch (Exception e) {
-      log.info("-------------------Principal: ", principal.getName());
       return ResponseEntity.internalServerError().body("파일 업로드 실패: " + e.getMessage());
     }
   }

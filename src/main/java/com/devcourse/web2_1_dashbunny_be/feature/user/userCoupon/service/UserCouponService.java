@@ -270,7 +270,7 @@ public class UserCouponService {
     Optional<SocialUser> socialUser = socialUserRepository.findByProviderId(currentUser); //소셜 로그인 사용자인지 확인
 
     if (socialUser.isPresent()) {
-      return userRepository.findById(socialUser.get().getUserId())
+      return userRepository.findById(socialUser.get().getUser().getUserId())
                 .orElseThrow(() -> new IllegalStateException("해당 소셜 사용자에 연결된 일반 사용자를 찾을 수 없습니다."));
     }
 
