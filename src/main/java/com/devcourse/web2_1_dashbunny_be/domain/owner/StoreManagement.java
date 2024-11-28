@@ -87,19 +87,8 @@ public class StoreManagement {
 
     //--------------------------------------데이터 추가
 
-    @OneToOne
-    @JoinColumn(name="feedback_id")
-    @ToString.Exclude
+    @OneToOne(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private StoreFeedBack storeFeedback;
-
-    @OneToOne(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
-    private DeliveryOperationInfo deliveryInfo;
-
-    @OneToOne
-    @JoinColumn(name="cart_id")
-    @ToString.Exclude
-    private Cart cartId;
 
     @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude

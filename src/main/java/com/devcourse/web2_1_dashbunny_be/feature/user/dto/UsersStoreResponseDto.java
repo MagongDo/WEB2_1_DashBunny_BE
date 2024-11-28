@@ -1,5 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.dto;
 
+import com.devcourse.web2_1_dashbunny_be.domain.owner.DeliveryOperatingInfo;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuGroup;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
@@ -19,7 +20,7 @@ public class UsersStoreResponseDto {
     private String storeName;                 // 가게 이름
     private Double rating;                    // 평점
     private Integer reviewCount;              // 리뷰 수
-    private Long defaultDeliveryTip;          // 기본 배달 팁
+    private Long deliveryTip;          // 기본 배달 팁
     private String minDeliveryTime;           // 최소 배달 예상 시간
     private String maxDeliveryTime;           // 최대 배달 예상 시간
     private String storeImage;                // 가게 이미지 URL
@@ -29,18 +30,18 @@ public class UsersStoreResponseDto {
     private List<UsersMenuGroupDto> usersMenuGroup;    // 메뉴 그룹 리스트
     private List<UsersMenuDto> usersMenus;              // 독립 메뉴 리스트
 
-    public static UsersStoreResponseDto toStoreResponseDto(StoreManagement store,List<MenuGroup> menuGroup,List<MenuManagement> usersMenu) {
+    public static UsersStoreResponseDto toStoreResponseDto(StoreManagement store, List<MenuGroup> menuGroup, List<MenuManagement> usersMenu, DeliveryOperatingInfo deliveryOperatingInfo) {
 
         return UsersStoreResponseDto.builder()
                 .storeId(store.getStoreId())
                 .storeName(store.getStoreName())
                 .rating(store.getStoreFeedback().getRating())
                 .reviewCount(store.getStoreFeedback().getReviewCount())
-                .defaultDeliveryTip(store.getDeliveryInfo().getBaseDeliveryTip())
-                .minDeliveryTime(store.getDeliveryInfo().getMinDeliveryTime())
-                .maxDeliveryTime(store.getDeliveryInfo().getMaxDeliveryTime())
+                .deliveryTip(deliveryOperatingInfo.getDeliveryTip())
+                .minDeliveryTime(deliveryOperatingInfo.getMinDeliveryTime())
+                .maxDeliveryTime(deliveryOperatingInfo.getMaxDeliveryTime())
                 .storeImage(store.getStoreLogo())
-                .minimumOrderPrice(store.getDeliveryInfo().getMinOrderAmount())
+                .minimumOrderPrice(deliveryOperatingInfo.getMinOrderAmount())
                 .ownerCouponId(store.getCouponList() != null && !store.getCouponList().isEmpty()
                         ? store.getCouponList().get(0).getCouponId() : null)
                 .storeStatus(store.getStoreStatus())

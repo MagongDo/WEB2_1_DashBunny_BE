@@ -1,6 +1,7 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.user.SmsVerification;
+import com.devcourse.web2_1_dashbunny_be.feature.user.Util.SecurityUtil;
 import com.devcourse.web2_1_dashbunny_be.feature.user.Util.SmsUtil;
 import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
@@ -24,10 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Log4j2
 @Service
@@ -43,22 +41,29 @@ public class UserService {
     private final SmsVerificationRepository smsVerificationRepository;
 
 
-    public String getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof SocialUser) {
-            return (String) authentication.getPrincipal();
-        }
-        return null;
-    }
     public User registerUser(UserDTO userDTO) throws Exception {
 
         if(userRepository.findByPhone(userDTO.getPhone()).isPresent()) {
             throw new Exception("이미 존재하는 전화번호입니다.");
         }
 
+        // 비밀번호가 있는지 확인
+        String rawPassword = userDTO.getPassword();
+        String encodedPassword;
+
+        if (rawPassword != null && !rawPassword.isEmpty()) {
+            encodedPassword = passwordEncoder.encode(rawPassword);
+        } else {
+            // 비밀번호가 없으면 랜덤 비밀번호 생성
+            String randomPassword = UUID.randomUUID().toString();
+            encodedPassword = passwordEncoder.encode(randomPassword);
+            log.info("비밀번호가 제공되지 않아 랜덤 비밀번호를 생성했습니다: {}", randomPassword);
+            // 필요시, 사용자에게 랜덤 비밀번호를 이메일 등으로 전송하는 로직을 추가할 수 있습니다.
+        }
+
         User user = User.builder()
                 .phone(userDTO.getPhone())
-                .password(passwordEncoder.encode(userDTO.getPassword()))
+                .password(encodedPassword)
                 .name(userDTO.getName())
                 .birthday(userDTO.getBirthday())
                 .email(userDTO.getEmail())
@@ -76,7 +81,7 @@ public class UserService {
     }
 
 
-    public SocialUser registerSocialUser(OAuth2User oauth2User, String provider) {
+    public SocialUser registerSocialUser(OAuth2User oauth2User, String provider, User user) {
         /**
          * provider - 파라미터
          * providerId - oauth2User
@@ -98,8 +103,12 @@ public class UserService {
                     log.info("findByProviderId - properties: {}", properties);
 
                     String nickname = (String) properties.get("nickname");
+                    // 유저 아이디에 해당하는 user테이블의 is_social 을 Y로 변경 후 소셜유저에 저장
+                    Long userId = user.getUserId();
+                    userRepository.updateIsSocialToY(userId);
 
                     SocialUser socialUser = SocialUser.builder()
+                            .user(user)
                             .providerId(providerId)
                             .provider(provider)
                             .userName(nickname)
@@ -112,29 +121,21 @@ public class UserService {
 
     // 인증번호 전송 서비스
     public ResponseEntity<?> sendSmsToFindPhone(String phone) {
-
         Map<String, Object> response = new HashMap<>();
-
         try {
-            // 1. 전화번호 형식 정리
+            // 전화번호 형식 정리
             String phoneNum = phone.replaceAll("-", "");
             log.info("정리된 전화번호: {}", phoneNum);
 
-            // 2. 사용자 찾기 (필요 시 활성화)
-            // 예시로 이름이 없이 전화번호만으로 찾는 경우
-//            User foundUser = userRepository.findByPhone(phoneNum)
-//                    .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
-
-            // 3. 인증 코드 생성
+            // 인증 코드 생성
             String verificationCode = validationUtil.createCode(phoneNum);
             log.info("생성된 인증 코드: {}", verificationCode);
 
-            // 4. SMS 전송
+            // SMS 전송
             SingleMessageSentResponse smsResponse = smsUtil.sendOne(phoneNum, verificationCode);
             log.info("SMS 전송 성공: {}", smsResponse);
 
-
-            // 6. 성공 응답 설정
+            // 성공 응답 설정
             response.put("code", 200);
             response.put("message", "SMS 전송 성공");
             return ResponseEntity.ok(response);
@@ -176,7 +177,6 @@ public class UserService {
         return false;
     }
 
-
     /**
      * 사용자의 프로필 사진 URL을 업데이트합니다.
      *
@@ -194,6 +194,104 @@ public class UserService {
                 .build();
 
         userRepository.save(updatedUser);
+    }
+
+    // 일반 로그인된 사용자 정보
+    public Object getCurrentUser() {
+        return SecurityUtil.getCurrentUser();
+    }
+
+    // 비밀번호 변경
+    public void resetPassword(String phone, String verificationCode, String newPassword) {
+        // 인증번호 검증
+        boolean isVerified = verifyCode(phone, verificationCode);
+        if (!isVerified) {
+            throw new IllegalArgumentException("유효하지 않거나 만료된 인증 코드");
+        }
+
+        // 사용자 찾기
+        User user = userRepository.findByPhone(phone)
+                .orElseThrow(() -> new IllegalArgumentException("지정된 전화번호에 대한 사용자를 찾을 수 없습니다"));
+
+        // 비밀번호 변경
+        User setUserPw = user.toBuilder()
+                .password(passwordEncoder.encode(newPassword))
+                .build();
+
+        userRepository.save(user);
+    }
+
+    // 닉네임 변경
+    public void updateName(String newName) {
+        // 현재 로그인된 사용자 확인
+        Object currentUsername = getCurrentUser();
+        if (currentUsername == null) {
+            throw new IllegalArgumentException("사용자가 인증되지 않음");
+        }
+        User user = null;
+        String providerId;
+        if (currentUsername instanceof User) {
+            user = (User) currentUsername;
+            // 사용자 찾기
+            user = userRepository.findByPhone(user.getPhone())
+                    .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다"));
+        } else if (currentUsername instanceof OAuth2User) { // OAuth2 카카오 로그인 사용자 처리
+            OAuth2User oauth2User = (OAuth2User) currentUsername;
+            // getName()으로 Name 값 가져오기
+            // provider_id 가져옴
+            providerId = oauth2User.getName();
+            user = findUserByProviderId(providerId);
+        }
+
+        // 닉네임 변경
+        User setUserName = user.toBuilder()
+                .name(newName)
+                .build();
+        userRepository.save(user);
+    }
+
+    // 회원 탈퇴
+    public void withdrawUser() {
+        // 현재 로그인된 사용자 확인
+        Object currentUsername = getCurrentUser();
+        if (currentUsername == null) {
+            throw new IllegalArgumentException("사용자가 인증되지 않음");
+        }
+        User user = null;
+        String providerId;
+        if (currentUsername instanceof User) {
+            user = (User) currentUsername;
+        } else if (currentUsername instanceof OAuth2User) { // OAuth2 카카오 로그인 사용자 처리
+            OAuth2User oauth2User = (OAuth2User) currentUsername;
+            // getName()으로 Name 값 가져오기
+            // provider_id 가져옴
+            providerId = oauth2User.getName();
+            user = findUserByProviderId(providerId);
+        }
+
+        // 회원 탈퇴 처리
+        user = user.toBuilder()
+                .isWithdrawn("Y") // 탈퇴 상태로 변경
+                .modifiedDate(LocalDateTime.now()) // 수정 시간 갱신
+                .build();
+
+        userRepository.save(user);
+
+        // 로그아웃 처리 (옵션)
+        SecurityContextHolder.clearContext();
+    }
+
+    // providerId로 social_users 에서 userId 가져오고 users 테이블에서 user_id로 조회 하는 메소드
+    public User findUserByProviderId(String providerId) {
+        // 1. provider_id로 social_users에서 user_id 가져오기
+        SocialUser socialUser = socialUserRepository.findByProviderId(providerId)
+                .orElseThrow(() -> new IllegalArgumentException("providerId에 대한 소셜 사용자를 찾을 수 없습니다: " + providerId));
+
+        Long userId = socialUser.getUser().getUserId();
+
+        // 2. users 테이블에서 user_id로 조회
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("userId에 대한 사용자를 찾을 수 없습니다: " + userId));
     }
 
 }
