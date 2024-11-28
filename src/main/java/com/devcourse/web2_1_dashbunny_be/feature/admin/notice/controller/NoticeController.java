@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 @RequestMapping("/api/notice")
 public class NoticeController {
   private final NoticeService noticeService;
@@ -63,7 +63,7 @@ public class NoticeController {
 
     List<AdminNoticeListResponseDto> notices;
 
-    if (!currentUserRole.equals("ADMIN")) { //사장님, 사용자가 조회
+    if (!currentUserRole.equals("ROLE_ADMIN")) { //사장님, 사용자가 조회
       notices = noticeService.getAllNoticesByRole(currentUserRole);
     } else { //관리자 조회
       notices = noticeService.getAllNotices();

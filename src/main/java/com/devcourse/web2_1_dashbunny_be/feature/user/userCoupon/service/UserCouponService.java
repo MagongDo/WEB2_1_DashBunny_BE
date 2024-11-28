@@ -209,7 +209,7 @@ public class UserCouponService {
   /**
    * 현재 사용자 쿠폰함 목록을 조회하는 메소드.
    */
-  public List<UserCouponListResponseDto> findNotUsedCoupons(){
+  public List<UserCouponListResponseDto> findNotUsedCoupons() {
     User currentUser = currentUserValidation();
     List<UserCoupon> availableCoupons = userCouponRepository.findByUser_UserIdAndCouponUsedIsFalse(currentUser.getUserId());
 
@@ -227,6 +227,7 @@ public class UserCouponService {
                 adminCoupon.getMaximumDiscount(),
                 adminCoupon.getExpiredDate(),
                 adminCoupon.getCouponDescription()
+                //가게 이름
         );
       } else if (coupon.getIssuedCouponType() == IssuedCouponType.OWNER) {
         OwnerCoupon ownerCoupon = ownerCouponRepository.findById(coupon.getCouponId())
