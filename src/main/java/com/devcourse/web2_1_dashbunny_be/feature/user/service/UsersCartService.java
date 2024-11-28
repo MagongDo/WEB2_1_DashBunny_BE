@@ -83,11 +83,11 @@ public class UsersCartService {
             cartRepository.save(cart);
         }
 
-        MenuManagement menu = menuRepository.findById(menuId)
+        MenuManagement menu = menuManagementRepository.findById(menuId)
                 .orElseThrow(() -> new RuntimeException("메뉴를 찾을 수 없습니다."));
         StoreManagement store = storeManagementRepository.findById(menu.getStoreId())
                 .orElseThrow(IllegalArgumentException::new);
-        DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperatingInfoRepository.findByStoreId(store.getStoreId());
+        DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperationInfoRepository.findByStoreId(store.getStoreId());
 
         if (cart.getStoreId() == null || cart.getStoreId().equals(store.getStoreId())) {
             // 카트에 가게 정보가 없거나, 가게가 동일한 경우
@@ -132,9 +132,9 @@ public class UsersCartService {
 
         User user = userRepository.findByPhone(userId).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         Cart cart = cartRepository.findByUser(user);
-        MenuManagement menu = menuRepository.findById(menuId).orElseThrow(IllegalArgumentException::new);
+        MenuManagement menu = menuManagementRepository.findById(menuId).orElseThrow(IllegalArgumentException::new);
         StoreManagement store = storeManagementRepository.findById(menu.getStoreId()).orElseThrow(IllegalArgumentException::new);
-        DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperatingInfoRepository.findByStoreId(store.getStoreId());
+        DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperationInfoRepository.findByStoreId(store.getStoreId());
         List<CartItem> itemsToRemove = new ArrayList<>();
 
         cart.getCartItems().forEach(item -> {
