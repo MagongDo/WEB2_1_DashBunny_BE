@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>회원가입</title>
+</head>
+<body>
+<h1>회원가입</h1>
+<form action="/api/auth/signUp/AdditionalInfo" method="post">
+  <input type="text" id="phone" name="phone">
+  <input type="text" id="name" name="name">
+  <input type="text" id="email" name="email">
+  <input type="text" id="birthday" name="birthday">
+  <button type="submit">다음</button>
+</form>
+</body>
+</html>

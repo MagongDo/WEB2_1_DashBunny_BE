@@ -2,7 +2,6 @@ package com.devcourse.web2_1_dashbunny_be.feature.user.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.DeliveryOperatingInfo;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
-import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
 import com.devcourse.web2_1_dashbunny_be.domain.user.CartItem;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
@@ -27,7 +26,7 @@ import java.util.Optional;
 public class UsersCartService {
 
     private final UsersCartRepository cartRepository;
-    private final MenuManagementRepository menuManagementRepository;
+    private final MenuRepository menuRepository;
     private final StoreManagementRepository storeManagementRepository;
     private final DeliveryOperationInfoRepository deliveryOperationInfoRepository;
     private final UserRepository userRepository;
@@ -67,6 +66,9 @@ public class UsersCartService {
         User user = userRepository.findByPhone(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         Cart cart = cartRepository.findByUser(user);
+
+        // MenuManagement menu = menuRepository.findById(menuId).orElseThrow(() -> new RuntimeException("Menu not found"));
+
 
         if (cart == null) {
             // 카트가 없으면 새로 생성

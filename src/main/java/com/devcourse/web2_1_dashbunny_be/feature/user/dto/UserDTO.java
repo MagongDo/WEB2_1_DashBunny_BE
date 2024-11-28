@@ -6,13 +6,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.io.Serializable;
+
 
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
+public class UserDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @NotBlank
     @Size(max = 11)
