@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.FileStorageService;
@@ -22,12 +23,14 @@ public class UserController {
 
     private final FileStorageService fileStorageService;
 
-    /**
+    */
+/**
      * 사용자의 프로필 사진을 업로드하는 엔드포인트입니다.
      *
      * @param file 업로드된 파일
      * @return 업로드 결과를 포함한 ResponseEntity
-     */
+     *//*
+
     @PostMapping("/upload-profile-picture")
     public ResponseEntity<?> uploadProfilePicture(@RequestParam("profileImage") MultipartFile file,
                                                   HttpSession session) {
@@ -59,3 +62,4 @@ public class UserController {
     }
 
 }
+*/
