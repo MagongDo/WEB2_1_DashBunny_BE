@@ -64,6 +64,10 @@ dependencies {
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    // springdoc-openapi 의존성 추가
+    // https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
 
 
     // Testing
