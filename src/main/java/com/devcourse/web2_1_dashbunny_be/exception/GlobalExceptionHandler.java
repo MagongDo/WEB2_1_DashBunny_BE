@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.context.request.WebRequest;
 //** 전역 에러 클래스.
 
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -43,6 +45,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(NullPointerException.class)
   public ResponseEntity<String> handleNullPointerException(NullPointerException ex) {
+    log.error(ex.getMessage());
     return new ResponseEntity<>("요청을 완료하지 못했습니다. 입력 값을 확인하고 다시 시도해주세요.", HttpStatus.BAD_REQUEST);
   }
 

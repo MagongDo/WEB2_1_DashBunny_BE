@@ -29,4 +29,9 @@ public interface MenuService {
     */
     void delete(UpdateActionRequestDto actionRequestDTO);
     MenuWithMenuGroupResponseDto MenuWithGroups(Long meneId); //메뉴 수정 페이지 데이터 단 건 반환 및 그룹 반환
+
+  /**
+   * 메뉴 단 건 삭제.
+   */
+  void deleteMenu(Long menuId);
 }

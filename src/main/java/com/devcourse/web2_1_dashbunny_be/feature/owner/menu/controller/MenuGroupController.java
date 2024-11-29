@@ -30,9 +30,9 @@ public class MenuGroupController {
 
   private final GroupService groupService;
 
-  /**
+/*  *//**
   * 특정 가게 id의 그룹 목록을 반환.
-  */
+  *//*
   @GetMapping("/group/{storeId}")
   public ResponseEntity<List<MenuGroupListResponseDto>> readMenuGroup(
           @PathVariable String storeId) {
@@ -42,7 +42,7 @@ public class MenuGroupController {
               .map(MenuGroupListResponseDto::fromEntity)
               .toList();
     return ResponseEntity.ok(responseDto);
-  }
+  }*/
 
   /**
    * 새로운 메뉴 그롭 생성을 위한 요청.
