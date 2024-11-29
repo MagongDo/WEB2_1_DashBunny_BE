@@ -2,6 +2,7 @@ package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 
 import com.devcourse.web2_1_dashbunny_be.config.s3.FileUploadService;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDTO;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.FileStorageService;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -86,6 +87,13 @@ public class UserController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/currentUser")
+    public ResponseEntity<UserDTO> getCurrentUser() {
+        User currentUser = userService.getCurrentUser();
+        UserDTO user = UserDTO.toDTO(currentUser);
+        return ResponseEntity.ok(user);
     }
 
 }

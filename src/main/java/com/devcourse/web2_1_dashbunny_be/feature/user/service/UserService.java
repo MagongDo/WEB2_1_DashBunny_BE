@@ -17,7 +17,6 @@ import lombok.extern.log4j.Log4j2;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -295,6 +294,39 @@ public class UserService {
         // 2. users 테이블에서 user_id로 조회
         return userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("userId에 대한 사용자를 찾을 수 없습니다: " + userId));
+    }
+
+    public User registerOwner(UserDTO userDTO) throws Exception {
+
+        if(userRepository.findByPhone(userDTO.getPhone()).isPresent()) {
+            throw new Exception("이미 존재하는 전화번호입니다.");
+        }
+
+        // 비밀번호가 있는지 확인
+        String rawPassword = userDTO.getPassword();
+        String encodedPassword;
+
+        if (rawPassword != null && !rawPassword.isEmpty()) {
+            encodedPassword = passwordEncoder.encode(rawPassword);
+        } else {
+            // 비밀번호가 없으면 랜덤 비밀번호 생성
+            String randomPassword = UUID.randomUUID().toString();
+            encodedPassword = passwordEncoder.encode(randomPassword);
+            log.info("비밀번호가 제공되지 않아 랜덤 비밀번호를 생성했습니다: {}", randomPassword);
+            // 필요시, 사용자에게 랜덤 비밀번호를 이메일 등으로 전송하는 로직을 추가할 수 있습니다.
+        }
+
+        User user = User.builder()
+                .phone(userDTO.getPhone())
+                .password(encodedPassword)
+                .name(userDTO.getName())
+                .birthday(userDTO.getBirthday())
+                .email(userDTO.getEmail())
+                .role("ROLE_OWNER") // 기본 역할 설정
+                .createdDate(LocalDateTime.now())
+                .build();
+
+        return userRepository.save(user);
     }
 
 }
