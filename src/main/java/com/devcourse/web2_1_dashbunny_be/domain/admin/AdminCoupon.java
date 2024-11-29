@@ -2,11 +2,10 @@ package com.devcourse.web2_1_dashbunny_be.domain.admin;
 
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponStatus;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponType;
-import com.devcourse.web2_1_dashbunny_be.domain.admin.role.DiscountType;
+import com.devcourse.web2_1_dashbunny_be.domain.common.role.DiscountType;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.*;
-import org.hibernate.annotations.UuidGenerator;
 
 
 /**
@@ -45,6 +44,7 @@ public class AdminCoupon {
   @Column(nullable = false)
   private CouponType couponType = CouponType.Regula; //쿠폰 유형 (일반, 선착순)
 
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private DiscountType discountType; //할인 타입 (정률,정액)
 

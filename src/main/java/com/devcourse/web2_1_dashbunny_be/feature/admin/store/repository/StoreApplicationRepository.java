@@ -4,12 +4,14 @@ import com.devcourse.web2_1_dashbunny_be.domain.admin.StoreApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 /**
  * 가게 생성 repository.
  */
+@Repository
 public interface StoreApplicationRepository extends JpaRepository<StoreApplication, Long> {
 
   /**

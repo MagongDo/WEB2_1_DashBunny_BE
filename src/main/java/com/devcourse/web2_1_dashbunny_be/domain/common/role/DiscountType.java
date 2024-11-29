@@ -1,4 +1,4 @@
-package com.devcourse.web2_1_dashbunny_be.domain.admin.role;
+package com.devcourse.web2_1_dashbunny_be.domain.common.role;
 
 /**
  * 쿠폰 할입타입 enum.

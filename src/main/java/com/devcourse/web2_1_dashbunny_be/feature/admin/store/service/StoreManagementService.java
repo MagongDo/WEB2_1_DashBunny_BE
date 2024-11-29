@@ -25,10 +25,9 @@ public class StoreManagementService {
   private final StoreManagementRepository storeManagementRepository;
   private final StoreApplicationRepository storeApplicationRepository;
 
-/**
+  /**
    * 가게 등록 신청 메서드.
    */
-
   @Transactional
   public StoreManagement create(CreateStoreRequestDto storeCreateRequestDto) {
     // 가게 객체 생성
@@ -48,10 +47,9 @@ public class StoreManagementService {
   //가게 재등록 신청
 
 
-/**
+  /**
    * 가게 재등록 신청 메서드.
    */
-
   @Transactional
   public StoreManagement reCreate(String storeId, CreateStoreRequestDto storeCreateRequestDto) {
     StoreManagement storeManagement = storeManagementRepository.findById(storeId)
@@ -84,19 +82,15 @@ public class StoreManagementService {
   }
 
 
-  // 가게 폐업 신청
-
-
-/**
+  /**
    * 가게 폐업 신청 메서드.
    */
-
   @Transactional
   public StoreManagement close(String storeId) {
     StoreManagement storeManagement = storeManagementRepository.findById(storeId)
             .orElseThrow(() -> new IllegalArgumentException("Store ID not found: " + storeId));
 
-    //TEMP_CLOSE이라면 CLOSURE_PENDING은 제가 멋대로 만든거니 수정하시면 됩니다!
+
     if (storeManagement.getStoreStatus() == StoreStatus.TEMP_CLOSE) {
       storeManagement.setStoreStatus(StoreStatus.CLOSURE_PENDING);
 
