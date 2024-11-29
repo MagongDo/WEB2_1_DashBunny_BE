@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 가게 레포지토리 클래스.
@@ -56,5 +57,7 @@ public interface StoreManagementRepository extends JpaRepository<StoreManagement
    * 관리자 - 여러 상태를 포함한 가게 목록 조회.
    */
   Page<StoreManagement> findByStoreStatusIn(List<StoreStatus> storeStatuses, Pageable pageable);
+
+  Optional<StoreManagement> findByStoreId(String storeId);
 
 }

@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 
 import com.devcourse.web2_1_dashbunny_be.config.s3.FileUploadService;
@@ -26,12 +27,14 @@ public class UserController {
     private final UserService userService;
     private final FileUploadService fileUploadService;
 
-    /**
+    */
+/**
      * 사용자의 프로필 사진을 업로드하는 엔드포인트입니다.
      *
      * @param profileImage 업로드된 파일
      * @return 업로드 결과를 포함한 ResponseEntity
-     */
+     *//*
+
     @PostMapping("/upload-profile-picture")
     public ResponseEntity<?> uploadProfilePicture(@RequestParam("profileImage") MultipartFile profileImage) {
 
@@ -78,7 +81,7 @@ public class UserController {
 //    }
 
     // 닉네임 변경
-    @PutMapping("/update-name")
+    @PostMapping("/update-name")
     public ResponseEntity<?> updateName(@RequestBody User user) {
         try {
             userService.updateName(user.getName());
@@ -89,3 +92,4 @@ public class UserController {
     }
 
 }
+*/

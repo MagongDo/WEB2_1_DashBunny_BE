@@ -1,6 +1,5 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 
-import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCartResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UsersCartService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +35,11 @@ public class UserCartController {
     @GetMapping("/carts")
     public ResponseEntity<UsersCartResponseDto> getCart(Principal principal) {
         return ResponseEntity.ok(cartService.getCart(principal.getName()));
+    }
+    @PostMapping("/carts/checkout")
+    public ResponseEntity<UsersCartResponseDto> checkoutCart(Principal principal) {
+        UsersCartResponseDto cartDto = cartService.checkoutCart(principal.getName());
+        return ResponseEntity.ok(cartDto);
     }
 }
 

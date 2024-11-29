@@ -5,7 +5,7 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.SmsVerification;
 import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDTO;
-import com.devcourse.web2_1_dashbunny_be.feature.user.service.FileStorageService;
+/*import com.devcourse.web2_1_dashbunny_be.feature.user.service.FileStorageService;*/
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -103,7 +103,7 @@ public class AuthController {
 
     @GetMapping("/test")
     public ResponseEntity<?> getTest() {
-        Object a = userService.getCurrentUser();
+        User a = userService.getCurrentUser();
         System.out.println("getCurrentUser : " + a);
         return ResponseEntity.ok(userService.getCurrentUser());
     }

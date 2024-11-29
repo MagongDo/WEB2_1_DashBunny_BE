@@ -6,6 +6,7 @@ import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreClosureRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreApplicationRepository;
 
 import java.util.List;
@@ -88,7 +89,7 @@ public class StoreApplicationService {
   /**
    * 가게 폐업 승인 메서드.
    */
-  public void close(String storeId) {
+  public void close(String storeId ) {
     StoreManagement storeManagement = storeManagementRepository.findById(storeId)
             .orElseThrow(() -> new IllegalArgumentException("Store not found for ID: " + storeId));
     StoreApplication storeApplication = storeApplicationRepository.findByStoreIdAndClosure(storeId);

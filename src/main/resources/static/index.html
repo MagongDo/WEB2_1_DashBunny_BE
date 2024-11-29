@@ -1,15 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Toss Payments 테스트</title>
 </head>
 <body>
-안녕하시렵니까? 반갑습니다? 메인으로 쏘기
-<form action="/logout" method="POST">
-    <!-- CSRF Token (Spring Security가 CSRF 보호를 활성화한 경우 필요) -->
-    <!--    <input type="hidden" name="_csrf" value="${_csrf.token}">-->
-    <button type="submit" class="logout-btn">Log Out</button>
-</form>
+<h1>Toss Payments 결제 테스트</h1>
+<button id="checkoutButton">결제 시작</button>
+
+<script>
+    document.getElementById('checkoutButton').addEventListener('click', function() {
+        // 결제 요청 데이터
+        const paymentData = {
+            cartId: 2, // 예시 cartId (실제 데이터로 변경)
+            orderName: 'Order for Cart ID: 2'
+        };
+
+        // 로딩 상태 표시
+        const button = document.getElementById('checkoutButton');
+        button.disabled = true;
+        button.textContent = '결제 중...';
+
+        // 결제 생성 API 호출
+        fetch('http://localhost:8080/api/users/carts/checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(paymentData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('결제 생성에 실패했습니다.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.redirectUrl) {
+                    // Toss Payments 결제 페이지로 리디렉션
+                    window.location.href = data.redirectUrl;
+                } else {
+                    // 에러 처리
+                    alert('결제 생성에 실패했습니다.');
+                    console.error('결제 생성 실패:', data);
+                    button.disabled = false;
+                    button.textContent = '결제 시작';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('결제 생성 중 오류가 발생했습니다.');
+                button.disabled = false;
+                button.textContent = '결제 시작';
+            });
+    });
+</script>
 </body>
 </html>
