@@ -1,7 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.service;
 
 
-
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

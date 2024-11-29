@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -12,30 +15,32 @@ import java.time.LocalDateTime;
 @Table(name = "payments")
 @Getter
 @Setter
+@EntityListeners(AuditingEntityListener.class)
 public class Payment {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 내부 결제 ID
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id; // 내부 결제 ID
 
-    @Column(unique = true)
-    private String paymentId; // 토스 결제 고유 ID
+  @Column(unique = true)
+  private String paymentId; // 토스 결제 고유 ID
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", nullable = false)
-    @ToString.Exclude
-    private Cart cart; // 장바구니와의 관계
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "cart_id", nullable = false)
+  @ToString.Exclude
+  private Cart cart; // 장바구니와의 관계
 
-    @Column(nullable = false)
-    private Long amount; // 결제 금액 (원 단위)
+  @Column(nullable = false)
+  private Long amount; // 결제 금액 (원 단위)
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PaymentStatus status; // 결제 상태
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private PaymentStatus status; // 결제 상태
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+  @CreatedDate
+  @Column(nullable = false)
+  private LocalDateTime createdAt; //생성 날짜
 
-    @Column
-    private LocalDateTime updatedAt;
+  @LastModifiedDate
+  private LocalDateTime updatedAt; //수정 날짜
 }
