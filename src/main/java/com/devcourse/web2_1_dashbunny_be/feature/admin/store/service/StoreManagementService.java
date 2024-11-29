@@ -68,7 +68,7 @@ public class StoreManagementService {
 //    storeManagement.setCategory2(storeCreateRequestDto.getCategory2());
 //    storeManagement.setCategory3(storeCreateRequestDto.getCategory3());
     storeManagement.setStoreRegistrationDocs(storeCreateRequestDto.getStoreRegistrationDocs());
-    storeManagement.setStoreBannerImage(storeCreateRequestDto.getStoreBannerImage());
+/*    storeManagement.setStoreBannerImage(storeCreateRequestDto.getStoreBannerImage());*/
     storeManagement.setStoreStatus(StoreStatus.PENDING); // 상태를 재등록 신청 중으로 변경
 
     // 업데이트된 StoreManagement 저장

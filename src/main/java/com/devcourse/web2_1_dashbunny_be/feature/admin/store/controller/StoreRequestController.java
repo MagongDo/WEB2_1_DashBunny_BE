@@ -6,16 +6,16 @@ import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreRespo
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreApplicationService;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreManagementService;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.CreateStoreRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.descriptor.web.ContextHandler;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 /**
  * 사장님: 가게 등록/폐업 신청 & 관리자: 승인/거절 repository.
@@ -34,35 +34,31 @@ public class StoreRequestController {
   /**
    * 사장님 - 가게 등록 신청 api (POST).
    */
-  @PostMapping(value = "/create",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/create")
   public ResponseEntity<String> createStore(
-          @RequestParam(name = "bannerImageFile") MultipartFile bannerImageFile,
-          @RequestParam(name = "logoImageFile") MultipartFile logoImageFile,
+          @RequestParam(name = "docsImageFile") MultipartFile docsImageFile,
           @RequestPart(name = "request") CreateStoreRequestDto request) {
-    try {
-      log.info("Creating a new store request{}",request.toString());
-      String bannerImageFileUrl = fileUploadService.uploadFile(bannerImageFile,"storeBannerImage");
-      String logoImageFileUrl = fileUploadService.uploadFile(logoImageFile,"storeLogoImage");
-
-      log.info("url{}",bannerImageFileUrl);
-      log.info("url{}",logoImageFileUrl);
-
-      request.setStoreBannerImage(bannerImageFileUrl);
-      request.setStoreLogo(logoImageFileUrl);
-      // 디버그 로그 추가
-      System.out.println("배너 파일 이름: " + bannerImageFile.getOriginalFilename());
-      System.out.println("로고 파일 이름: " + logoImageFile.getOriginalFilename());
-      System.out.println("가게 이름: " + request.getStoreName());
-      System.out.println("카테고리: " + request.getCategories());
+    String pone = SecurityContextHolder.getContext().getAuthentication().getName();
+    log.info("user {}", pone);
+    try{
+      String docsUrl = fileUploadService.uploadFile(docsImageFile, "storeDocsImage");
+      request.setUserName(pone);
+      request.setStoreRegistrationDocs(docsUrl);
       storeManagementService.create(request);
       return ResponseEntity.ok("가게 등록 승인 요청을 성공했습니다.");
-    } catch (Exception e) {
+    }catch (Exception e){
+      e.printStackTrace();
+      return ResponseEntity.badRequest().body("파일 업로드에 실패했습니다");
 
-      return ResponseEntity.internalServerError().body("파일 업로드 실패: " + e.getMessage());
     }
+
   }
 
-
+//      log.info("Creating a new store request{}",request.toString());
+//      String bannerImageFileUrl = fileUploadService.uploadFile(bannerImageFile, "storeBannerImage");
+//      String logoImageFileUrl = fileUploadService.uploadFile(logoImageFile, "storeLogoImage");
+//      @RequestParam(name = "bannerImageFile") MultipartFile bannerImageFile,
+//      @RequestParam(name = "logoImageFile") MultipartFile logoImageFile,
   /**
    * 사장님 - 가게 등록 재신청 api (POST).
    */

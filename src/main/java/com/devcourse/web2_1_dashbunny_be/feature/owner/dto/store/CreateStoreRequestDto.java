@@ -4,14 +4,15 @@ import com.devcourse.web2_1_dashbunny_be.domain.owner.Categorys;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.CategoryType;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
-import jakarta.persistence.Column;
+import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.List;
+
 
 /**
  * 생성된 가게 정보를 넘겨주는 dto.
@@ -21,17 +22,15 @@ import java.util.List;
 @ToString
 @Builder
 public class CreateStoreRequestDto {
-  private String storeName;          // 가게 이름
-  private String contactNumber;      // 가게 연락처
-  private String address;            // 가게 위치
-  private String description;        // 가게 소개
-  private Double latitude;  //위도
-  private Double longitude; //경도
+  private String storeName;             // 가게 이름
+  private String contactNumber;         // 가게 연락처
+  private String address;               // 가게 위치
+  private String description;           // 가게 소개
+  private Double latitude;              //위도
+  private Double longitude;             //경도
   private String storeRegistrationDocs; // 등록 서류
-  private String storeLogo;          // 가게 매장 로고
-  private String storeBannerImage;    // 가게 배너 이미지
   private StoreStatus storeStatus;
-  private String userName; //사장님 이름-- StoreManagement엔티티에 아직 없음
+  private String userName;              //사장님 이름
 
   @Size(max = 3, message = "카테고리는 최대 3개까지 선택할 수 있습니다.")
   private List<CategoryType> categories;
@@ -46,24 +45,22 @@ public class CreateStoreRequestDto {
     storeManagement.setAddress(this.address);
     storeManagement.setStoreDescription(this.description);
     storeManagement.setStoreRegistrationDocs(this.storeRegistrationDocs);
-    storeManagement.setStoreLogo(this.storeLogo);
-    storeManagement.setStoreBannerImage(this.storeBannerImage);
     storeManagement.setLatitude(this.latitude);
     storeManagement.setLongitude(this.longitude);
     storeManagement.setStoreStatus(StoreStatus.PENDING);
     storeManagement.setUser(user);
 
-    if (this.categories != null) {
-      List<Categorys> categoryEntities = this.categories.stream()
-              .map(type -> {
-                Categorys category = new Categorys();
-                category.setCategoryType(type);
-                return category;
-              })
-              .toList();
-      storeManagement.setCategory(categoryEntities);
-    }
+    // CategoryType 리스트를 Categorys 리스트로 변환
+    List<Categorys> categoryEntities = this.categories.stream()
+            .map(categoryType -> {
+              Categorys category = new Categorys();
+              category.setCategoryType(categoryType);
+              category.setStoreManagement(storeManagement); // 연관 설정
+              return category;
+            })
+            .toList();
+
+    storeManagement.setCategory(categoryEntities);
     return storeManagement;
   }
-
 }

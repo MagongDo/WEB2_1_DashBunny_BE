@@ -33,7 +33,7 @@ public class StoreManagement {
 
     // userid 빠져있음
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     // operationid 빠져있음
@@ -96,7 +96,6 @@ public class StoreManagement {
 
     @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Categorys> category = new ArrayList<>();
-
 
 
     public Long maxDiscountPrice() {
