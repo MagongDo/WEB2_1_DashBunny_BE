@@ -3,6 +3,7 @@ package com.devcourse.web2_1_dashbunny_be.feature.admin.store.controller;
 import com.devcourse.web2_1_dashbunny_be.config.s3.FileUploadService;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreClosureRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreApplicationService;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreManagementService;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.CreateStoreRequestDto;
@@ -38,15 +39,15 @@ public class StoreRequestController {
   public ResponseEntity<String> createStore(
           @RequestParam(name = "docsImageFile") MultipartFile docsImageFile,
           @RequestPart(name = "request") CreateStoreRequestDto request) {
-    String pone = SecurityContextHolder.getContext().getAuthentication().getName();
-    log.info("user {}", pone);
-    try{
+    String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+    log.info("user {}", phone);
+    try {
       String docsUrl = fileUploadService.uploadFile(docsImageFile, "storeDocsImage");
-      request.setUserName(pone);
+      request.setUserPhone(phone);
       request.setStoreRegistrationDocs(docsUrl);
       storeManagementService.create(request);
       return ResponseEntity.ok("가게 등록 승인 요청을 성공했습니다.");
-    }catch (Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
       return ResponseEntity.badRequest().body("파일 업로드에 실패했습니다");
 
@@ -63,9 +64,25 @@ public class StoreRequestController {
    * 사장님 - 가게 등록 재신청 api (POST).
    */
   @PostMapping("/recreate/{storeId}")
-  public ResponseEntity<String> recreateStore(@PathVariable String storeId, @RequestBody CreateStoreRequestDto storeCreateRequestDto) {
-    storeManagementService.reCreate(storeId, storeCreateRequestDto);
-    return ResponseEntity.ok("가게 등록 재승인 요청을 성공했습니다.");
+  public ResponseEntity<String> recreateStore(@PathVariable String storeId,
+                                              @RequestParam(name = "docsImageFile") MultipartFile docsImageFile,
+                                              @RequestPart(name = "request") CreateStoreRequestDto request) {
+//    storeManagementService.reCreate(storeId, request);
+//    return ResponseEntity.ok("가게 등록 재승인 요청을 성공했습니다.");
+
+    String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+    log.info("user {}", phone);
+    try {
+      String docsUrl = fileUploadService.uploadFile(docsImageFile, "storeDocsImage");
+      request.setUserPhone(phone);
+      request.setStoreRegistrationDocs(docsUrl);
+      storeManagementService.reCreate(storeId, request);
+      return ResponseEntity.ok("가게 재등록 승인 요청을 성공했습니다.");
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.badRequest().body("파일 업로드에 실패했습니다");
+
+    }
   }
 
 
@@ -77,6 +94,11 @@ public class StoreRequestController {
     storeManagementService.close(storeId);
     return ResponseEntity.ok("가게 폐업 승인 요청을 성공했습니다.");
   }
+//  @PostMapping("/closure/{storeId}")
+//  public ResponseEntity<String> closeStore(@PathVariable String storeId, @RequestBody StoreClosureRequestDto request) {
+//    storeManagementService.close(storeId,request);
+//    return ResponseEntity.ok("가게 폐업 승인 요청을 성공했습니다.");
+//  }
 
 
 

@@ -7,6 +7,7 @@ import com.devcourse.web2_1_dashbunny_be.domain.admin.role.StoreIsApproved;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreClosureRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreApplicationRepository;
 
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.CreateStoreRequestDto;
@@ -33,7 +34,7 @@ public class StoreManagementService {
    */
   @Transactional
   public StoreManagement create(CreateStoreRequestDto storeCreateRequestDto) {
-    User user = userRepository.findByPhone(storeCreateRequestDto.getUserName()).orElseThrow();
+    User user = userRepository.findByPhone(storeCreateRequestDto.getUserPhone()).orElseThrow();
     // 가게 객체 생성
     StoreManagement savedStoreManagement = storeManagementRepository.save(storeCreateRequestDto.toEntity(user));
 
@@ -84,7 +85,7 @@ public class StoreManagementService {
     );
     return savedStoreManagement;
   }
-
+//, StoreClosureRequestDto closureRequestDto
 
   /**
    * 가게 폐업 신청 메서드.
