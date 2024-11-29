@@ -15,6 +15,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -53,7 +54,7 @@ public class NoticeController {
    * 현재 로그인한 사용자의 권한을 내부에서 확인하고 필터링해야함.
    */
   //http://localhost:8080/api/notice/admin?role=OWNER이게 아님..
-  @GetMapping("")
+  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<AdminNoticeListResponseDto>> getNotices()  {
     String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
     log.info("------------currentUser: " + currentUser);
@@ -75,7 +76,7 @@ public class NoticeController {
   /**
    *단일 공지사항 조회 api (GET).
    */
-  @GetMapping("/id/{noticeId}")
+  @GetMapping(value = "/id/{noticeId}",produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<AdminNoticeResponseDto> getNotice(@PathVariable Long noticeId) {
     AdminNoticeResponseDto adminNoticeResponseDto = noticeService.getNotice(noticeId);
     return ResponseEntity.ok().body(adminNoticeResponseDto);

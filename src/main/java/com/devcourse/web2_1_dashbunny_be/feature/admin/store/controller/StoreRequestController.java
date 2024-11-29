@@ -137,7 +137,7 @@ public class StoreRequestController {
   /**
    * 관리자 - 가게 조회 api (GET).
    */
-  @GetMapping("/{storeId}")
+  @GetMapping(value = "/{storeId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<AdminStoreResponseDto> getStore(@PathVariable String storeId) {
     AdminStoreResponseDto adminStoreResponseDto = storeApplicationService.getStore(storeId);
     return ResponseEntity.ok().body(adminStoreResponseDto);
