@@ -25,16 +25,17 @@ public class SocialUser implements Serializable { // 변경
 
     private String provider;
 
-    private Long userId;
+//    private Long userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    private User user;
 
     private String userName;
 
     @Builder.Default
     @Column(nullable = false, length = 11)
     private String role = "ROLE_USER";
-
-    @Column(length = 255)
-    private String profileImageUrl;
 
     @CreatedDate
     private LocalDateTime createdDate;

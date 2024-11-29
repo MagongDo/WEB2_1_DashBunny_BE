@@ -51,34 +51,34 @@ public class SecurityConfig {
                 // CSRF 보호 비활성화 (실제 운영 환경에서는 활성화 권장)
                 .csrf(AbstractHttpConfigurer::disable)
                 // 인증 제공자 설정
-                .authenticationProvider(authenticationProvider())
-
+//                .authenticationProvider(authenticationProvider())
+//
 //                // 요청에 대한 권한 설정
+//                // 권한순서는 위에서부터 아래로 내려감
 //                .authorizeHttpRequests(authorize -> authorize
-//                        // 모든 요청에 대해 접근 허용
-//                        .anyRequest().permitAll()
+//                        .requestMatchers("/api/user/upload-profile-picture").permitAll()
+//                        .requestMatchers("/api/auth/session-user").hasRole("USER")
+//                        .requestMatchers("/api/user/**").hasRole("USER")
+//                        .requestMatchers("/uploads/upload-profile-picture").hasAnyRole("ADMIN", "USER")
+//                        .requestMatchers(
+//                                "/api/auth/**",
+//                                "/login",
+//                                "/main",
+//                                "/test",
+//                                "/error",
+//                                "/favicon.ico",
+//                                "/images/**",
+//                                "/css/**",
+//                                "/js/**"
+//                        ).permitAll()
+//                        .anyRequest().authenticated()
 //                )
 
-                // 요청에 대한 권한 설정
-                // 권한순서는 위에서부터 아래로 내려감
                 .authorizeHttpRequests(authorize -> authorize
-//                                .requestMatchers("/api/user/upload-profile-picture").permitAll()
-//                                .requestMatchers("/api/auth/session-user").hasRole("USER")
-////                        .requestMatchers("/uploads/upload-profile-picture").hasAnyRole("ADMIN", "USER")
-//                                .requestMatchers(
-//                                        "/api/auth/**",
-//                                        "/login",
-//                                        "/main",
-//                                        "/test",
-//                                        "/error",
-//                                        "/favicon.ico",
-//                                        "/images/**",
-//                                        "/css/**",
-//                                        "/js/**"
-//                                ).permitAll()
-//                                .requestMatchers("/api/user/**").hasRole("USER")
-                                .anyRequest().authenticated()
+                        // 모든 요청에 대해 인증 없이 접근 허용
+                        .anyRequest().permitAll()
                 )
+
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
                         .successHandler(oAuth2AuthenticationSuccessHandler)

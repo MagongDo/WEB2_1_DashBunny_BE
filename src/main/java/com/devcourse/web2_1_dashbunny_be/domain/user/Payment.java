@@ -3,6 +3,7 @@ package com.devcourse.web2_1_dashbunny_be.domain.user;
 import com.devcourse.web2_1_dashbunny_be.domain.user.role.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
@@ -10,13 +11,14 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "payments")
 @Getter
+@Setter
 public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 내부 결제 ID
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String paymentId; // 토스 결제 고유 ID
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -36,6 +38,4 @@ public class Payment {
 
     @Column
     private LocalDateTime updatedAt;
-
-    // 추가 필드가 필요하다면 여기에 추가
 }

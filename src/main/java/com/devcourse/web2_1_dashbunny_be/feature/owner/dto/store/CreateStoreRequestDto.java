@@ -4,7 +4,6 @@ import com.devcourse.web2_1_dashbunny_be.domain.owner.Categorys;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.CategoryType;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
-import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;

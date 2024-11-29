@@ -3,12 +3,10 @@ package com.devcourse.web2_1_dashbunny_be.feature.user.service;
 import com.devcourse.web2_1_dashbunny_be.config.GeoUtils;
 import com.devcourse.web2_1_dashbunny_be.config.KakaoGeocoding;
 import com.devcourse.web2_1_dashbunny_be.config.RedisKeyUtil;
-import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuGroup;
-import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
-import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreFlag;
-import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.*;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuGroupRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.DeliveryOperatingInfoRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreResponseDto;
@@ -31,6 +29,7 @@ public class UsersStoreService {
     private final StoreManagementRepository storeManagementRepository;
     private final UserRepository userRepository;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final DeliveryOperatingInfoRepository deliveryOperatingInfoRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuRepository menuRepository;
     private final KakaoGeocoding kakaoGeocoding; // 추가된 필드
@@ -168,8 +167,9 @@ public class UsersStoreService {
             }
 
             // DTO로 변환하여 응답 리스트에 추가
+            DeliveryOperatingInfo deliveryOperatingInfo=deliveryOperatingInfoRepository.findByStoreId(storeId);
             UsersStoreListResponseDto dto = new UsersStoreListResponseDto();
-            dto.toUsersStoreListResponseDto(store);
+            dto.toUsersStoreListResponseDto(store,deliveryOperatingInfo);
             responseDtos.add(dto);
         }
         return responseDtos;
@@ -201,7 +201,8 @@ public class UsersStoreService {
         List<MenuGroup> menuGroup=menuGroupRepository.findByStoreId(storeId);
         Optional<StoreManagement> store = storeManagementRepository.findById(storeId);
         List<MenuManagement> menu=menuRepository.findAllByStoreId(storeId);
+        DeliveryOperatingInfo deliveryOperatingInfo=deliveryOperatingInfoRepository.findByStoreId(storeId);
 
-        return UsersStoreResponseDto.toStoreResponseDto(Objects.requireNonNull(store.orElse(null)),menuGroup,menu);
+        return UsersStoreResponseDto.toStoreResponseDto(Objects.requireNonNull(store.orElse(null)),menuGroup,menu,deliveryOperatingInfo);
     }
 }

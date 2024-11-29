@@ -2,6 +2,7 @@ package com.devcourse.web2_1_dashbunny_be.domain.user;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
@@ -56,12 +57,15 @@ public class User implements UserDetails {
 
     private LocalDateTime modifiedDate;
 
- /*   @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
-    private String isWithdrawn;*/
+    @Column(nullable = false, length = 1)
+    @Builder.Default
+    @Pattern(regexp = "[YN]")
+    private String isWithdrawn = "N";
 
     @Column(nullable = false, length = 1)
     @Builder.Default
-    private String isWithdrawn = "N";
+    @Pattern(regexp = "[YN]")
+    private String isSocial = "N";
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

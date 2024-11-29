@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -46,8 +47,10 @@ public class AuthController {
     @GetMapping("/session-user")
     public SocialUser getSessionUser(HttpSession session) {
         SocialUser socialUser = (SocialUser) session.getAttribute(SESSION_USER_KEY);
+        log.info("/session-user : " + socialUser);
         return socialUser;
     }
+
 
     /**
      * 사용자의 전화번호로 인증 코드를 SMS로 전송하는 엔드포인트입니다.
@@ -95,12 +98,15 @@ public class AuthController {
         }
     }
 
-//    @PostMapping("/save-additional-data")
-//    public String saveAdditionalData(@RequestBody UserDTO userDTO, HttpSession session) {
-//        session.setAttribute(SESSION_ADDITIONAL_DATA_KEY, userDTO.getPhone());
-//        log.info("저장된 세션 번호 {}", session.getAttribute(SESSION_ADDITIONAL_DATA_KEY));
-//        return "Additional data saved in session.";
-//    }
+
+
+
+    @GetMapping("/test")
+    public ResponseEntity<?> getTest() {
+        User a = userService.getCurrentUser();
+        System.out.println("getCurrentUser : " + a);
+        return ResponseEntity.ok(userService.getCurrentUser());
+    }
 
 
 

@@ -1,5 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.dto;
 
+import com.devcourse.web2_1_dashbunny_be.domain.owner.DeliveryOperatingInfo;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import lombok.AllArgsConstructor;
@@ -19,13 +20,13 @@ public class UsersStoreListResponseDto {
     private String storeLogo;
     private double rating;
     private int reviewCount;
-    private Long baseDeliveryTip;
+    private Long deliveryTip;
     private String minDeliveryTime;
     private String maxDeliveryTime;
     private Long discountPrice;
     private StoreStatus status;
 
-    public void toUsersStoreListResponseDto(StoreManagement store) {
+    public void toUsersStoreListResponseDto(StoreManagement store, DeliveryOperatingInfo deliveryOperatingInfo) {
         if (store == null) {
             return;
         }
@@ -37,10 +38,10 @@ public class UsersStoreListResponseDto {
             this.reviewCount = store.getStoreFeedback().getReviewCount();
         }
 
-        if (store.getDeliveryInfo() != null) {
-            this.baseDeliveryTip = store.getDeliveryInfo().getBaseDeliveryTip();
-            this.minDeliveryTime = store.getDeliveryInfo().getMinDeliveryTime();
-            this.maxDeliveryTime = store.getDeliveryInfo().getMaxDeliveryTime();
+        if (deliveryOperatingInfo != null) {
+            this.deliveryTip = deliveryOperatingInfo.getDeliveryTip();
+            this.minDeliveryTime = deliveryOperatingInfo.getMinDeliveryTime();
+            this.maxDeliveryTime = deliveryOperatingInfo.getMaxDeliveryTime();
             this.discountPrice = store.maxDiscountPrice(); // 실제 할인 가격 필드로 수정
         }
 

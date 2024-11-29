@@ -21,6 +21,8 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.dto.UserCouponL
 import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.repository.UserCouponRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,7 @@ public class UserCouponService {
   private final OwnerCouponRepository ownerCouponRepository;
   private final UserRepository userRepository;
   private final SocialUserRepository socialUserRepository;
+  private final RedisTemplate<String, Object> redisTemplate;
 
 
   /**
@@ -175,8 +178,32 @@ public class UserCouponService {
    * 관리자가 발급한 선착순 쿠폰 다운로드 메서드.
    */
   private UserCoupon downloadFirstComeCoupon(User currentUser, Long couponId) {
-    return null;
-      //레디스 사용
+    String redisKey = "firstComeCoupon:" + couponId;
+    ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
+
+    // Atomically increment the count
+    Long newCount = valueOps.increment(redisKey, 1);
+
+    // Fetch AdminCoupon to get maxIssuance
+    AdminCoupon adminCoupon = adminCouponRepository.findById(couponId)
+            .orElseThrow(() -> new IllegalArgumentException("해당 쿠폰이 존재하지 않습니다."));
+
+    if (newCount > adminCoupon.getMaxIssuance()) {
+      // Decrement the count as the issuance is over the limit
+      valueOps.increment(redisKey, -1);
+      throw new IllegalArgumentException("선착순 쿠폰 발급 한도를 초과하였습니다.");
+    }
+
+    // Create UserCoupon
+    UserCoupon downloadCoupon = UserCoupon.builder()
+            .user(currentUser)
+            .couponId(couponId)
+            .issuedCouponType(IssuedCouponType.ADMIN)
+            .usedDate(null)
+            .couponUsed(false)
+            .build();
+
+    return userCouponRepository.save(downloadCoupon); // Save to DB
   }
 
   /**
@@ -243,7 +270,7 @@ public class UserCouponService {
     Optional<SocialUser> socialUser = socialUserRepository.findByProviderId(currentUser); //소셜 로그인 사용자인지 확인
 
     if (socialUser.isPresent()) {
-      return userRepository.findById(socialUser.get().getUserId())
+      return userRepository.findById(socialUser.get().getUser().getUserId())
                 .orElseThrow(() -> new IllegalStateException("해당 소셜 사용자에 연결된 일반 사용자를 찾을 수 없습니다."));
     }
 
