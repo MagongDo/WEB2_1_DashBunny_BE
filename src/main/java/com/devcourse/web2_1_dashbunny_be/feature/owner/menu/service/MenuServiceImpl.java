@@ -141,5 +141,13 @@ public class MenuServiceImpl implements MenuService {
                         .map(group -> new MenuGroupResponseDto(group.getGroupId(), group.getGroupName()))
                         .collect(Collectors.toList()))
                 .build();
-    }
+  }
+
+  /**
+  * 메뉴 단 건 삭제.
+  */
+  @Override
+  public void deleteMenu(Long menuId) {
+    menuRepository.deleteById(menuId);
+  }
 }
