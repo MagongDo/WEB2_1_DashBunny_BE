@@ -19,14 +19,14 @@ public class AdminStoreListResponseDto {
 
   private String storeId;
   private String storeName;
-  private String contactNumber;
+  private String userPhone;
   private String description;
   private String address;
   private StoreStatus storeStatus;
   private String storeLogo;    // 가게 로고 이미지
   private String userName; //사장님 이름
   private LocalDateTime approvedDate; //승인 날짜
-  //수정날짜로 받기
+
 
   /**
    * StoreManagement 엔티티에서 DTO로 데이터를 변환을 위한 생성자.
@@ -34,7 +34,7 @@ public class AdminStoreListResponseDto {
   public AdminStoreListResponseDto(StoreManagement storeManagement) {
     this.storeId = storeManagement.getStoreId();
     this.storeName = storeManagement.getStoreName();
-    this.contactNumber = storeManagement.getContactNumber();
+    this.userPhone = storeManagement.getUser().getPhone();
     this.description = storeManagement.getStoreDescription();
     this.address = storeManagement.getAddress();
     this.storeStatus = storeManagement.getStoreStatus();

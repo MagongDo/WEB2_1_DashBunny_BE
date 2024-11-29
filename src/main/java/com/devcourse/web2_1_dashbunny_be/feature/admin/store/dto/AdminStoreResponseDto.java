@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * 가게 단일 정보 조회 데이터를 넘겨주는 DTO.
  */
@@ -15,18 +18,16 @@ import lombok.NoArgsConstructor;
 public class AdminStoreResponseDto {
   private String storeId;
   private  String storeName;          // 가게 이름
-  private String contactNumber;      // 가게 연락처
+  private String userPhone;      // 가게 연락처
   private String address;            // 가게 위치
   private String description;        // 가게 소개
-  private String category1;          // 대표 카테고리
-  private String category2;          // 추가 카테고리 1
-  private String category3;          // 추가 카테고리 2
+  private List<String> categories;   // 카테고리 리스트로 변경
   private Double latitude;  //위도
   private Double longitude; //경도
   private String storeRegistrationDocs; // 등록 서류
   private String storeBannerImage;    // 가게 배너 이미지
   private StoreStatus storeStatus; //가게 상태
-  private String userName; //사장님 이름-- StoreManagement엔티티에 아직 없음
+  private String userName; //사장님 이름
 
   /**
    * StoreManagement 엔티티에서 DTO로 데이터를 변환을 위한 생성자.
@@ -34,12 +35,12 @@ public class AdminStoreResponseDto {
   public AdminStoreResponseDto(StoreManagement storeManagement) {
     this.storeId = storeManagement.getStoreId();
     this.storeName = storeManagement.getStoreName();
-    this.contactNumber = storeManagement.getContactNumber();
+    this.userPhone = storeManagement.getUser().getPhone();
     this.address = storeManagement.getAddress();
     this.description = storeManagement.getStoreDescription();
-//    this.category1 = storeManagement.getCategory1();
-//    this.category2 = storeManagement.getCategory2();
-//    this.category3 = storeManagement.getCategory3();
+    this.categories = storeManagement.getCategory().stream() // 가게 카테고리 리스트 생성
+            .map(category -> category.getCategoryType().name()) // Enum 값을 문자열로 변환
+            .collect(Collectors.toList());
     this.storeRegistrationDocs = storeManagement.getStoreRegistrationDocs();
     this.storeBannerImage = storeManagement.getStoreBannerImage();
     this.storeStatus = storeManagement.getStoreStatus();
