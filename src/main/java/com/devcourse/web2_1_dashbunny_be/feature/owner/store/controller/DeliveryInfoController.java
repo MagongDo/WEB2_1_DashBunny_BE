@@ -1,4 +1,4 @@
-/*
+
 package com.devcourse.web2_1_dashbunny_be.feature.owner.store.controller;
 
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.delivery.DeliveryAreaRequestDto;
@@ -28,4 +28,4 @@ public class DeliveryInfoController {
         deliveryInfoService.setDeliveryArea(requestDto);
         return ResponseEntity.ok(new MessageResponseDto("배달 범위가 성공적으로 설정되었습니다."));
     }
-}*/
+}

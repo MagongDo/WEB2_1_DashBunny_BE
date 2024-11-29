@@ -15,7 +15,7 @@ public class DeliveryOperatingInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "deliveryInfoId", nullable = false)
-    private Long deliveryInfoId;
+    private Long id;
 
     @Column(name = "storeId", nullable = false)
     private String storeId;
