@@ -1,7 +1,8 @@
 package com.devcourse.web2_1_dashbunny_be.config;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+
+import com.nimbusds.jose.shaded.gson.JsonObject;
+import com.nimbusds.jose.shaded.gson.JsonParser;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;

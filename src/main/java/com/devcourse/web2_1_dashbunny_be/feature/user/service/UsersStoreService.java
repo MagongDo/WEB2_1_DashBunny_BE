@@ -11,11 +11,13 @@ import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreMan
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
-import com.google.gson.JsonObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import com.nimbusds.jose.shaded.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

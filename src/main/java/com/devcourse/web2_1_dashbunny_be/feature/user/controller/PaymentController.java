@@ -3,8 +3,9 @@ package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.PaymentService;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+
+import com.nimbusds.jose.shaded.gson.JsonObject;
+import com.nimbusds.jose.shaded.gson.JsonParser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

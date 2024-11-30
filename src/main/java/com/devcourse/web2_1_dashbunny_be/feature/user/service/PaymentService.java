@@ -10,12 +10,13 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentRequest
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.PaymentRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UsersCartRepository;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Optional;
+
+import com.nimbusds.jose.shaded.gson.JsonObject;
+import com.nimbusds.jose.shaded.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
