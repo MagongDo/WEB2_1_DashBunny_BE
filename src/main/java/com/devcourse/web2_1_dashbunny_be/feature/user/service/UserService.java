@@ -43,7 +43,7 @@ public class UserService {
 
     public User registerUser(UserDTO userDTO) throws Exception {
 
-        if(userRepository.findByPhone(userDTO.getPhone()).isPresent()) {
+        if (userRepository.findByPhone(userDTO.getPhone()).isPresent()) {
             throw new Exception("이미 존재하는 전화번호입니다.");
         }
 
@@ -91,7 +91,7 @@ public class UserService {
         String providerId = oauth2User.getName();
 
         return findByProviderId(providerId)
-                .map(socialUser ->{
+                .map(socialUser -> {
                     log.warn("이미 존재하는 사용자 socialUser : {}\nprovider: {}\nproviderId : {}", socialUser, provider, providerId);
                     return socialUser;
                 })
@@ -180,7 +180,7 @@ public class UserService {
     /**
      * 사용자의 프로필 사진 URL을 업데이트합니다.
      *
-     * @param userId       사용자 ID
+     * @param userId          사용자 ID
      * @param profileImageUrl 프로필 사진 URL
      */
     @Transactional
