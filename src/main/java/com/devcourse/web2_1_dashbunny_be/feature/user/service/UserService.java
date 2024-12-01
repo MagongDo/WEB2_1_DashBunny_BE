@@ -17,7 +17,6 @@ import lombok.extern.log4j.Log4j2;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -197,8 +196,27 @@ public class UserService {
     }
 
     // 일반 로그인된 사용자 정보
-    public Object getCurrentUser() {
-        return SecurityUtil.getCurrentUser();
+    public User getCurrentUser() {
+        Object currentUser = SecurityUtil.getCurrentUser();
+
+        if (currentUser == null) {
+            throw new IllegalArgumentException("사용자가 인증되지 않음");
+        }
+        User user = null;
+        String providerId;
+        if (currentUser instanceof User) {
+            user = (User) currentUser;
+            // 사용자 찾기
+            user = userRepository.findByPhone(user.getPhone())
+                    .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다"));
+        } else if (currentUser instanceof OAuth2User) { // OAuth2 카카오 로그인 사용자 처리
+            OAuth2User oauth2User = (OAuth2User) currentUser;
+            // getName()으로 Name 값 가져오기
+            // provider_id 가져옴
+            providerId = oauth2User.getName();
+            user = findUserByProviderId(providerId);
+        }
+        return user;
     }
 
     // 비밀번호 변경
@@ -224,36 +242,20 @@ public class UserService {
     // 닉네임 변경
     public void updateName(String newName) {
         // 현재 로그인된 사용자 확인
-        Object currentUsername = getCurrentUser();
-        if (currentUsername == null) {
-            throw new IllegalArgumentException("사용자가 인증되지 않음");
-        }
-        User user = null;
-        String providerId;
-        if (currentUsername instanceof User) {
-            user = (User) currentUsername;
-            // 사용자 찾기
-            user = userRepository.findByPhone(user.getPhone())
-                    .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다"));
-        } else if (currentUsername instanceof OAuth2User) { // OAuth2 카카오 로그인 사용자 처리
-            OAuth2User oauth2User = (OAuth2User) currentUsername;
-            // getName()으로 Name 값 가져오기
-            // provider_id 가져옴
-            providerId = oauth2User.getName();
-            user = findUserByProviderId(providerId);
-        }
-
+        User user = getCurrentUser();
+        log.info("updateName : {} ",newName);
+        log.info("updateName : {} ",user);
         // 닉네임 변경
         User setUserName = user.toBuilder()
                 .name(newName)
                 .build();
-        userRepository.save(user);
+        userRepository.save(setUserName);
     }
 
     // 회원 탈퇴
     public void withdrawUser() {
         // 현재 로그인된 사용자 확인
-        Object currentUsername = getCurrentUser();
+        User currentUsername = getCurrentUser();
         if (currentUsername == null) {
             throw new IllegalArgumentException("사용자가 인증되지 않음");
         }
@@ -292,6 +294,39 @@ public class UserService {
         // 2. users 테이블에서 user_id로 조회
         return userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("userId에 대한 사용자를 찾을 수 없습니다: " + userId));
+    }
+
+    public User registerOwner(UserDTO userDTO) throws Exception {
+
+        if(userRepository.findByPhone(userDTO.getPhone()).isPresent()) {
+            throw new Exception("이미 존재하는 전화번호입니다.");
+        }
+
+        // 비밀번호가 있는지 확인
+        String rawPassword = userDTO.getPassword();
+        String encodedPassword;
+
+        if (rawPassword != null && !rawPassword.isEmpty()) {
+            encodedPassword = passwordEncoder.encode(rawPassword);
+        } else {
+            // 비밀번호가 없으면 랜덤 비밀번호 생성
+            String randomPassword = UUID.randomUUID().toString();
+            encodedPassword = passwordEncoder.encode(randomPassword);
+            log.info("비밀번호가 제공되지 않아 랜덤 비밀번호를 생성했습니다: {}", randomPassword);
+            // 필요시, 사용자에게 랜덤 비밀번호를 이메일 등으로 전송하는 로직을 추가할 수 있습니다.
+        }
+
+        User user = User.builder()
+                .phone(userDTO.getPhone())
+                .password(encodedPassword)
+                .name(userDTO.getName())
+                .birthday(userDTO.getBirthday())
+                .email(userDTO.getEmail())
+                .role("ROLE_OWNER") // 기본 역할 설정
+                .createdDate(LocalDateTime.now())
+                .build();
+
+        return userRepository.save(user);
     }
 
 }
