@@ -1,10 +1,9 @@
 package com.devcourse.web2_1_dashbunny_be.domain.user;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.Table;
-import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 
@@ -14,8 +13,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 public class PasswordResetRequest {
 
-    private String phone;
-    private String verificationCode;
-    private String newPassword;
+  private String phone;
+  private String verificationCode;
+  private String newPassword;
 
 }

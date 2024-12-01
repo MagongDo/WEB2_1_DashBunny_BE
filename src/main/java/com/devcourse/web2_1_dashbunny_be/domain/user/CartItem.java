@@ -12,18 +12,18 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CartItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cartItemId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long cartItemId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cartId", nullable = false)
-    private Cart cart;
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "cartId", nullable = false)
+  private Cart cart;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menuId", nullable = false)
-    private MenuManagement menuManagement;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "menuId", nullable = false)
+  private MenuManagement menuManagement;
 
-    @Column(name = "quantity", nullable = false)
-    private Long quantity;
+  @Column(name = "quantity", nullable = false)
+  private Long quantity;
 }

@@ -1,5 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 
+import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
@@ -29,12 +30,13 @@ public class UserStoreController {
   }
 
   @PostMapping("/stores/checking")
-  public ResponseEntity<Void> getUsersStoreChecking(@RequestParam String address,
-                                                    Principal principal) {
+  public ResponseEntity<Void> getUsersStoreChecking(@RequestParam String address
+                                                    ) {
+    User currentUser = userService.getCurrentUser();
     log.info(userService.getCurrentUser());
-    if (!usersStoreService.checkRedisData(principal.getName(), address)) {
+    if (!usersStoreService.checkRedisData(currentUser.getPhone(), address)) {
       // Redis 키가 없으면 데이터를 새로 추가
-      usersStoreService.redisAddStoreList(principal.getName(), address);
+      usersStoreService.redisAddStoreList(currentUser.getPhone(), address);
     }
 
     return ResponseEntity.ok().build();

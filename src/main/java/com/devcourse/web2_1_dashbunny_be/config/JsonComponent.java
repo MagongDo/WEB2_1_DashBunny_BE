@@ -16,28 +16,28 @@ public class JsonComponent {
 
   @PostConstruct
   public void init() {
-      objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
   }
 
   public String objectToJson(Object obj) {
-      String jsonStr = "";
-      try {
-          jsonStr = objectMapper.writeValueAsString(obj);
-      } catch (Exception e) {
-          log.error(ExceptionUtils.getStackTrace(e));
-          new RuntimeException("ParsingException", e);
-      }
-      return jsonStr;
+    String jsonStr = "";
+    try {
+      jsonStr = objectMapper.writeValueAsString(obj);
+    } catch (Exception e) {
+      log.error(ExceptionUtils.getStackTrace(e));
+      new RuntimeException("ParsingException", e);
+    }
+    return jsonStr;
   }
 
   public <T> T jsonToObject(String json, Class<T> clazz) {
-      T obj = null;
-      try {
-          obj = objectMapper.readValue(json, clazz);
-      } catch (Exception e) {
-          log.error(ExceptionUtils.getStackTrace(e));
-          new RuntimeException("ConvertException", e);
-      }
-      return obj;
+    T obj = null;
+    try {
+      obj = objectMapper.readValue(json, clazz);
+    } catch (Exception e) {
+      log.error(ExceptionUtils.getStackTrace(e));
+      new RuntimeException("ConvertException", e);
+    }
+    return obj;
     }
 }
