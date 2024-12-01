@@ -48,7 +48,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // 프론트엔드 주소
+        configuration.setAllowedOrigins(List.of("*")); // 프론트엔드 주소
 //        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://frontend.example.com")); // 여러 출처 허용
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-CSRF-TOKEN", "X-Requested-With"));
@@ -71,33 +71,33 @@ public class SecurityConfig {
 
                 // 요청에 대한 권한 설정
                 // 권한순서는 위에서부터 아래로 내려감
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/user/upload-profile-picture").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/auth/test").hasRole("ADMIN")
-                        .requestMatchers("/api/owner/**").hasRole("OWNER")
-                        .requestMatchers("/api/auth/session-user").hasRole("USER")
-                        .requestMatchers("/api/user/**").hasRole("USER")
-                        .requestMatchers("/uploads/upload-profile-picture").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(
-                                "/api/auth/**",
-                                "/login",
-                                "/main",
-                                "/error/**",
-//                                "/test",
-                                "/error",
-                                "/favicon.ico",
-                                "/images/**",
-                                "/css/**",
-                                "/js/**"
-                        ).permitAll()
-                        .anyRequest().authenticated()
-                )
-
 //                .authorizeHttpRequests(authorize -> authorize
-//                        // 모든 요청에 대해 인증 없이 접근 허용
-//                        .anyRequest().permitAll()
+//                        .requestMatchers("/api/user/upload-profile-picture").permitAll()
+//                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/api/auth/test").hasRole("ADMIN")
+//                        .requestMatchers("/api/owner/**").hasRole("OWNER")
+//                        .requestMatchers("/api/auth/session-user").hasRole("USER")
+//                        .requestMatchers("/api/user/**").hasRole("USER")
+//                        .requestMatchers("/uploads/upload-profile-picture").hasAnyRole("ADMIN", "USER")
+//                        .requestMatchers(
+//                                "/api/auth/**",
+//                                "/login",
+//                                "/main",
+//                                "/error/**",
+////                                "/test",
+//                                "/error",
+//                                "/favicon.ico",
+//                                "/images/**",
+//                                "/css/**",
+//                                "/js/**"
+//                        ).permitAll()
+//                        .anyRequest().authenticated()
 //                )
+
+                .authorizeHttpRequests(authorize -> authorize
+                        // 모든 요청에 대해 인증 없이 접근 허용
+                        .anyRequest().permitAll()
+                )
 
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")

@@ -131,14 +131,7 @@ public class UsersCartService {
     return UsersCartResponseDto.toUsersCartDto(cart, store.getStoreName(), deliveryOperatingInfo.getDeliveryTip(), null);
   }
 
-<<<<<<< HEAD
-        User user = userRepository.findByPhone(userId).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        Cart cart = cartRepository.findByUser(user);
-        MenuManagement menu = menuManagementRepository.findById(menuId).orElseThrow(IllegalArgumentException::new);
-        StoreManagement store = storeManagementRepository.findById(menu.getStoreId()).orElseThrow(IllegalArgumentException::new);
-        DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperationInfoRepository.findByStoreId(store.getStoreId());
-        List<CartItem> itemsToRemove = new ArrayList<>();
-=======
+
   public UsersCartResponseDto updateItemQuantity(String userId, Long menuId, Long counts) {
     User user = userRepository.findByPhone(userId).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
     Cart cart = cartRepository.findByUser(user);
@@ -146,7 +139,6 @@ public class UsersCartService {
     StoreManagement store = storeManagementRepository.findById(menu.getStoreId()).orElseThrow(IllegalArgumentException::new);
     DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperationInfoRepository.findByStoreId(store.getStoreId());
     List<CartItem> itemsToRemove = new ArrayList<>();
->>>>>>> origin/admin_user
 
     cart.getCartItems().forEach(item -> {
       if (item.getMenuManagement().getMenuId().equals(menuId)) {

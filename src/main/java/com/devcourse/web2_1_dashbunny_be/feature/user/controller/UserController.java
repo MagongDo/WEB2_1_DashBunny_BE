@@ -1,6 +1,7 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 
 import com.devcourse.web2_1_dashbunny_be.config.s3.FileUploadService;
+import com.devcourse.web2_1_dashbunny_be.domain.user.PasswordResetRequest;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDTO;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.FileStorageService;
@@ -83,9 +84,20 @@ public class UserController {
     public ResponseEntity<?> updateName(@RequestBody User user) {
         try {
             userService.updateName(user.getName());
-            return ResponseEntity.ok("Nickname updated successfully");
+            return ResponseEntity.ok("닉네임 변경 성공");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("닉네임 변경 실패: " + e.getMessage());
+        }
+    }
+
+    // 비밀번호 변경
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest request) {
+        try {
+            userService.resetPassword(request.getPhone(), request.getVerificationCode(), request.getNewPassword());
+            return ResponseEntity.ok("비밀번호 변경 성공");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("비밀번호 변경 실패: " + e.getMessage());
         }
     }
 
