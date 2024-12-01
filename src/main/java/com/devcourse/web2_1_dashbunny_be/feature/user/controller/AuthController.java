@@ -1,6 +1,7 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 
 
+import com.devcourse.web2_1_dashbunny_be.domain.user.PasswordResetRequest;
 import com.devcourse.web2_1_dashbunny_be.domain.user.SmsVerification;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDTO;
@@ -95,6 +96,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+
 
     @GetMapping("/test")
     public ResponseEntity<?> getTest() {
