@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 public class FirstComeCouponResponseDto {
   private Long couponId; //쿠폰 아이디
   private String couponName; //쿠폰명
+  private Long discountPrice; //할인 금액
   private DiscountType discountType; //할인 유형
   private Long maximumDiscount; //최대 할인 금액 (정률 방식에만)
   private LocalDateTime downloadStartDate; // (선착순 쿠폰일 경우)다운로드 시작 시간
@@ -29,6 +30,7 @@ public class FirstComeCouponResponseDto {
   public FirstComeCouponResponseDto(AdminCoupon adminCoupon) {
     this.couponId = adminCoupon.getCouponId();
     this.couponName = adminCoupon.getCouponName();
+    this.discountPrice = adminCoupon.getDiscountPrice();
     this.discountType = adminCoupon.getDiscountType();
     this.maximumDiscount = adminCoupon.getMaximumDiscount();
     this.downloadStartDate = adminCoupon.getDownloadStartDate();

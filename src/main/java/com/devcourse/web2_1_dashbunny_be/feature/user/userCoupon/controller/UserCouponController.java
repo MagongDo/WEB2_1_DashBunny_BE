@@ -6,6 +6,7 @@ import com.devcourse.web2_1_dashbunny_be.feature.owner.ownerCoupon.service.Owner
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.CustomUserDetailsService;
 import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.dto.FirstComeCouponResponseWrapper;
 import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.dto.GeneralCouponListResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.dto.OwnerCouponListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.dto.UserCouponListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.service.UserCouponService;
 import lombok.RequiredArgsConstructor;
@@ -54,25 +55,23 @@ public class UserCouponController {
     }
   }
 
-
   /**
    * 사장님이 발급한 쿠폰 목록 조회 api (GET).
    */
-//  @GetMapping("/owner")
-//  public ResponseEntity<List<OwnerCouponListResponseDto>> getOwnerCoupon() {
-//
-//
-//  }
-
+  @GetMapping("/owner/{storeId}")
+  public ResponseEntity<List<OwnerCouponListResponseDto>> getOwnerCoupon(@PathVariable String storeId) {
+    List<OwnerCouponListResponseDto> ownerCoupons = userCouponService.findActiveOwnerCoupons(storeId);
+    return ResponseEntity.status(HttpStatus.OK).body(ownerCoupons);
+  }
 
   /**
    * 일반 쿠폰 다운로드 api (POST).
    */
   @PostMapping("/download/general/{couponId}")
-  public ResponseEntity<String> downloadGeneralCoupon(@PathVariable Long couponId) {
+  public ResponseEntity<?> downloadGeneralCoupon(@PathVariable Long couponId) {
     //현재 사용자의 userId를 가져와야함
     userCouponService.downloadCoupon(couponId, IssuedCouponType.ADMIN);
-    return ResponseEntity.ok("쿠폰이 발급되었습니다!");
+    return ResponseEntity.ok(Collections.singletonMap("message", "쿠폰이 발급되었습니다!"));
 
   }
 
@@ -80,20 +79,21 @@ public class UserCouponController {
    * 가게 쿠폰 다운로드 api (POST).
    */
   @PostMapping("/download/owner/{couponId}")
-  public ResponseEntity<String> downloadOwnerCoupon(@PathVariable Long couponId) {
+  public ResponseEntity<?> downloadOwnerCoupon(@PathVariable Long couponId) {
     //현재 사용자의 userId를 가져와야함
     userCouponService.downloadCoupon(couponId, IssuedCouponType.OWNER);
-    return ResponseEntity.ok("쿠폰이 발급되었습니다!");
+    return ResponseEntity.ok(Collections.singletonMap("message", "쿠폰이 발급되었습니다!"));
+
   }
 
   /**
    * 선착순 쿠폰 다운로드 api (POST).
    */
-  @PostMapping("/download/firstCome/{couponId}")
-  public ResponseEntity<String> downloadFirstComeCoupon(@PathVariable Long couponId) {
+  @PostMapping("/download/first-come/{couponId}")
+  public ResponseEntity<?> downloadFirstComeCoupon(@PathVariable Long couponId) {
     //현재 사용자의 userId를 가져와야함
     userCouponService.downloadCoupon(couponId, IssuedCouponType.ADMIN);
-    return ResponseEntity.ok("선착순 쿠폰이 발급되었습니다!");
+    return ResponseEntity.ok(Collections.singletonMap("message", "선착순 쿠폰 다운로드에 성공했습니다!"));
   }
 
   /**

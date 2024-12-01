@@ -3,9 +3,11 @@ package com.devcourse.web2_1_dashbunny_be.exception;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +19,7 @@ import org.springframework.web.context.request.WebRequest;
 
 //** 전역 에러 클래스.
 
-
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -101,6 +103,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleDifferentStoreException(DifferentStoreException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
+
+
+  @ExceptionHandler(CustomException.class)
+  public ResponseEntity<?> handleCustomException(CustomException e) {
+
+
+    return ResponseEntity.status(e.getStatus())
+            .body(Collections.singletonMap("error", e.getMessage()));
+  }
 }
 
 //package com.devcourse.web2_1_dashbunny_be.exception;
