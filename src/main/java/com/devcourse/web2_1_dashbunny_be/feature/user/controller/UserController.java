@@ -45,22 +45,7 @@ public class UserController {
             String fileUrl = fileUploadService.uploadFile(profileImage, "profileImage");
             log.info("uploadProfilePicture : {}", fileUrl);
             // 현재 사용자 정보 가져오기
-            Object currentUser = userService.getCurrentUser();
-            User user = null;
-
-            if (currentUser == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증된 사용자가 아닙니다.");
-            }
-
-            if (currentUser instanceof User) {
-                user = (User) currentUser;
-            } else if (currentUser instanceof OAuth2User) { // OAuth2 카카오 로그인 사용자 처리
-                OAuth2User oauth2User = (OAuth2User) currentUser;
-                // getName()으로 Name 값 가져오기
-                // provider_id 가져옴
-                String providerId = oauth2User.getName();
-                user = userService.findUserByProviderId(providerId);
-            }
+            User user = userService.getCurrentUser();
 
             userService.updateProfileImageUrl(user.getUserId(), fileUrl);
 
