@@ -86,6 +86,7 @@ public class GlobalExceptionHandler {
 //  public ResponseEntity<String> handleAllExceptions(Exception ex) {
 //    return new ResponseEntity<>("서버 오류가 발생했습니다. 관리자에게 문의해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
 //  }
+  
   // RuntimeException 처리
   @ExceptionHandler(RuntimeException.class)
   public ResponseEntity<String> handleRuntimeException(RuntimeException e){
@@ -101,6 +102,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleDifferentStoreException(DifferentStoreException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
+
+  @ExceptionHandler(CustomException.class)
+  public ResponseEntity<String> handleCustomException(CustomException ex) {
+    return ResponseEntity.status(ex.getStatus()).body(ex.getMessage());
+  }
+
 }
 
 //package com.devcourse.web2_1_dashbunny_be.exception;
@@ -168,9 +175,6 @@ public class GlobalExceptionHandler {
 //  }
 //
 //
-//  @ExceptionHandler(CustomException.class)
-//  public ResponseEntity<String> handleCustomException(CustomException ex) {
-//    return ResponseEntity.status(ex.getStatus()).body(ex.getMessage());
-//  }
-//
-//}
+
+
+
