@@ -6,6 +6,7 @@ import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreClosureRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreApplicationRepository;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class StoreApplicationService {
   private final StoreApplicationRepository storeApplicationRepository;
   private final StoreManagementRepository storeManagementRepository;
@@ -87,7 +89,7 @@ public class StoreApplicationService {
   /**
    * 가게 폐업 승인 메서드.
    */
-  public void close(String storeId) {
+  public void close(String storeId ) {
     StoreManagement storeManagement = storeManagementRepository.findById(storeId)
             .orElseThrow(() -> new IllegalArgumentException("Store not found for ID: " + storeId));
     StoreApplication storeApplication = storeApplicationRepository.findByStoreIdAndClosure(storeId);

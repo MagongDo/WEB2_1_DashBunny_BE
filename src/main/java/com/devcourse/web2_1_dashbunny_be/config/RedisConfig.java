@@ -31,12 +31,12 @@ public class RedisConfig {
   public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
     RedisTemplate<String, Object> template = new RedisTemplate<>();
     template.setConnectionFactory(connectionFactory);
-    // Key Serializer
+      // Key를 String으로 직렬화
     template.setKeySerializer(new StringRedisSerializer());
-    // Value Serializer
+      // Value를 JSON으로 직렬화
     template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 
-    return template;
+        return template;
     }
 }
 

@@ -183,6 +183,8 @@ public class UserCouponService {
 
     // Atomically increment the count
     Long newCount = valueOps.increment(redisKey, 1);
+    // 현재 발급된 개수를 로그로 출력
+    log.info("쿠폰 ID: {}, Redis 발급 개수: {}", couponId, newCount);
 
     // Fetch AdminCoupon to get maxIssuance
     AdminCoupon adminCoupon = adminCouponRepository.findById(couponId)
@@ -191,6 +193,7 @@ public class UserCouponService {
     if (newCount > adminCoupon.getMaxIssuance()) {
       // Decrement the count as the issuance is over the limit
       valueOps.increment(redisKey, -1);
+      log.warn("쿠폰 ID: {}, Redis 발급 한도 초과! 현재 Redis 발급 개수: {}", couponId, newCount - 1);
       throw new IllegalArgumentException("선착순 쿠폰 발급 한도를 초과하였습니다.");
     }
 
@@ -203,13 +206,14 @@ public class UserCouponService {
             .couponUsed(false)
             .build();
 
+    log.info("쿠폰 ID: {}, 사용자 ID: {} - 쿠폰 발급 완료", couponId, currentUser.getUserId());
     return userCouponRepository.save(downloadCoupon); // Save to DB
   }
 
   /**
    * 현재 사용자 쿠폰함 목록을 조회하는 메소드.
    */
-  public List<UserCouponListResponseDto> findNotUsedCoupons(){
+  public List<UserCouponListResponseDto> findNotUsedCoupons() {
     User currentUser = currentUserValidation();
     List<UserCoupon> availableCoupons = userCouponRepository.findByUser_UserIdAndCouponUsedIsFalse(currentUser.getUserId());
 
@@ -227,6 +231,7 @@ public class UserCouponService {
                 adminCoupon.getMaximumDiscount(),
                 adminCoupon.getExpiredDate(),
                 adminCoupon.getCouponDescription()
+                //가게 이름
         );
       } else if (coupon.getIssuedCouponType() == IssuedCouponType.OWNER) {
         OwnerCoupon ownerCoupon = ownerCouponRepository.findById(coupon.getCouponId())

@@ -6,10 +6,13 @@ import com.devcourse.web2_1_dashbunny_be.domain.admin.role.StoreApplicationType;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.StoreIsApproved;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
+import com.devcourse.web2_1_dashbunny_be.domain.user.User;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreClosureRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreApplicationRepository;
 
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.CreateStoreRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,14 +27,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class StoreManagementService {
   private final StoreManagementRepository storeManagementRepository;
   private final StoreApplicationRepository storeApplicationRepository;
+  private final UserRepository userRepository;
 
   /**
    * 가게 등록 신청 메서드.
    */
   @Transactional
   public StoreManagement create(CreateStoreRequestDto storeCreateRequestDto) {
+    User user = userRepository.findByPhone(storeCreateRequestDto.getUserPhone()).orElseThrow();
     // 가게 객체 생성
-    StoreManagement savedStoreManagement = storeManagementRepository.save(storeCreateRequestDto.toEntity());
+    StoreManagement savedStoreManagement = storeManagementRepository.save(storeCreateRequestDto.toEntity(user));
 
     //가게 신청 유형을 CREATE 으로 객체 생성
     storeApplicationRepository.save(
@@ -64,7 +69,7 @@ public class StoreManagementService {
 //    storeManagement.setCategory2(storeCreateRequestDto.getCategory2());
 //    storeManagement.setCategory3(storeCreateRequestDto.getCategory3());
     storeManagement.setStoreRegistrationDocs(storeCreateRequestDto.getStoreRegistrationDocs());
-    storeManagement.setStoreBannerImage(storeCreateRequestDto.getStoreBannerImage());
+/*    storeManagement.setStoreBannerImage(storeCreateRequestDto.getStoreBannerImage());*/
     storeManagement.setStoreStatus(StoreStatus.PENDING); // 상태를 재등록 신청 중으로 변경
 
     // 업데이트된 StoreManagement 저장
@@ -80,7 +85,7 @@ public class StoreManagementService {
     );
     return savedStoreManagement;
   }
-
+//, StoreClosureRequestDto closureRequestDto
 
   /**
    * 가게 폐업 신청 메서드.
