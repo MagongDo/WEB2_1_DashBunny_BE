@@ -24,10 +24,11 @@ public class UsersStoreListResponseDto {
   private Long discountPrice;
   private StoreStatus status;
 
-  public void toUsersStoreListResponseDto(StoreManagement store, DeliveryOperatingInfo deliveryOperatingInfo) {
+  public UsersStoreListResponseDto toUsersStoreListResponseDto(StoreManagement store, DeliveryOperatingInfo deliveryOperatingInfo) {
     if (store == null) {
-      return;
+      return null;
     }
+    UsersStoreListResponseDto dto = new UsersStoreListResponseDto();
     this.storeId = store.getStoreId();
     this.storeName = store.getStoreName();
     this.storeLogo = store.getStoreLogo();
@@ -44,6 +45,9 @@ public class UsersStoreListResponseDto {
     }
 
     this.status = store.getStoreStatus();
+    dto.status = store.getStoreStatus();
+    return dto;
   }
+
 
 }

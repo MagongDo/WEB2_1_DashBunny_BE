@@ -9,6 +9,7 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.DeliveryOperatingInfoRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCartItemDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCartResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentResponseDto;
@@ -170,29 +171,44 @@ public class UsersCartService {
                 .sum();
   }
 
-  public UsersCartResponseDto checkoutCart(String userId) {
+  public UsersCartResponseDto checkoutCart(String userId,
+                                           String storeRequirement,
+                                           String deliveryRequirement) {
     UsersCartResponseDto cartDto = getCart(userId);
     if (cartDto == null || cartDto.getCartItems() == null || cartDto.getCartItems().isEmpty()) {
       throw new IllegalArgumentException("Cart is empty");
     }
-
+    // Cart 엔티티 조회
+    Cart cart = cartRepository.findById(cartDto.getCartId())
+            .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
+    List<UsersCartItemDto> cartItemDtos = cart.getCartItems().stream()
+            .map(UsersCartItemDto::toUsersCartItemDto)  // 각 CartItem을 UsersCartItemDto로 변환
+            .toList();
+    Long totalPrice = cartItemDtos.stream()
+            .mapToLong(UsersCartItemDto::getTotalPrice)
+            .sum();
+    Long totalAmount = totalPrice + cartDto.getDeliveryFee();
     PaymentRequestDto paymentRequest = new PaymentRequestDto();
     paymentRequest.setCartId(cartDto.getCartId());
     paymentRequest.setOrderName("Order for Cart ID: " + cartDto.getCartId());
 
     PaymentResponseDto paymentResponse = paymentService.createPayment(paymentRequest);
 
-    // Cart 엔티티 조회
-    Cart cart = cartRepository.findById(cartDto.getCartId())
-                .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
-
+    cartDto.setStoreRequirement(storeRequirement);
+    cartDto.setDeliveryRequest(deliveryRequirement);
     // 새로운 UsersCartResponseDto 생성하여 반환
-    return UsersCartResponseDto.toUsersCartDto(
-                cart,
-                cartDto.getStoreName(),
-                cartDto.getDeliveryFee(),
-                paymentResponse // 결제 정보 전달
-    );
+    return UsersCartResponseDto.builder()
+            .cartId(cart.getCartId())
+            .userId(cart.getUser().getUserId())  // 사용자 ID
+            .storeName(cartDto.getStoreName())  // 가게 이름
+            .cartItems(cartItemDtos)  // 장바구니 아이템 리스트
+            .deliveryFee(cartDto.getDeliveryFee())  // 배달료
+            .totalAmount(totalAmount)  // 총 결제 금액
+            .paymentInfo(paymentResponse)
+            .storeRequirement(storeRequirement)
+            .deliveryRequest(deliveryRequirement)
+            .build();
+
   }
 
 }

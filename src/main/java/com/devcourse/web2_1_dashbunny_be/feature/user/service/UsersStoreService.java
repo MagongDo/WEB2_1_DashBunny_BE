@@ -11,12 +11,10 @@ import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreMan
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
 import com.nimbusds.jose.shaded.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -156,7 +154,6 @@ public class UsersStoreService {
       // 카테고리 필터링
       boolean hasCategory = store.getCategory().stream()
              .anyMatch(cat -> cat.getCategoryType().name().equalsIgnoreCase(category));
-      logger.info("Stored store {}: {}", store.getStoreId(), store);
       if (!hasCategory) {
         continue; // 카테고리가 일치하지 않으면 무시
       }
@@ -164,7 +161,7 @@ public class UsersStoreService {
       // DTO로 변환하여 응답 리스트에 추가
       DeliveryOperatingInfo deliveryOperatingInfo=deliveryOperationInfoRepository.findByStoreId(storeId);
       UsersStoreListResponseDto dto = new UsersStoreListResponseDto();
-      dto.toUsersStoreListResponseDto(store,deliveryOperatingInfo);
+      dto.toUsersStoreListResponseDto(store, deliveryOperatingInfo);
       responseDtos.add(dto);
     }
     return responseDtos;
