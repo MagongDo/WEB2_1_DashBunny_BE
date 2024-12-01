@@ -29,14 +29,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         String username = authentication.getName(); // 사용자 이름
         log.info("로그인 성공: 사용자 이름 - {}", username);
         User user = userService.getCurrentUser();
-        String redirectUrl = "/main";
+        String redirectUrl = "/api/main";
 
         if (user.getRole().equals("ROLE_ADMIN")) {
-            redirectUrl = "/admin";
+            redirectUrl = "/api/admin";
         } else if (user.getRole().equals("ROLE_OWNER")) {
-            redirectUrl = "/owner";
+            redirectUrl = "/api/owner";
         } else if (user.getRole().equals("ROLE_USER")) {
-            redirectUrl = "/main";
+            redirectUrl = "/api/main";
         }
 
         // 로그인 성공 후, 기본 URL로 리다이렉트
