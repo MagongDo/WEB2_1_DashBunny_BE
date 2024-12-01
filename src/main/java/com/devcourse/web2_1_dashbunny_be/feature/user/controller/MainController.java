@@ -3,6 +3,7 @@ package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDTO;
+import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequiredArgsConstructor
 public class MainController {
+
+    private final UserService userService;
 
     @GetMapping ("/login")
     public String login(Model model) {
@@ -53,21 +56,18 @@ public class MainController {
 
     @GetMapping("/main")
     public String main(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof User) {
-                User user = (User) principal;
-                model.addAttribute("user", user);
-                log.info("user model : " + model.getAttribute("user"));
-            }// OAuth2 카카오 로그인 사용자 처리
-            else if (principal instanceof SocialUser) {
-                SocialUser socialUser = (SocialUser) principal;
-                model.addAttribute("user", socialUser);
-                log.info("socialUser model : " + model.getAttribute("user"));
-            }
-        }
+        User currentUser = userService.getCurrentUser();
+        model.addAttribute("user", currentUser);
+        log.info("User session : " + model.getAttribute("user"));
         return "main"; // main.html로 이동
     }
+
+
+    @GetMapping ("/admin")
+    public String moveAdmin() {return "adminMain";}
+
+    @GetMapping ("/owner")
+    public String moveOwner() {return "ownerMain";}
+
 
 }

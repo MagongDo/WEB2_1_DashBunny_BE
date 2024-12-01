@@ -15,6 +15,12 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @EnableWebSecurity
 @Configuration
@@ -38,25 +44,38 @@ public class SecurityConfig {
         return authProvider;
     }
 
-//    @Bean
-//    public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
-//        return new OAuth2AuthenticationSuccessHandler();
-//    }
+    // CORS 설정
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("*")); // 프론트엔드 주소
+//        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://frontend.example.com")); // 여러 출처 허용
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-CSRF-TOKEN", "X-Requested-With"));
+        configuration.setAllowCredentials(false);
 
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     // 보안 필터 체인
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // CSRF 보호 비활성화 (실제 운영 환경에서는 활성화 권장)
                 .csrf(AbstractHttpConfigurer::disable)
                 // 인증 제공자 설정
-//                .authenticationProvider(authenticationProvider())
-//
-//                // 요청에 대한 권한 설정
-//                // 권한순서는 위에서부터 아래로 내려감
+                .authenticationProvider(authenticationProvider())
+
+                // 요청에 대한 권한 설정
+                // 권한순서는 위에서부터 아래로 내려감
 //                .authorizeHttpRequests(authorize -> authorize
 //                        .requestMatchers("/api/user/upload-profile-picture").permitAll()
+//                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/api/auth/test").hasRole("ADMIN")
+//                        .requestMatchers("/api/owner/**").hasRole("OWNER")
 //                        .requestMatchers("/api/auth/session-user").hasRole("USER")
 //                        .requestMatchers("/api/user/**").hasRole("USER")
 //                        .requestMatchers("/uploads/upload-profile-picture").hasAnyRole("ADMIN", "USER")
@@ -64,7 +83,8 @@ public class SecurityConfig {
 //                                "/api/auth/**",
 //                                "/login",
 //                                "/main",
-//                                "/test",
+//                                "/error/**",
+////                                "/test",
 //                                "/error",
 //                                "/favicon.ico",
 //                                "/images/**",
@@ -106,6 +126,16 @@ public class SecurityConfig {
                         .permitAll()
                 )
 
+//                // 보안 헤더 설정
+//                .headers(headers -> headers
+//                        .contentSecurityPolicy("default-src 'self'")
+//                        .frameOptions(frameOptions -> frameOptions.sameOrigin())
+//                        .httpStrictTransportSecurity(hsts -> hsts
+//                                .maxAgeInSeconds(31536000)
+//                                .includeSubDomains(true)
+//                        )
+//                );
+
                 // 세션 관리 설정
                 .sessionManagement(session -> session
                         .sessionFixation().migrateSession()
@@ -116,6 +146,8 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                         .invalidSessionUrl("/")
                 );
+
+
 
         return http.build();
     }

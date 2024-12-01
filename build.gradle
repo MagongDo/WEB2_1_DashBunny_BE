@@ -29,8 +29,7 @@ dependencies {
     implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
     implementation 'org.glassfish:jakarta.el:4.0.2'
 
-    // JSON handling
-    implementation 'com.google.code.gson:gson:2.10.1'
+
 
     // HTTP requests
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
