@@ -34,7 +34,7 @@ public class AuthController {
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@Validated @RequestBody UserDTO userDTO) {
         try {
-            User user = userService.registerUser(userDTO);
+            userService.registerUser(userDTO);
             return new ResponseEntity<>("회원가입 성공", HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -44,7 +44,7 @@ public class AuthController {
     @PostMapping("/signUp-owner")
     public ResponseEntity<?> signUpOwner(@Validated @RequestBody UserDTO userDTO) {
         try {
-            User user = userService.registerOwner(userDTO);
+            userService.registerOwner(userDTO);
             return new ResponseEntity<>("사장님 회원가입 성공", HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

@@ -32,7 +32,6 @@ public class UserStoreController {
   public ResponseEntity<Void> getUsersStoreChecking(@RequestParam String address
                                                     ) {
     User currentUser = userService.getCurrentUser();
-    log.info(userService.getCurrentUser());
     if (!usersStoreService.checkRedisData(currentUser.getPhone(), address)) {
       // Redis 키가 없으면 데이터를 새로 추가
       usersStoreService.redisAddStoreList(currentUser.getPhone(), address);

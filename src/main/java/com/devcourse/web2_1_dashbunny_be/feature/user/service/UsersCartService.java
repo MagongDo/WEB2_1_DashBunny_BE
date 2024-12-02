@@ -114,7 +114,6 @@ public class UsersCartService {
     Optional<CartItem> existingItem = cart.getCartItems().stream()
                 .filter(item -> item.getMenuManagement().getMenuId().equals(menuId))
                 .findFirst();
-
     if (existingItem.isPresent()) {
       CartItem cartItem = existingItem.get();
       cartItem.setQuantity(cartItem.getQuantity() + quantity);
@@ -126,7 +125,6 @@ public class UsersCartService {
                     .build();
       cart.getCartItems().add(newItem);
     }
-
     cart.setTotalPrice(calculateTotalPrice(cart));
     cartRepository.save(cart);
 
@@ -141,7 +139,6 @@ public class UsersCartService {
     StoreManagement store = storeManagementRepository.findById(menu.getStoreId()).orElseThrow(IllegalArgumentException::new);
     DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperationInfoRepository.findByStoreId(store.getStoreId());
     List<CartItem> itemsToRemove = new ArrayList<>();
-
     cart.getCartItems().forEach(item -> {
       if (item.getMenuManagement().getMenuId().equals(menuId)) {
 
@@ -153,7 +150,6 @@ public class UsersCartService {
         }
       }
     });
-
     cart.getCartItems().removeAll(itemsToRemove);
     if (cart.getCartItems().isEmpty()) {
       cart.setStoreId(null);

@@ -34,7 +34,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         if (user.getRole().equals("ROLE_ADMIN")) {
             redirectUrl = "/api/admin";
         } else if (user.getRole().equals("ROLE_OWNER")) {
-            redirectUrl = "/api/owner";
+            redirectUrl = "/api/auth/store/lobby";
         } else if (user.getRole().equals("ROLE_USER")) {
             redirectUrl = "/api/main";
         }

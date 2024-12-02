@@ -110,9 +110,9 @@ public class SecurityConfig {
 //                        .loginProcessingUrl("/loginForm") // 로그인 폼 제출 시 처리할 URL
                         .usernameParameter("phone") // 폼에서 사용하는 username 파라미터 이름
                         .passwordParameter("password") // 폼에서 사용하는 password 파라미터 이름
-                        .defaultSuccessUrl("/api/main", true) // 로그인 성공 시 이동할 URL
+//                        .defaultSuccessUrl("/api/main", true) // 로그인 성공 시 이동할 URL
                         .failureUrl("/api/login?error=true") // 로그인 실패 시 이동할 URL
-//                        .successHandler(successHandler) // 성공 핸들러 등록
+                        .successHandler(successHandler) // 성공 핸들러 등록
                         .failureHandler(failureHandler) // 실패 핸들러 등록
                         .permitAll()
                 )
