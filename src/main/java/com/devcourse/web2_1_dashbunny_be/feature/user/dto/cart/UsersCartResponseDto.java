@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 
+/**
+ * 사용자에게 장바구니 내용을 보여주기 위한 조회용 dto.
+ */
 @Builder
 @Getter
 @Setter
