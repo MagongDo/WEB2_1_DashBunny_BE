@@ -8,6 +8,7 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDTO;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartException;
@@ -25,14 +26,14 @@ public class UserController {
     private final FileUploadService fileUploadService;
 
 
-/**
+    /**
      * 사용자의 프로필 사진을 업로드하는 엔드포인트입니다.
      *
      * @param profileImage 업로드된 파일
      * @return 업로드 결과를 포함한 ResponseEntity
      */
 
-    @PostMapping("/upload-profile-picture")
+    @PostMapping(value = "/upload-profile-picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadProfilePicture(@RequestParam("profileImage") MultipartFile profileImage) {
 
         // 파일이 비어있는지 확인
