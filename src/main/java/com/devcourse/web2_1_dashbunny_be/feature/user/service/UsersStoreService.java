@@ -206,4 +206,57 @@ public class UsersStoreService {
 
     return UsersStoreResponseDto.toStoreResponseDto(store, storeFeedBack, menuGroup, menu, deliveryOperatingInfo, wishStatus);
   }
+
+  // 레디스에 저장된 데이터를 활용하여 주위 모든 가게 리스트 반환
+  public List<UsersStoreListResponseDto> getNearbyStores(String userId, String address) {
+    List<UsersStoreListResponseDto> responseDtos = new ArrayList<>();
+    // 사용자의 주소를 기반으로 좌표를 가져옴
+    JsonObject addressLatLon;
+    try {
+      addressLatLon = kakaoGeocoding.getCoordinatesFromAddress(address);
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to get coordinates from address", e);
+    }
+
+    if (addressLatLon == null) {
+      throw new RuntimeException("Failed to get coordinates from address");
+    }
+    // 사용자의 위도와 경도 추출
+    double userLatitude = addressLatLon.get("latitude").getAsDouble();
+    double userLongitude = addressLatLon.get("longitude").getAsDouble();
+
+    // Redis 키 생성 (소수점 이하 6자리 포맷)
+    String redisKey = RedisKeyUtil.generateKey(userId, userLatitude, userLongitude);
+    logger.debug("Generated Redis Key: {}", redisKey);
+    // Redis에서 데이터 확인
+    if (!checkRedisData(userId, address)) {
+      // Redis 키가 없으면 데이터를 새로 추가
+      redisAddStoreList(userId, address);
+    }
+
+    // Redis에서 가게 ID 리스트 가져오기
+    @SuppressWarnings("unchecked")
+    List<String> storeIds = (List<String>) redisTemplate.opsForValue().get(redisKey);
+
+    if (storeIds == null || storeIds.isEmpty()) {
+      return responseDtos; // Redis에 저장된 데이터가 비어 있으면 빈 리스트 반환
+    }
+
+    // 가게 ID로 데이터베이스에서 가게 정보 가져오기 및 필터링
+    for (String storeId : storeIds) {
+      StoreManagement store = storeManagementRepository.findById(storeId)
+              .orElse(null);
+      if (store == null) {
+        continue; // 가게 정보가 없으면 무시
+      }
+
+      // DTO로 변환하여 응답 리스트에 추가
+      DeliveryOperatingInfo deliveryOperatingInfo=deliveryOperationInfoRepository.findByStoreId(storeId);
+      UsersStoreListResponseDto dto = new UsersStoreListResponseDto();
+      dto.toUsersStoreListResponseDto(store,deliveryOperatingInfo);
+      responseDtos.add(dto);
+    }
+    return responseDtos;
+  }
+
 }
