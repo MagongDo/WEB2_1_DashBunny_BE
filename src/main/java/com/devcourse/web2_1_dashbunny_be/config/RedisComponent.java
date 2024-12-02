@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.config;
 
 import java.util.concurrent.TimeUnit;
@@ -7,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
-
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,3 +33,4 @@ public class RedisComponent {
     redisTemplate.expire(key, 7, TimeUnit.DAYS);
   }
 }
+*/

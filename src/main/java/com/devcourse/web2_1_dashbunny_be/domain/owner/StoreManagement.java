@@ -87,8 +87,7 @@ public class StoreManagement {
 
   //--------------------------------------데이터 추가
 
-  @OneToOne(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-  private StoreFeedBack storeFeedback;
+
 
   @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
   @ToString.Exclude
