@@ -8,7 +8,10 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.service.CustomUserDetailsS
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -137,19 +140,36 @@ public class SecurityConfig {
 //                );
 
                 // 세션 관리 설정
-                .sessionManagement(session -> session
-                        .sessionFixation().migrateSession()
-                        .sessionConcurrency(concurrency -> concurrency
-                                .maximumSessions(1)
-                                .maxSessionsPreventsLogin(false)
-                        )
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                        .invalidSessionUrl("/")
+//                .sessionManagement(session -> session
+//                        .sessionFixation().migrateSession()
+//                        .sessionConcurrency(concurrency -> concurrency
+//                                .maximumSessions(1)
+//                                .maxSessionsPreventsLogin(false)
+//                        )
+//                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+//                        .invalidSessionUrl("/")
+//                );
+
+                //임시로 붙인 겁니다. 삭제하지 마시고 주석으로만 가려주세요...
+        .sessionManagement(session -> session
+                .sessionFixation().newSession()
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+        ) //임시로 붙인 겁니다. 삭제하지 마시고 주석으로만 가려주세요...
+                .securityContext(context -> context
+                        .requireExplicitSave(false) // SecurityContext 자동 저장
                 );
 
 
 
         return http.build();
     }
+
+    //임시로 붙인 겁니다. 삭제하지 마시고 주석으로만 가려주세요...
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+
 
 }

@@ -12,7 +12,6 @@ import java.util.List;
 @Repository
 public interface UserCouponRepository extends JpaRepository<UserCoupon, String> {
 
-//    UserCoupon findByCouponIdAndCouponType(Long couponId, String couponType);
 
   /**
    * 사용자가 같은 유형의 쿠폰을 발급했는지 확인.

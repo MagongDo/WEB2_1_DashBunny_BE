@@ -9,9 +9,13 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.dto.GeneralCoup
 import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.dto.OwnerCouponListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.dto.UserCouponListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.service.UserCouponService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -21,6 +25,7 @@ import java.util.List;
  * 사용자 쿠폰 컨트롤러.
  */
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user/coupon")
@@ -90,7 +95,14 @@ public class UserCouponController {
    * 선착순 쿠폰 다운로드 api (POST).
    */
   @PostMapping("/download/first-come/{couponId}")
-  public ResponseEntity<?> downloadFirstComeCoupon(@PathVariable Long couponId) {
+  public ResponseEntity<?> downloadFirstComeCoupon(@PathVariable Long couponId, HttpServletRequest request) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    log.debug("현재 인증 사용자: {}", authentication);
+    log.debug("세션 ID: {}", request.getSession(false).getId());
+
+    if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인된 사용자를 찾을 수 없습니다.");
+    }
     //현재 사용자의 userId를 가져와야함
     userCouponService.downloadCoupon(couponId, IssuedCouponType.ADMIN);
     return ResponseEntity.ok(Collections.singletonMap("message", "선착순 쿠폰 다운로드에 성공했습니다!"));

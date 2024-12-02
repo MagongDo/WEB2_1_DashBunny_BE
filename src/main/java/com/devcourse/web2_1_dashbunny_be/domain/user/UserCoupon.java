@@ -60,7 +60,6 @@ public class UserCoupon {
 //  private String couponDescription; //쿠폰 상세내용
 
 
-
 }
 
 //User엔티티에
