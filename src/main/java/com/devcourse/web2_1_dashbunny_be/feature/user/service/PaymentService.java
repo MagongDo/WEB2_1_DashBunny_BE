@@ -44,8 +44,7 @@ public class PaymentService {
     Cart cart = cartRepository.findById(requestDto.getCartId())
             .orElseThrow(() -> new RuntimeException("Cart not found"));
     // 2. StoreManagement 엔티티 조회
-    StoreManagement store = storeManagementRepository.findByStoreId(cart.getStoreId())
-            .orElseThrow(() -> new RuntimeException("Store not found"));
+    StoreManagement store = storeManagementRepository.findByStoreId(cart.getStoreId());
     // 3. Payment 엔티티 생성 및 저장
     Payment payment = new Payment();
     payment.setCart(cart);

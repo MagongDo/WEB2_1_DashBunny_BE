@@ -43,9 +43,12 @@ public class UserCartController {
     return ResponseEntity.ok(cartService.getCart(currentUser.getPhone()));
   }
   @PostMapping("/carts/checkout")
-  public ResponseEntity<UsersCartResponseDto> checkoutCart() {
+  public ResponseEntity<UsersCartResponseDto> checkoutCart(@RequestParam String storeRequirement,
+                                                           @RequestParam String deliveryRequirement) {
     User currentUser = userService.getCurrentUser();
-    UsersCartResponseDto cartDto = cartService.checkoutCart(currentUser.getPhone());
+    UsersCartResponseDto cartDto = cartService.checkoutCart(currentUser.getPhone(),
+            storeRequirement,
+            deliveryRequirement);
     return ResponseEntity.ok(cartDto);
   }
 }
