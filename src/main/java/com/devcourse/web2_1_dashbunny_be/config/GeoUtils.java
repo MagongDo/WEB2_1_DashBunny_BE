@@ -13,8 +13,7 @@ public class GeoUtils {
             + Math.cos(Math.toRadians(storeLat)) * Math.cos(Math.toRadians(userLat))
             * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
     double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    double distance = EARTH_RADIUS_KM * c; // 거리 계산 (단위: km)
+    return EARTH_RADIUS_KM * c; // 거리 계산 (단위: km)
     // 반경 내 사용자 좌표 추가
-    return distance; // 반경 내 사용자 좌표 리스트 반환
     }
 }
