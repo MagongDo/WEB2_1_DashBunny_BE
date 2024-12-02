@@ -2,10 +2,14 @@ package com.devcourse.web2_1_dashbunny_be.feature.owner.dto.menu;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 전체 메뉴 리스트 조회를 위한 DTO 클래스.
  */
+@Getter
+@Setter
 @Builder
 public class MenuListResponseDto {
   private Long menuId;
@@ -25,7 +29,7 @@ public class MenuListResponseDto {
         .menuId(menu.getMenuId())
         .menuImage(menu.getMenuImage())
         .menuName(menu.getMenuName())
-        .menuGroupName(menu.getMenuGroup().getGroupName())
+        .menuGroupName(menu.getMenuGroup() != null ? menu.getMenuGroup().getGroupName() : null)
         .price(menu.getPrice())
         .stockAvailable(menu.isStockAvailable())
         .menuStock(menu.getMenuStock())

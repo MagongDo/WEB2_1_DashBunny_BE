@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface DeliveryOperatingInfoRepository extends JpaRepository<DeliveryOperatingInfo, Long> {
 
-//    Optional<DeliveryOperatingInfo> findFirstByOrderByIdDesc();
+    Optional<DeliveryOperatingInfo> findFirstByOrderByIdDesc();
     DeliveryOperatingInfo findByStoreId(String storeId);
 
 }

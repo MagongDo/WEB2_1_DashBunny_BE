@@ -14,6 +14,7 @@ public class MenuResponseDto {
   private String menuName;
   private Long menuGroupId;
   private String menuGroupName;
+  private String menuContent;
   private Long price;
   private Boolean stockAvailable;
   private int menuStock;
@@ -23,8 +24,9 @@ public class MenuResponseDto {
     return MenuResponseDto.builder()
             .menuId(menu.getMenuId())
             .menuName(menu.getMenuName())
-            .menuGroupId(menu.getMenuGroup().getGroupId())
-            .menuGroupName(menu.getMenuGroup().getGroupName())
+            .menuGroupId(menu.getMenuGroup() != null ? menu.getMenuGroup().getGroupId() : null)
+            .menuGroupName(menu.getMenuGroup() != null ? menu.getMenuGroup().getGroupName() : null)
+            .menuContent(menu.getMenuContent())
             .price(menu.getPrice())
             .stockAvailable(menu.isStockAvailable())
             .menuStock(menu.getMenuStock())
