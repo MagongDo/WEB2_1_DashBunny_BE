@@ -106,21 +106,21 @@ public class SecurityConfig {
 
                 // 폼 로그인 설정
                 .formLogin(form -> form
-                        .loginPage("/login") // 로그인 폼을 제공하는 페이지 URL
-                        .loginProcessingUrl("/loginForm") // 로그인 폼 제출 시 처리할 URL
+                        .loginPage("/api/login") // 로그인 폼을 제공하는 페이지 URL
+//                        .loginProcessingUrl("/loginForm") // 로그인 폼 제출 시 처리할 URL
                         .usernameParameter("phone") // 폼에서 사용하는 username 파라미터 이름
                         .passwordParameter("password") // 폼에서 사용하는 password 파라미터 이름
-                        .defaultSuccessUrl("/main", true) // 로그인 성공 시 이동할 URL
-                        .failureUrl("/login?error=true") // 로그인 실패 시 이동할 URL
-                        .successHandler(successHandler) // 성공 핸들러 등록
+                        .defaultSuccessUrl("/api/main", true) // 로그인 성공 시 이동할 URL
+                        .failureUrl("/api/login?error=true") // 로그인 실패 시 이동할 URL
+//                        .successHandler(successHandler) // 성공 핸들러 등록
                         .failureHandler(failureHandler) // 실패 핸들러 등록
                         .permitAll()
                 )
 
                 // 로그아웃 설정
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout=true")
+                        .logoutUrl("/api/logout")
+                        .logoutSuccessUrl("/api/login?logout=true")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()

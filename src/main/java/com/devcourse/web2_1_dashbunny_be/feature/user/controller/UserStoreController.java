@@ -22,10 +22,9 @@ public class UserStoreController {
   private final UserService userService;
 
   @GetMapping("/stores/{category}")
-  public ResponseEntity<List<UsersStoreListResponseDto>> getUsersByCategory(@PathVariable String category,                                                                            Principal principal,
-                                                                            @RequestParam String address) {
-    log.info(principal.getName());
-    List<UsersStoreListResponseDto> storeList = usersStoreService.usersStoreListResponse(principal.getName(), address, category);
+  public ResponseEntity<List<UsersStoreListResponseDto>> getUsersByCategory(@PathVariable String category, @RequestParam String address) {
+    User currentUser = userService.getCurrentUser();
+    List<UsersStoreListResponseDto> storeList = usersStoreService.usersStoreListResponse(currentUser.getPhone(), address, category);
     return ResponseEntity.ok(storeList);
   }
 
@@ -44,7 +43,8 @@ public class UserStoreController {
 
   @GetMapping("/stores/details")
   public ResponseEntity<UsersStoreResponseDto> getUsersDetailPage(@RequestParam String storeId) {
+    User currentUser = userService.getCurrentUser();
     log.info(userService.getCurrentUser());
-    return ResponseEntity.ok(usersStoreService.getStoreDetails(storeId));
+    return ResponseEntity.ok(usersStoreService.getStoreDetails(currentUser.getUserId(), storeId));
   }
 }

@@ -255,22 +255,7 @@ public class UserService {
     // 회원 탈퇴
     public void withdrawUser() {
         // 현재 로그인된 사용자 확인
-        User currentUsername = getCurrentUser();
-        if (currentUsername == null) {
-            throw new IllegalArgumentException("사용자가 인증되지 않음");
-        }
-        User user = null;
-        String providerId;
-        if (currentUsername instanceof User) {
-            user = (User) currentUsername;
-        } else if (currentUsername instanceof OAuth2User) { // OAuth2 카카오 로그인 사용자 처리
-            OAuth2User oauth2User = (OAuth2User) currentUsername;
-            // getName()으로 Name 값 가져오기
-            // provider_id 가져옴
-            providerId = oauth2User.getName();
-            user = findUserByProviderId(providerId);
-        }
-
+        User user = getCurrentUser();
         // 회원 탈퇴 처리
         user = user.toBuilder()
                 .isWithdrawn("Y") // 탈퇴 상태로 변경

@@ -1,27 +1,21 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 
-import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDTO;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Log4j2
 @Controller
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class MainController {
 
@@ -45,7 +39,7 @@ public class MainController {
           "email" : "kim@kim.com",
           "birthday" : "990909-2",
           "password" : "z123456"    */
-    @PostMapping("/api/auth/signUp/AdditionalInfo")
+    @PostMapping("/auth/signUp/AdditionalInfo")
     public String processRegistrationForm(@ModelAttribute UserDTO userDTO, HttpSession session) {
         System.out.println("processRegistrationForm : " + userDTO);
         // 추가 정보를 세션에 저장
