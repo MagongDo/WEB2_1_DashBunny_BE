@@ -18,6 +18,6 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         log.warn("로그인 실패: {}", exception.getMessage());
 
         // 로그인 실패 후, 로그인 페이지로 리다이렉트
-        response.sendRedirect("/login?error=true");
+        response.sendRedirect("/api/login?error=true");
     }
 }

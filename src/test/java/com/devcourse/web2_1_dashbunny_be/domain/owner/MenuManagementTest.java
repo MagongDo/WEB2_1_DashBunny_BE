@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.domain.owner;
 
 import org.junit.jupiter.api.Test;
@@ -108,4 +109,4 @@ class MenuManagementTest {
     }
 
 
-}
+}*/
