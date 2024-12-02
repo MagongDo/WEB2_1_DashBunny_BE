@@ -87,8 +87,7 @@ public class StoreManagement {
 
   //--------------------------------------데이터 추가
 
-  @OneToOne(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-  private StoreFeedBack storeFeedback;
+
 
   @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
   @ToString.Exclude
@@ -116,17 +115,5 @@ public class StoreManagement {
 
   @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<StoreApplication> storeApplications = new ArrayList<>();
-
-  //-------------------------------------추가
-  private Long wishCount = 0L;
-  public Long increaseWishCount() {
-    wishCount += 1;
-    return wishCount;
-  }
-
-  public Long decreaseWishCount() {
-    wishCount -= 1;
-    return wishCount;
-  }
 
 }

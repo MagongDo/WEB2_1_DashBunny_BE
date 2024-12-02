@@ -6,7 +6,6 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.PasswordResetRequest;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDTO;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreListResponseDto;
-import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersWishListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UsersWishListService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -96,8 +96,11 @@ public class UserController {
 
   @PostMapping("/wishModification")
   public ResponseEntity<Void> getWishModification(@RequestParam String storeId) {
+    log.info("Entered wishModification with storeId: {}", storeId);
     User currentUser = userService.getCurrentUser();
+    log.info("getCurrentUser : " + currentUser);
     usersWishListService.getUsersWishModification(currentUser.getUserId(), storeId);
+    log.info("getCurrentUser : " + currentUser.getUserId());
     return ResponseEntity.ok().build();
   }
 

@@ -4,23 +4,26 @@ import com.devcourse.web2_1_dashbunny_be.config.GeoUtils;
 import com.devcourse.web2_1_dashbunny_be.config.KakaoGeocoding;
 import com.devcourse.web2_1_dashbunny_be.config.RedisKeyUtil;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.*;
+import com.devcourse.web2_1_dashbunny_be.domain.user.User;
+import com.devcourse.web2_1_dashbunny_be.domain.user.WishList;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuGroupRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.DeliveryOperatingInfoRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreFeedBackRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UsersWishListRepository;
+import com.nimbusds.jose.shaded.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import com.nimbusds.jose.shaded.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +35,8 @@ public class UsersStoreService {
   private final MenuGroupRepository menuGroupRepository;
   private final MenuRepository menuRepository;
   private final KakaoGeocoding kakaoGeocoding; // 추가된 필드
+  private final UsersWishListRepository usersWishListRepository;
+  private final StoreFeedBackRepository storeFeedBackRepository;
   private static final Logger logger = LoggerFactory.getLogger(UsersStoreService.class);
 
   // 가게 깃발의 반경을 조사하여 해당 가게의 사용자 배달 가능 여부를 판단하여 Redis에 저장
@@ -67,7 +72,7 @@ public class UsersStoreService {
                 flagLatitude, flagLongitude, userLatitude, userLongitude
         );
         // 반경 내 사용자라면 가게 ID 추가
-        if (distance <= 6.5) { // 예시로 1.5km로 수정 (사용자의 요청에 따라 조정 가능)
+        if (distance <= 1.5) { // 예시로 1.5km로 수정
           deliverableStoreIds.add(store.getStoreId());
           break; // 한 플래그라도 포함되면 해당 가게를 배달 가능으로 처리
         }
@@ -111,6 +116,7 @@ public class UsersStoreService {
 
   // 레디스에 저장된 데이터를 활용하여 카테고리별 가게 리스트 반환
   public List<UsersStoreListResponseDto> usersStoreListResponse(String userId, String address, String category) {
+    User user = userRepository.findByPhone(userId).orElseThrow(IllegalArgumentException::new);
     List<UsersStoreListResponseDto> responseDtos = new ArrayList<>();
     // 사용자의 주소를 기반으로 좌표를 가져옴
     JsonObject addressLatLon;
@@ -157,11 +163,10 @@ public class UsersStoreService {
       if (!hasCategory) {
         continue; // 카테고리가 일치하지 않으면 무시
       }
-
       // DTO로 변환하여 응답 리스트에 추가
-      DeliveryOperatingInfo deliveryOperatingInfo=deliveryOperationInfoRepository.findByStoreId(storeId);
-      UsersStoreListResponseDto dto = new UsersStoreListResponseDto();
-      dto.toUsersStoreListResponseDto(store, deliveryOperatingInfo);
+      StoreFeedBack storeFeedBack = storeFeedBackRepository.findByStoreId(storeId);
+      DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperationInfoRepository.findByStoreId(storeId);
+      UsersStoreListResponseDto dto = UsersStoreListResponseDto.toUsersStoreListResponseDto(store, deliveryOperatingInfo, storeFeedBack);
       responseDtos.add(dto);
     }
     return responseDtos;
@@ -189,11 +194,16 @@ public class UsersStoreService {
     return hasKey;
   }
 
-  public UsersStoreResponseDto getStoreDetails(String storeId) {
-    List<MenuGroup> menuGroup=menuGroupRepository.findByStoreId(storeId);
-    Optional<StoreManagement> store = storeManagementRepository.findById(storeId);
-    List<MenuManagement> menu=menuRepository.findAllByStoreId(storeId);
-    DeliveryOperatingInfo deliveryOperatingInfo=deliveryOperationInfoRepository.findByStoreId(storeId);
-    return UsersStoreResponseDto.toStoreResponseDto(Objects.requireNonNull(store.orElse(null)),menuGroup,menu,deliveryOperatingInfo);
+  public UsersStoreResponseDto getStoreDetails(Long userId, String storeId) {
+    List<MenuGroup> menuGroup = menuGroupRepository.findByStoreId(storeId);
+    StoreManagement store = storeManagementRepository.findById(storeId).orElseThrow(IllegalArgumentException::new);
+    List<MenuManagement> menu = menuRepository.findAllByStoreId(storeId);
+    DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperationInfoRepository.findByStoreId(storeId);
+    WishList wishList = usersWishListRepository.findByStoreIdAndUserId(storeId, userId);
+    StoreFeedBack storeFeedBack = storeFeedBackRepository.findByStoreId(storeId);
+    Boolean wishStatus;
+    wishStatus = wishList != null;
+
+    return UsersStoreResponseDto.toStoreResponseDto(store, storeFeedBack, menuGroup, menu, deliveryOperatingInfo, wishStatus);
   }
 }

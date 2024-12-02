@@ -66,6 +66,7 @@ public class UsersCartService {
       return UsersCartResponseDto.toUsersCartDto(cart, store.getStoreName(), deliveryOperatingInfo.getDeliveryTip(), null);
     }
   }
+
   @Transactional
   public UsersCartResponseDto addMenuToCart(String userId, Long menuId, Long quantity, boolean overwrite) {
     if (quantity <= 0) {
@@ -131,6 +132,7 @@ public class UsersCartService {
 
     return UsersCartResponseDto.toUsersCartDto(cart, store.getStoreName(), deliveryOperatingInfo.getDeliveryTip(), null);
   }
+
 
   public UsersCartResponseDto updateItemQuantity(String userId, Long menuId, Long counts) {
     User user = userRepository.findByPhone(userId).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));

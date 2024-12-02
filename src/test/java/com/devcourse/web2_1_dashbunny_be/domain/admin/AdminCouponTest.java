@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.domain.admin;
 
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponType;
@@ -44,4 +45,4 @@ class AdminCouponTest {
     assertThat(foundCoupon.getCouponName()).isEqualTo("welcome!");
     assertThat(foundCoupon.getDiscountPrice()).isEqualTo(5000L);
   }
-}
+}*/

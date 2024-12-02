@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.controller;
 
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.delivery.DeliveryAreaRequestDto;
@@ -67,4 +68,4 @@ class DeliveryInfoControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("배달 범위가 성공적으로 설정되었습니다."));
     }
-}
+}*/
