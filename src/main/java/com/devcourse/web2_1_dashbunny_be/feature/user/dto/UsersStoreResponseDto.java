@@ -1,9 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.dto;
 
-import com.devcourse.web2_1_dashbunny_be.domain.owner.DeliveryOperatingInfo;
-import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuGroup;
-import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
-import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.*;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import java.util.List;
 import lombok.*;
@@ -27,14 +24,19 @@ public class UsersStoreResponseDto {
   private StoreStatus storeStatus;          // 가게 상태
   private List<UsersMenuGroupDto> usersMenuGroup;    // 메뉴 그룹 리스트
   private List<UsersMenuDto> usersMenus;              // 독립 메뉴 리스트
-
-  public static UsersStoreResponseDto toStoreResponseDto(StoreManagement store, List<MenuGroup> menuGroup, List<MenuManagement> usersMenu, DeliveryOperatingInfo deliveryOperatingInfo) {
+  private Boolean wishStatus;
+  public static UsersStoreResponseDto toStoreResponseDto(StoreManagement store,
+                                                         StoreFeedBack storeFeedBack,
+                                                         List<MenuGroup> menuGroup,
+                                                         List<MenuManagement> usersMenu,
+                                                         DeliveryOperatingInfo deliveryOperatingInfo,
+                                                         Boolean wishStatus) {
 
     return UsersStoreResponseDto.builder()
               .storeId(store.getStoreId())
               .storeName(store.getStoreName())
-              .rating(store.getStoreFeedback().getRating())
-              .reviewCount(store.getStoreFeedback().getReviewCount())
+              .rating(storeFeedBack.getRating())
+              .reviewCount(storeFeedBack.getReviewCount())
               .deliveryTip(deliveryOperatingInfo.getDeliveryTip())
               .minDeliveryTime(deliveryOperatingInfo.getMinDeliveryTime())
               .maxDeliveryTime(deliveryOperatingInfo.getMaxDeliveryTime())
@@ -54,6 +56,7 @@ public class UsersStoreResponseDto {
                       .map(UsersMenuDto::toMenuDto)
                       .toList()
                       : null)
+              .wishStatus(wishStatus)
               .build();
   }
 

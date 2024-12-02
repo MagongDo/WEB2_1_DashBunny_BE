@@ -43,7 +43,8 @@ public class UserStoreController {
 
   @GetMapping("/stores/details")
   public ResponseEntity<UsersStoreResponseDto> getUsersDetailPage(@RequestParam String storeId) {
+    User currentUser = userService.getCurrentUser();
     log.info(userService.getCurrentUser());
-    return ResponseEntity.ok(usersStoreService.getStoreDetails(storeId));
+    return ResponseEntity.ok(usersStoreService.getStoreDetails(currentUser.getUserId(), storeId));
   }
 }

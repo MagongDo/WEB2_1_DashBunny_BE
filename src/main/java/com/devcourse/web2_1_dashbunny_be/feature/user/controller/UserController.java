@@ -5,7 +5,9 @@ import com.devcourse.web2_1_dashbunny_be.config.s3.FileUploadService;
 import com.devcourse.web2_1_dashbunny_be.domain.user.PasswordResetRequest;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDTO;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
+import com.devcourse.web2_1_dashbunny_be.feature.user.service.UsersWishListService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
@@ -15,6 +17,7 @@ import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Log4j2
 @RestController
@@ -22,9 +25,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
-    private final FileUploadService fileUploadService;
-
+  private final UserService userService;
+  private final FileUploadService fileUploadService;
+  private final UsersWishListService usersWishListService;
 
     /**
      * 사용자의 프로필 사진을 업로드하는 엔드포인트입니다.
@@ -54,44 +57,59 @@ public class UserController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
-//    @GetMapping("/info")
-//    public String getUserInfo() {
-//        log.info("getUserInfo : " + userService.getCurrentUser());
-//        return userService.getCurrentUser();
-//    }
+  /*@GetMapping("/info")
+  public String getUserInfo() {
+    log.info("getUserInfo : " + userService.getCurrentUser());
+    return userService.getCurrentUser();
+  }*/
 
-    // 닉네임 변경
-    @PostMapping("/update-name")
-    public ResponseEntity<?> updateName(@RequestBody User user) {
-        try {
-            userService.updateName(user.getName());
-            return ResponseEntity.ok("닉네임 변경 성공");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("닉네임 변경 실패: " + e.getMessage());
-        }
+  // 닉네임 변경
+  @PostMapping("/update-name")
+  public ResponseEntity<?> updateName(@RequestBody User user) {
+    try {
+      userService.updateName(user.getName());
+      return ResponseEntity.ok("닉네임 변경 성공");
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.badRequest().body("닉네임 변경 실패: " + e.getMessage());
     }
+  }
 
-    // 비밀번호 변경
-    @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest request) {
-        try {
-            userService.resetPassword(request.getPhone(), request.getVerificationCode(), request.getNewPassword());
-            return ResponseEntity.ok("비밀번호 변경 성공");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("비밀번호 변경 실패: " + e.getMessage());
-        }
+  // 비밀번호 변경
+  @PostMapping("/reset-password")
+  public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest request) {
+    try {
+      userService.resetPassword(request.getPhone(), request.getVerificationCode(), request.getNewPassword());
+      return ResponseEntity.ok("비밀번호 변경 성공");
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.badRequest().body("비밀번호 변경 실패: " + e.getMessage());
     }
+  }
 
-    @GetMapping("/currentUser")
-    public ResponseEntity<UserDTO> getCurrentUser() {
-        User currentUser = userService.getCurrentUser();
-        UserDTO user = UserDTO.toDTO(currentUser);
-        log.info("getCurrentUser : " + user);
-        return ResponseEntity.ok(user);
-    }
+  @GetMapping("/currentUser")
+  public ResponseEntity<UserDTO> getCurrentUser() {
+    User currentUser = userService.getCurrentUser();
+    UserDTO user = UserDTO.toDTO(currentUser);
+    log.info("getCurrentUser : " + user);
+    return ResponseEntity.ok(user);
+  }
+
+  @PostMapping("/wishModification")
+  public ResponseEntity<Void> getWishModification(@RequestParam String storeId) {
+    log.info("Entered wishModification with storeId: {}", storeId);
+    User currentUser = userService.getCurrentUser();
+    log.info("getCurrentUser : " + currentUser);
+    usersWishListService.getUsersWishModification(currentUser.getUserId(), storeId);
+    log.info("getCurrentUser : " + currentUser.getUserId());
+    return ResponseEntity.ok().build();
+  }
+
+  @GetMapping("/wishList")
+  public ResponseEntity<List<UsersStoreListResponseDto>> getWishList() {
+    User currentUser = userService.getCurrentUser();
+    return ResponseEntity.ok(usersWishListService.getUsersWishList(currentUser.getUserId()));
+  }
 
 }
 

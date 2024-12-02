@@ -19,8 +19,13 @@ public class UsersCartResponseDto {
   private Long deliveryFee;              // 배달료
   private Long totalAmount;              // 총 결제 금액 (주문 금액 + 배달료)
   private PaymentResponseDto paymentInfo;
+  private String storeRequirement;
+  private String deliveryRequest;
 
-  public static UsersCartResponseDto toUsersCartDto(Cart cart, String storeName, Long deliveryFee, PaymentResponseDto paymentInfo) {
+  public static UsersCartResponseDto toUsersCartDto(Cart cart,
+                                                    String storeName,
+                                                    Long deliveryFee,
+                                                    PaymentResponseDto paymentInfo) {
     List<UsersCartItemDto> cartItemDtos = cart.getCartItems().stream()
               .map(UsersCartItemDto::toUsersCartItemDto)  // 각 CartItem을 UsersCartItemDto로 변환
               .toList();
