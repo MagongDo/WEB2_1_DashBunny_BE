@@ -194,7 +194,6 @@ public class UsersStoreService {
 
     // Redis 키 생성 (소수점 이하 6자리 포맷)
     String redisKey = RedisKeyUtil.generateKey(userId, userLatitude, userLongitude);
-    logger.debug("Generated Redis Key: {}", redisKey);
     // Redis에서 데이터 확인
     if (!checkRedisData(userId, address)) {
       // Redis 키가 없으면 데이터를 새로 추가
@@ -218,9 +217,10 @@ public class UsersStoreService {
       }
 
       // DTO로 변환하여 응답 리스트에 추가
+      StoreFeedBack storeFeedBack = storeFeedBackRepository.findByStoreId(storeId);
       DeliveryOperatingInfo deliveryOperatingInfo=deliveryOperationInfoRepository.findByStoreId(storeId);
       UsersStoreListResponseDto dto = new UsersStoreListResponseDto();
-      dto.toUsersStoreListResponseDto(store,deliveryOperatingInfo);
+      dto.toUsersStoreListResponseDto(store,deliveryOperatingInfo,storeFeedBack);
       responseDtos.add(dto);
     }
     return responseDtos;
