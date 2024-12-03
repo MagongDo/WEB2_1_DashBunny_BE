@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.feature.user.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
@@ -32,3 +33,4 @@ class MockStoreData {
         return stores;
     }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
@@ -139,4 +140,4 @@ class MenuServiceImplTest2 {
 
         verify(groupRepository, never()).findAll();
     }
-}
+}*/

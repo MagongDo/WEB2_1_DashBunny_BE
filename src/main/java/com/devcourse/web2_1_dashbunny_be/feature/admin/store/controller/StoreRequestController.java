@@ -3,21 +3,20 @@ package com.devcourse.web2_1_dashbunny_be.feature.admin.store.controller;
 import com.devcourse.web2_1_dashbunny_be.config.s3.FileUploadService;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreClosureRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreApplicationService;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreManagementService;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.CreateStoreRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.descriptor.web.ContextHandler;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.security.Principal;
-import java.util.List;
 
 /**
  * 사장님: 가게 등록/폐업 신청 & 관리자: 승인/거절 repository.
@@ -31,48 +30,59 @@ public class StoreRequestController {
   private final StoreManagementService storeManagementService;
   private final StoreApplicationService storeApplicationService;
   private final FileUploadService fileUploadService;
-
+  private final UserService userService;
 
   /**
    * 사장님 - 가게 등록 신청 api (POST).
    */
-  @PostMapping(value = "/create",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<String> createStore(
-          @RequestParam(name = "bannerImageFile") MultipartFile bannerImageFile,
-          @RequestParam(name = "logoImageFile") MultipartFile logoImageFile,
-          @RequestPart(name = "request") CreateStoreRequestDto request
- ) {
+          @RequestParam(name = "docsImageFile") MultipartFile docsImageFile,
+          @RequestPart(name = "request") CreateStoreRequestDto request) {
+    String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+    log.info("user {}", phone);
     try {
-
-      log.info("Creating a new store request{}",request.toString());
-      String bannerImageFileUrl = fileUploadService.uploadFile(bannerImageFile,"storeBannerImage");
-      String logoImageFileUrl = fileUploadService.uploadFile(logoImageFile,"storeLogoImage");
-
-      log.info("url{}",bannerImageFileUrl);
-      log.info("url{}",logoImageFileUrl);
-
-      request.setStoreBannerImage(bannerImageFileUrl);
-      request.setStoreLogo(logoImageFileUrl);
-      // 디버그 로그 추가
-      System.out.println("배너 파일 이름: " + bannerImageFile.getOriginalFilename());
-      System.out.println("로고 파일 이름: " + logoImageFile.getOriginalFilename());
-      System.out.println("가게 이름: " + request.getStoreName());
-      System.out.println("카테고리: " + request.getCategories());
+      String docsUrl = fileUploadService.uploadFile(docsImageFile, "storeDocsImage");
+      request.setUserPhone(phone);
+      request.setStoreRegistrationDocs(docsUrl);
       storeManagementService.create(request);
       return ResponseEntity.ok("가게 등록 승인 요청을 성공했습니다.");
     } catch (Exception e) {
-      return ResponseEntity.internalServerError().body("파일 업로드 실패: " + e.getMessage());
+      e.printStackTrace();
+      return ResponseEntity.badRequest().body("파일 업로드에 실패했습니다");
+
     }
+
   }
 
-
+//      log.info("Creating a new store request{}",request.toString());
+//      String bannerImageFileUrl = fileUploadService.uploadFile(bannerImageFile, "storeBannerImage");
+//      String logoImageFileUrl = fileUploadService.uploadFile(logoImageFile, "storeLogoImage");
+//      @RequestParam(name = "bannerImageFile") MultipartFile bannerImageFile,
+//      @RequestParam(name = "logoImageFile") MultipartFile logoImageFile,
   /**
    * 사장님 - 가게 등록 재신청 api (POST).
    */
   @PostMapping("/recreate/{storeId}")
-  public ResponseEntity<String> recreateStore(@PathVariable String storeId, @RequestBody CreateStoreRequestDto storeCreateRequestDto) {
-    storeManagementService.reCreate(storeId, storeCreateRequestDto);
-    return ResponseEntity.ok("가게 등록 재승인 요청을 성공했습니다.");
+  public ResponseEntity<String> recreateStore(@PathVariable String storeId,
+                                              @RequestParam(name = "docsImageFile") MultipartFile docsImageFile,
+                                              @RequestPart(name = "request") CreateStoreRequestDto request) {
+//    storeManagementService.reCreate(storeId, request);
+//    return ResponseEntity.ok("가게 등록 재승인 요청을 성공했습니다.");
+
+    String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+    log.info("user {}", phone);
+    try {
+      String docsUrl = fileUploadService.uploadFile(docsImageFile, "storeDocsImage");
+      request.setUserPhone(phone);
+      request.setStoreRegistrationDocs(docsUrl);
+      storeManagementService.reCreate(storeId, request);
+      return ResponseEntity.ok("가게 재등록 승인 요청을 성공했습니다.");
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.badRequest().body("파일 업로드에 실패했습니다");
+
+    }
   }
 
 
@@ -84,6 +94,11 @@ public class StoreRequestController {
     storeManagementService.close(storeId);
     return ResponseEntity.ok("가게 폐업 승인 요청을 성공했습니다.");
   }
+//  @PostMapping("/closure/{storeId}")
+//  public ResponseEntity<String> closeStore(@PathVariable String storeId, @RequestBody StoreClosureRequestDto request) {
+//    storeManagementService.close(storeId,request);
+//    return ResponseEntity.ok("가게 폐업 승인 요청을 성공했습니다.");
+//  }
 
 
 
@@ -122,7 +137,7 @@ public class StoreRequestController {
   /**
    * 관리자 - 가게 조회 api (GET).
    */
-  @GetMapping("/{storeId}")
+  @GetMapping(value = "/{storeId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<AdminStoreResponseDto> getStore(@PathVariable String storeId) {
     AdminStoreResponseDto adminStoreResponseDto = storeApplicationService.getStore(storeId);
     return ResponseEntity.ok().body(adminStoreResponseDto);

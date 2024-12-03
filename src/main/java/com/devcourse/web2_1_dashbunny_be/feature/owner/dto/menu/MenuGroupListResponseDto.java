@@ -14,6 +14,7 @@ import lombok.Setter;
 public class MenuGroupListResponseDto {
   private Long groupId;
   private String groupName;
+  private Boolean isMainGroup;
 
   /**
    * 디티오 변환.
@@ -21,7 +22,8 @@ public class MenuGroupListResponseDto {
   public static MenuGroupListResponseDto fromEntity(MenuGroup menuGroup) {
     return new MenuGroupListResponseDto(
          menuGroup.getGroupId(),
-         menuGroup.getGroupName()
+         menuGroup.getGroupName(),
+         menuGroup.getIsMainGroup()
        );
     }
 }

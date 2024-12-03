@@ -13,6 +13,7 @@ public class CreateMenuRequestDto {
   private String menuName;
   private Long menuGroupId;
   private Long price;
+  private String menuContent;
   private boolean stockAvailable;
   private int menuStock;
   private boolean isSoldOut;
@@ -24,6 +25,7 @@ public class CreateMenuRequestDto {
     MenuManagement menu = new MenuManagement();
     menu.setMenuName(menuName);
     menu.setPrice(price);
+    menu.setMenuContent(menuContent);
     menu.setStockAvailable(stockAvailable);
     menu.setMenuStock(menuStock);
     menu.setIsSoldOut(isSoldOut);

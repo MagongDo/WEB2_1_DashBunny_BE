@@ -35,13 +35,20 @@ public class UserDTO implements Serializable {
 
     private String profileImageUrl;
 
-    public UserDTO(User user) {
-        this.phone = user.getPhone();
-        this.password = user.getPassword();
-        this.name = user.getName();
-        this.birthday = user.getBirthday();
-        this.email = user.getEmail();
-        this.profileImageUrl = user.getProfileImageUrl();
+    /**
+     * User 엔티티를 UserDTO로 변환하는 정적 메서드
+     *
+     * @param user 변환할 User 엔티티
+     * @return 변환된 UserDTO
+     */
+    public static UserDTO toDTO(User user) {
+        return UserDTO.builder()
+                .phone(user.getPhone())
+                .name(user.getName())
+                .birthday(user.getBirthday())
+                .email(user.getEmail())
+                .profileImageUrl(user.getProfileImageUrl())
+                .build();
     }
 
     public User toEntity() {
