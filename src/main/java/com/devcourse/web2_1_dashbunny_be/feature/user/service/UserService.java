@@ -182,7 +182,6 @@ public class UserService {
      * @param userId          사용자 ID
      * @param profileImageUrl 프로필 사진 URL
      */
-    @Transactional
     public void updateProfileImageUrl(Long userId, String profileImageUrl) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
