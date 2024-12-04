@@ -1,15 +1,21 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 
 
-import com.devcourse.web2_1_dashbunny_be.domain.user.PasswordResetRequest;
+import com.devcourse.web2_1_dashbunny_be.config.jwt.JwtUtil;
+import com.devcourse.web2_1_dashbunny_be.config.jwt.RefreshTokenService;
 import com.devcourse.web2_1_dashbunny_be.domain.user.SmsVerification;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
-import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDTO;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.*;
+import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
+import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,17 +28,50 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
 
+    // Spring Security AuthenticationManager: 사용자 인증 처리
+    private final AuthenticationManager authenticationManager;
     private final UserService userService;
-
+    private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
+    private final UserRepository userRepository;
 
     /**
-     * 사용자 회원가입을 하는 엔드포인트입니다.코드 201(CREATED), 400(BAD_REQUEST)
+     * 사용자 로그인 처리
+     * @param loginRequest 로그인 요청 데이터 (전화번호와 비밀번호)
+     * @return LoginResponse (AccessToken과 RefreshToken 반환)
+     */
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> authenticateUser(@RequestBody LoginRequestDto loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getPhone(),
+                        loginRequest.getPassword()
+                )
+        );
+			log.info("getPrincipal : {}", authentication.getPrincipal());
+        // 인증 성공 시 사용자 정보를 UserDetails로 변환
+        User user = (User) authentication.getPrincipal();
+        log.info("getUser : {}", user);
+        // Access Token 생성
+        String accessToken = jwtUtil.generateAccessToken(user.getUsername(), user.getRole());
+        // Refresh Token 생성 및 저장
+        User refreshToken = refreshTokenService.updateRefreshToken(user);
+        // AccessToken과 RefreshToken을 클라이언트에 반환
+        return ResponseEntity.ok(new LoginResponseDto(accessToken, refreshToken.getRefreshToken()));
+    }
+
+    /**
+     * 사용자 회원가입을 하는 엔드포인트입니다. 코드 201(CREATED), 400(BAD_REQUEST)
      *
-     * @param userDTO UserDTO가 포함된 요청 본문
+     * @param userDTO UserDTO 가 포함된 요청 본문
+     *                   - phone;    // 휴대폰 번호 ex) 01012345678
+     *                   - password; // 비밀번호
+     *                   - name;     // 이름
+     *                   - birthday; // 생년월일 ex) 000101-3
      * @return 회원가입 성공 메시지 또는 에러 메시지를 포함한 ResponseEntity
      */
     @PostMapping("/signUp")
-    public ResponseEntity<?> signUp(@Validated @RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> signUp(@Validated @RequestBody UserDto userDTO) {
         try {
             userService.registerUser(userDTO);
             return new ResponseEntity<>("회원가입 성공", HttpStatus.CREATED);
@@ -41,8 +80,18 @@ public class AuthController {
         }
     }
 
+    /**
+     * 사장님 회원가입을 하는 엔드포인트입니다. 코드 201(CREATED), 400(BAD_REQUEST)
+     *
+     * @param userDTO UserDTO 가 포함된 요청 본문
+     *                   - phone;    // 휴대폰 번호 ex) 01012345678
+     *                   - password; // 비밀번호
+     *                   - name;     // 이름
+     *                   - birthday; // 생년월일 ex) 000101-3
+     * @return 회원가입 성공 메시지 또는 에러 메시지를 포함한 ResponseEntity
+     */
     @PostMapping("/signUp-owner")
-    public ResponseEntity<?> signUpOwner(@Validated @RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> signUpOwner(@Validated @RequestBody UserDto userDTO) {
         try {
             userService.registerOwner(userDTO);
             return new ResponseEntity<>("사장님 회원가입 성공", HttpStatus.CREATED);
@@ -80,7 +129,7 @@ public class AuthController {
      * @return 검증 결과를 포함한 ResponseEntity
      */
     @PostMapping("/verify-sms")
-    public ResponseEntity<?> verifySms(@RequestBody SmsVerification smsVerification) {
+    public ResponseEntity<Map<String, Object>> verifySms(@RequestBody SmsVerification smsVerification) {
         Map<String, Object> response = new HashMap<>();
 
         boolean isValid = userService.verifyCode
@@ -99,7 +148,7 @@ public class AuthController {
 
 
     @GetMapping("/test")
-    public ResponseEntity<?> getTest() {
+    public ResponseEntity<User> getTest() {
         User a = userService.getCurrentUser();
         System.out.println("getCurrentUser : " + a);
         return ResponseEntity.ok(userService.getCurrentUser());

@@ -1,7 +1,7 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
-import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDTO;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class MainController {
           "birthday" : "990909-2",
           "password" : "z123456"    */
     @PostMapping("/auth/signUp/AdditionalInfo")
-    public String processRegistrationForm(@RequestBody UserDTO userDTO, HttpSession session) {
+    public String processRegistrationForm(@RequestBody UserDto userDTO, HttpSession session) {
         System.out.println("processRegistrationForm : " + userDTO.getPhone());
         // 추가 정보를 세션에 저장
         session.setAttribute("AdditionalInfoUser", userDTO);
