@@ -253,8 +253,10 @@ public class UsersCartService {
 
     //선택된 쿠폰이 있다면
     if (selectedCoupon != null) {
-      discountPrice = calculateSaleFee(selectedCoupon, totalPrice);
+      discountPrice = calculateDiscount(selectedCoupon, totalPrice);
+      cart.setUserCouponId(selectedCoupon.getUserCouponId());
     }
+
 
     // 총 결제 금액 (주문 금액 + 배달료 - 할인금액)
     Long totalAmount = totalPrice + cartDto.getDeliveryFee() - discountPrice;
@@ -269,12 +271,21 @@ public class UsersCartService {
     cartDto.setStoreRequirement(storeRequirement);
     cartDto.setDeliveryRequest(deliveryRequirement);
 
-    //선택된 쿠폰의 사용 여부 및 사용날짜 저장
-    UserCoupon userCoupon = userCouponRepository.findById(selectedCoupon.getUserCouponId())
-            .orElseThrow(() -> new IllegalArgumentException("사용자 쿠폰이 없습니다."));
-    userCoupon.setExpired(true);
-    userCoupon.setUsedDate(LocalDateTime.now());
-    userCouponRepository.save(userCoupon);
+    // 선택된 쿠폰의 사용 여부 및 사용 날짜 저장
+    if (selectedCoupon != null) {
+      UserCoupon userCoupon = userCouponRepository.findById(selectedCoupon.getUserCouponId())
+              .orElseThrow(() -> new IllegalArgumentException("사용자 쿠폰이 없습니다."));
+
+      if (userCoupon.isCouponUsed()) { //사용된 쿠폰인지 검증
+        throw new IllegalArgumentException("이미 사용된 쿠폰입니다.");
+      }
+
+      userCoupon.setCouponUsed(true);
+      userCoupon.setUsedDate(LocalDateTime.now());
+      userCouponRepository.save(userCoupon);
+    }
+
+    cartRepository.save(cart); // 장바구니 업데이트
 
     return UsersCartResponseDto.builder()
             .cartId(cart.getCartId())
@@ -297,7 +308,7 @@ public class UsersCartService {
    * @param totalPrice 할인 전 총금액.
    * @return 할인금액
    */
-  private Long calculateSaleFee(UsersCheckCouponDto coupon, Long totalPrice) {
+  private Long calculateDiscount(UsersCheckCouponDto coupon, Long totalPrice) {
     if (totalPrice < coupon.getMinOrderPrice()) {
       return 0L; // 최소 주문 금액 조건 미충족 시 할인 없음
     }

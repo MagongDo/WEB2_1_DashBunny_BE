@@ -44,9 +44,6 @@ public class UserCoupon {
   @Column(nullable = false)
   private boolean isExpired = false; //쿠폰 만료 여부
 
-  @OneToOne(mappedBy = "userCoupon", fetch = FetchType.LAZY)
-  private Cart cart;
-
 
 }
 
