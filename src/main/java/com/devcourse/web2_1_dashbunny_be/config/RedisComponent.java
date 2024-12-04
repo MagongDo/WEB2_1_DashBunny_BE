@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.config;
 
 import java.util.concurrent.TimeUnit;
@@ -32,3 +33,4 @@ public class RedisComponent {
     redisTemplate.expire(key, 7, TimeUnit.DAYS);
   }
 }
+*/

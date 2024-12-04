@@ -44,7 +44,7 @@ public class PaymentService {
     StoreManagement store = storeManagementRepository.findByStoreId(cart.getStoreId());
     // 3. Payment 엔티티 생성 및 저장
     Payment payment = new Payment();
-    payment.setCart(cart);
+    payment.setCartId(cart.getCartId());
     payment.setAmount(cart.getTotalPrice());
     payment.setStatus(PaymentStatus.READY);
     paymentRepository.save(payment);
@@ -119,7 +119,7 @@ public class PaymentService {
     if (payment.getStatus() == PaymentStatus.SUCCESS) {
       return PaymentResponseDto.builder()
                   .paymentId(paymentKey)
-                  .orderName(payment.getCart().getCartId().toString())
+                  .orderName(payment.getCartId().toString())
                   .amount(payment.getAmount())
                   .status(payment.getStatus().name())
                   .build();
@@ -148,13 +148,13 @@ public class PaymentService {
         paymentRepository.save(payment);
 
         // 결제 성공 시 장바구니 비우기
-        Cart cart = payment.getCart();
+        Cart cart =cartRepository.findById(payment.getCartId()).orElseThrow(IllegalStateException::new);
         cart.getCartItems().clear();
         cart.setStoreId(null);
         cartRepository.save(cart);
         PaymentResponseDto responseDto = PaymentResponseDto.builder()
                 .paymentId(paymentKey)
-                .orderName(payment.getCart().getCartId().toString())
+                .orderName(payment.getCartId().toString())
                 .amount(payment.getAmount())
                 .status(payment.getStatus().name())
                 .build();
@@ -181,7 +181,7 @@ public class PaymentService {
     if ("DONE".equalsIgnoreCase(status)) {
       payment.setStatus(PaymentStatus.SUCCESS);
       // 결제 성공 시 장바구니 비우기
-      Cart cart = payment.getCart();
+      Cart cart =cartRepository.findById(payment.getCartId()).orElseThrow(IllegalStateException::new);
       cart.getCartItems().clear();
       cart.setStoreId(null);
       cartRepository.save(cart);

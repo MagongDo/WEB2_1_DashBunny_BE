@@ -193,7 +193,7 @@ public class UsersCartService {
     PaymentResponseDto paymentResponse = paymentService.createPayment(paymentRequest);
 
     cartDto.setStoreRequirement(storeRequirement);
-    cartDto.setDeliveryRequest(deliveryRequirement);
+    cartDto.setDeliveryRequirement(deliveryRequirement);
     // 새로운 UsersCartResponseDto 생성하여 반환
     return UsersCartResponseDto.builder()
             .cartId(cart.getCartId())
@@ -204,9 +204,8 @@ public class UsersCartService {
             .totalAmount(totalAmount)  // 총 결제 금액
             .paymentInfo(paymentResponse)
             .storeRequirement(storeRequirement)
-            .deliveryRequest(deliveryRequirement)
+            .deliveryRequirement(deliveryRequirement)
             .build();
-
   }
 
 }

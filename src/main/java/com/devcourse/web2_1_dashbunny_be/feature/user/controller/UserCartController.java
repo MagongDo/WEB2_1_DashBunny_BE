@@ -46,8 +46,8 @@ public class UserCartController {
   public ResponseEntity<UsersCartResponseDto> checkoutCart(@RequestParam String storeRequirement,
                                                            @RequestParam String deliveryRequirement) {
     User currentUser = userService.getCurrentUser();
-    UsersCartResponseDto cartDto = cartService.checkoutCart(currentUser.getPhone(),
-            storeRequirement,
+    UsersCartResponseDto cartDto = cartService.checkoutCart(currentUser.getPhone()
+            ,storeRequirement,
             deliveryRequirement);
     return ResponseEntity.ok(cartDto);
   }
