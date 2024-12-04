@@ -269,7 +269,7 @@ public class UsersCartService {
 
     // 최종 응답 DTO 생성
     cartDto.setStoreRequirement(storeRequirement);
-    cartDto.setDeliveryRequest(deliveryRequirement);
+    cartDto.setDeliveryRequirement(deliveryRequirement);
 
     // 선택된 쿠폰의 사용 여부 및 사용 날짜 저장
     if (selectedCoupon != null) {
@@ -297,7 +297,7 @@ public class UsersCartService {
             .totalAmount(totalAmount)
             .paymentInfo(paymentResponse)
             .storeRequirement(storeRequirement)
-            .deliveryRequest(deliveryRequirement)
+            .deliveryRequirement(deliveryRequirement)
             .coupon(selectedCoupon)
             .build();
   }

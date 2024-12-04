@@ -38,7 +38,4 @@ public class Cart {
   private List<CartItem> cartItems;
 
 
-  @OneToOne(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Payment payment; // 결제와의 관계
-
 }
