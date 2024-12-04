@@ -1,0 +1,22 @@
+package com.devcourse.web2_1_dashbunny_be.feature.user.dto.order.controller.dto;
+
+import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
+import com.devcourse.web2_1_dashbunny_be.domain.user.role.OrderStatus;
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@Builder
+public class AcceptOrdersResponseDto {
+    private String storeId;
+    private int preparationTime;
+    private OrderStatus orderStatus;
+
+    public static AcceptOrdersResponseDto fromEntity(Orders order) {
+        return AcceptOrdersResponseDto.builder()
+                .storeId(order.getStoreId())
+                .preparationTime(order.getPreparationTime())
+                .orderStatus(order.getOrderStatus())
+                .build();
+    }
+}

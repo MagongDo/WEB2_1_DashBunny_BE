@@ -1,12 +1,8 @@
 package com.devcourse.web2_1_dashbunny_be.domain.owner;
 
-import com.devcourse.web2_1_dashbunny_be.domain.user.CartItem;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 // 메뉴 정보를 관리하는 엔티티 클래스
 @Getter
@@ -18,12 +14,12 @@ public class MenuManagement {
     // 메뉴 고유키 (자동 생성)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private Long menuId;
 
-    // 가게 고유키 (필수)(수정)
-    @ManyToOne
-    @JoinColumn(name = "store_id", nullable = false)
-    private StoreManagement storeId;
+    // 가게 고유키 (필수)
+    @Column(nullable = false)
+    private String storeId;
 
     // 그룹 고유키 (MenuGroup과 연관 관계 설정)
     // 그룹이 없어도 메뉴는 존재할 수 있다.
@@ -55,13 +51,17 @@ public class MenuManagement {
     private Boolean isSoldOut = false;
 
     //상품 금액
-
     @Column(nullable = false)
     private Long price;
 
-    //------------------------------추가 수정
-    @OneToMany(mappedBy = "menuManagement", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CartItem> cartItems = new ArrayList<>();
+
+
+
+
+
+
+
+
 
 
 }

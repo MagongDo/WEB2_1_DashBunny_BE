@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.feature.user.service;
 
 import com.google.gson.JsonObject;
@@ -10,3 +11,4 @@ class MockGeoUtils {
         return coordinates;
     }
 }
+*/

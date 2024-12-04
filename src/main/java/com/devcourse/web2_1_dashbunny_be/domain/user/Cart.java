@@ -12,30 +12,32 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Getter
+@Setter
 @ToString
 @EntityListeners(AuditingEntityListener.class)
 public class Cart {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cartId")
-    private Long cartId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "cart_id")
+  private Long cartId;
 
-    @OneToOne
-    @Column(name = "userId", nullable = false)
-    private User user;
+  @OneToOne
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    @OneToOne
-    @Column(name = "storeId", nullable = false)
-    private StoreManagement storeId;
+  @Column(name = "store_id")
+  private String storeId;
 
-    @Column(name = "userCouponId")
-    private String userCouponId;
+  @Column(name = "user_coupon_id")
+  private String userCouponId;
 
-    @Column(name = "totalPrice", nullable = false)
-    private Long totalPrice;
+  @Column(name = "total_price")
+  private Long totalPrice;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CartItem> cartItems;
+  @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+  private List<CartItem> cartItems;
 
+  @OneToOne(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private Payment payment; // 결제와의 관계
 
 }

@@ -26,23 +26,22 @@
     </style>
 </head>
 <body>
-<div class="user-info" th:if="${user}">
-    <h2>사용자 정보</h2>
-    <p><strong>전화번호:</strong> <span th:text="${user.phone}">전화번호</span></p>
-    <p><strong>이름:</strong> <span th:text="${user.name}">이름</span></p>
-    <p><strong>생일:</strong> <span th:text="${user.birthday}">생일</span></p>
-    <p><strong>이메일:</strong> <span th:text="${user.email}">이메일</span></p>
-    <p><strong>역할:</strong> <span th:text="${user.role}">역할</span></p>
-    <p><strong>가입일:</strong> <span th:text="${#temporals.format(user.createdDate, 'yyyy-MM-dd HH:mm:ss')}">가입일</span></p>
-    <p th:if="${user.modifiedDate}"><strong>수정일:</strong>
-        <span th:text="${user.modifiedDate != null} ? ${#temporals.format(user.modifiedDate, 'yyyy-MM-dd HH:mm:ss')} : '정보 없음'">수정일</span>
-    </p>
-</div>
+<!--<div class="user-info" th:if="${user}">-->
+<!--    <h2>사용자 정보</h2>-->
+<!--    <p ><strong>전화번호:</strong> <span th:text="${user.phone}">전화번호</span></p>-->
+<!--    <p><strong>이름:</strong> <span th:text="${user.name}">이름</span></p>-->
+<!--    <p><strong>생일:</strong> <span th:text="${user.birthday}">생일</span></p>-->
+<!--    <p><strong>이메일:</strong> <span th:text="${user.email}">이메일</span></p>-->
+<!--    <p><strong>역할:</strong> <span th:text="${user.role}">역할</span></p>-->
+<!--    <p><strong>가입일:</strong> <span th:text="${#temporals.format(user.createdDate, 'yyyy-MM-dd HH:mm:ss')}">가입일</span></p>-->
+<!--    <p th:if="${user.modifiedDate}"><strong>수정일:</strong>-->
+<!--        <span th:text="${user.modifiedDate != null} ? ${#temporals.format(user.modifiedDate, 'yyyy-MM-dd HH:mm:ss')} : '정보 없음'">수정일</span>-->
+<!--    </p>-->
+<!--</div>-->
 <div class="user-info" sec:authorize="isAuthenticated()">
     <h2>authentication 사용자 정보</h2>
     <p>로그인 사용자: <span sec:authentication="name"></span></p>
-    <p>이메일: <span th:text="${#authentication.principal.email}"></span></p>
-    <p><strong>전화번호:</strong> <span th:text="${#authentication.principal.phone}">전화번호</span></p>
+<!--    <p><strong>전화번호:</strong> <span th:text="${#authentication.principal.phone}">전화번호</span></p>-->
     <p>가입일: <span th:text="${#temporals.format(#authentication.principal.createdDate, 'yyyy-MM-dd HH:mm:ss')}"></span></p>
 
 </div>
@@ -52,7 +51,7 @@
     <p>사용자 정보를 불러올 수 없습니다.</p>
 </div>
 <div class="logout-link">
-    <a href="/logout">로그아웃</a>
+    <a href="/api/logout">로그아웃</a>
 </div>
 </body>
 </html>

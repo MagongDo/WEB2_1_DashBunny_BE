@@ -2,6 +2,7 @@ package com.devcourse.web2_1_dashbunny_be.domain.user;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,7 +18,7 @@ import java.util.List;
 @Table(name = "users")
 @Entity
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @ToString
 @EntityListeners(AuditingEntityListener.class) // Date를 등록, 수정 일시 자동 반영 중요!!
 @NoArgsConstructor
@@ -26,12 +27,14 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long userId;
 
     @NotBlank
     @Column(nullable = false, length = 11)
     private String phone;
 
+    @NotBlank
     @Column(nullable = false)
     private String password;
 
@@ -47,13 +50,23 @@ public class User implements UserDetails {
     @Column(nullable = false, length = 11)
     private String role;
 
+    @Column(length = 255)
+    private String profileImageUrl;
+
     @Column(nullable = false)
     private LocalDateTime createdDate;
 
     private LocalDateTime modifiedDate;
 
-    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
-    private String isWithdrawn;
+    @Column(nullable = false, length = 1)
+    @Builder.Default
+    @Pattern(regexp = "[YN]")
+    private String isWithdrawn = "N";
+
+    @Column(nullable = false, length = 1)
+    @Builder.Default
+    @Pattern(regexp = "[YN]")
+    private String isSocial = "N";
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

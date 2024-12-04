@@ -19,9 +19,8 @@ public class StoreFeedBack {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long feedbackId; // 피드백 고유 ID
 
-    @OneToOne
-    @JoinColumn(name = "store_id",nullable = false, unique = true)
-    private StoreManagement store;
+    @Column(name = "store_id", nullable = false, unique = true)
+    private String storeId;
 
     @Column(nullable = true)
     private Integer reviewCount; // 리뷰 수
@@ -30,5 +29,13 @@ public class StoreFeedBack {
     private Double rating; // 평점
 
     @Column(nullable = true)
-    private Integer wishlistCount; // 찜 수
+    private Integer wishlistCount = 0; // 찜 수
+
+    public Integer increaseWishCount() {
+      return this.wishlistCount + 1;
+    }
+
+    public Integer decreaseWishCount() {
+      return this.wishlistCount - 1;
+    }
 }

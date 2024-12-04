@@ -6,13 +6,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.io.Serializable;
+
 
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
+public class UserDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @NotBlank
     @Size(max = 11)
@@ -30,12 +33,22 @@ public class UserDTO {
     @Email
     private String email;
 
-    public UserDTO(User user) {
-        this.phone = user.getPhone();
-        this.password = user.getPassword();
-        this.name = user.getName();
-        this.birthday = user.getBirthday();
-        this.email = user.getEmail();
+    private String profileImageUrl;
+
+    /**
+     * User 엔티티를 UserDTO로 변환하는 정적 메서드
+     *
+     * @param user 변환할 User 엔티티
+     * @return 변환된 UserDTO
+     */
+    public static UserDTO toDTO(User user) {
+        return UserDTO.builder()
+                .phone(user.getPhone())
+                .name(user.getName())
+                .birthday(user.getBirthday())
+                .email(user.getEmail())
+                .profileImageUrl(user.getProfileImageUrl())
+                .build();
     }
 
     public User toEntity() {
@@ -45,6 +58,7 @@ public class UserDTO {
                 .name(name)
                 .birthday(birthday)
                 .email(email)
+                .profileImageUrl(profileImageUrl)
                 .build();
     }
 

@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serializable; // 추가
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,17 +13,23 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @ToString
-@EntityListeners(AuditingEntityListener.class) // Date를 등록, 수정 일시 자동 반영 중요!!
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @AllArgsConstructor
-public class SocialUser {
+public class SocialUser implements Serializable { // 변경
+
+    private static final long serialVersionUID = 1L; // 추가
 
     @Id
     private String providerId;
 
     private String provider;
 
-    private Long userId;
+//    private Long userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    private User user;
 
     private String userName;
 

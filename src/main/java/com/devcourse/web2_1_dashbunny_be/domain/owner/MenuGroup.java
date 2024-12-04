@@ -24,9 +24,8 @@ public class MenuGroup {
     private Long groupId;
 
     // 가게 ID (필수)
-    @ManyToOne
-    @JoinColumn(name = "store_id", nullable = false)
-    private StoreManagement storeId;
+    @Column(nullable = false)
+    private String storeId;
 
     // 그룹 이름 (필수, 최대 길이 255자)
     @Column(nullable = false, length = 255)
@@ -38,6 +37,7 @@ public class MenuGroup {
 
     // MenuManagement와의 연관관계 (1:N)
     @OneToMany(mappedBy = "menuGroup", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Column(nullable = true)
     private List<MenuManagement> menuList = new ArrayList<>();
 
 

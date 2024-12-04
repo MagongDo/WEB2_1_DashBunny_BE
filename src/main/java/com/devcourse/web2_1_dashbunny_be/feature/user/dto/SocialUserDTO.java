@@ -1,7 +1,11 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.dto;
 
 import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Builder
 @Getter
@@ -10,29 +14,25 @@ import lombok.*;
 @AllArgsConstructor
 public class SocialUserDTO {
 
-    private String providerId;
+  private String providerId;
 
-    private String provider;
+  private String provider;
 
-    private Long userId;
+  private String userName;
 
-    private String userName;
+  public SocialUserDTO(SocialUser socialUser) {
+    this.providerId = socialUser.getProviderId();
+    this.provider = socialUser.getProvider();
+    this.userName = socialUser.getUserName();
 
-    public SocialUserDTO(SocialUser socialUser) {
-        this.providerId = socialUser.getProviderId();
-        this.provider = socialUser.getProvider();
-        this.userId = socialUser.getUserId();
-        this.userName = socialUser.getUserName();
+  }
 
-    }
-
-    public SocialUser toEntity() {
-        return SocialUser.builder()
-                .providerId(providerId)
-                .provider(provider)
-                .userId(userId)
-                .userName(userName)
-                .build();
-    }
+  public SocialUser toEntity() {
+    return SocialUser.builder()
+      .providerId(providerId)
+      .provider(provider)
+      .userName(userName)
+      .build();
+  }
 
 }

@@ -1,12 +1,14 @@
 package com.devcourse.web2_1_dashbunny_be.domain.owner;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 // 가게의 운영정보를 관리하는 엔티티
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 @Entity
 public class StoreOperationInfo {
 
@@ -21,6 +23,9 @@ public class StoreOperationInfo {
         // 쇼츠 링크 (필요시 필드명 수정)
     @Column
     private String shortsUrl;
+
+    @Column(nullable = true)
+    private String menuName;
 
     //영업시간 (예: "09:00-22:00")
     private String openingHours;
