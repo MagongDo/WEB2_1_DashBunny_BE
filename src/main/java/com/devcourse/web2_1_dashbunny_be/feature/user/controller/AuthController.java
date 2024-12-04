@@ -48,7 +48,7 @@ public class AuthController {
                         loginRequest.getPassword()
                 )
         );
-			log.info("getPrincipal : {}", authentication.getPrincipal());
+			  log.info("getPrincipal : {}", authentication.getPrincipal());
         // 인증 성공 시 사용자 정보를 UserDetails로 변환
         User user = (User) authentication.getPrincipal();
         log.info("getUser : {}", user);
@@ -147,12 +147,12 @@ public class AuthController {
     }
 
 
-    @GetMapping("/test")
-    public ResponseEntity<User> getTest() {
-        User a = userService.getCurrentUser();
-        System.out.println("getCurrentUser : " + a);
-        return ResponseEntity.ok(userService.getCurrentUser());
-    }
+//    @GetMapping("/test")
+//    public ResponseEntity<User> getTest() {
+//        User a = userService.getCurrentUser();
+//        System.out.println("getCurrentUser : " + a);
+//        return ResponseEntity.ok(userService.getCurrentUser());
+//    }
 
 
 

@@ -34,8 +34,9 @@ public class ShortsController {
      * @return 회원가입 성공 메시지 또는 에러 메시지를 포함한 ResponseEntity
      */
     @PostMapping("/nearby-store")
-    public ResponseEntity<?> getNearbyShorts(@RequestBody ShortsRequestDto shortsRequestDto) {
-        User currentUser = userService.getCurrentUser();
+    public ResponseEntity<?> getNearbyShorts(@RequestHeader("Authorization") String authorizationHeader,
+                                             @RequestBody ShortsRequestDto shortsRequestDto) {
+        User currentUser = userService.getCurrentUserJWT(authorizationHeader);
         log.info("getNearbyShorts - Current userId: {}, Request userId: {}",
                 currentUser.getUserId(), shortsRequestDto.getUserId());
 
@@ -61,10 +62,11 @@ public class ShortsController {
      * @return 쇼츠 URL 등록/수정 성공 메시지 또는 에러 메시지를 포함한 ResponseEntity
      */
     @PostMapping("/update/shortsUrl")
-    public ResponseEntity<?> updateShortsUrl(@RequestBody ShortsCreateRequestDto shortsCreateRequestDto) {
+    public ResponseEntity<?> updateShortsUrl(@RequestHeader("Authorization") String authorizationHeader,
+                                             @RequestBody ShortsCreateRequestDto shortsCreateRequestDto) {
         try {
             // 현재 인증된 사용자 가져오기 (필요 시)
-            User currentUser = userService.getCurrentUser();
+            User currentUser = userService.getCurrentUserJWT(authorizationHeader);
             log.info("updateShortsUrl - Current userId: {}", currentUser.getUserId());
 
             // 요청 데이터 유효성 검사
