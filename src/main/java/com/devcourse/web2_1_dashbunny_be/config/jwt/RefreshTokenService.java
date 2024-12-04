@@ -9,15 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
 
 	private final UserRepository userRepository;
-
-	private final long refreshTokenDurationSe = 604800L; // 7일
+	private final JwtUtil jwtUtil;
 
 	public User updateRefreshToken(User currentUser) {
 		User user = userRepository.findByPhone(currentUser.getPhone())
@@ -25,10 +23,9 @@ public class RefreshTokenService {
 
 		// Refresh Token이 만료된 경우에만 갱신
 		if (user.getRefreshTokenExpiryDate().isBefore(LocalDateTime.now())) {
-			user.setRefreshToken(UUID.randomUUID().toString());
-			user.setRefreshTokenExpiryDate(LocalDateTime.now().plusSeconds(refreshTokenDurationSe));
+			user.setRefreshToken(jwtUtil.generateRefreshToken());
+			user.setRefreshTokenExpiryDate(LocalDateTime.now().plusDays(7));
 		}
-
 		return userRepository.save(user);
 	}
 

@@ -91,7 +91,7 @@ public class UserController {
   }
 
   // 회원탈퇴
-  @PostMapping("/reset-password")
+  @PostMapping("/withdraw")
   public ResponseEntity<String> withdrawUser(@RequestHeader("Authorization") String authorizationHeader) {
     try {
       userService.withdrawUser(authorizationHeader);

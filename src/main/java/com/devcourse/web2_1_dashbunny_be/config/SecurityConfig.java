@@ -110,7 +110,6 @@ public class SecurityConfig {
                 )
 
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
                         .successHandler(oAuth2AuthenticationSuccessHandler)
                 )
 

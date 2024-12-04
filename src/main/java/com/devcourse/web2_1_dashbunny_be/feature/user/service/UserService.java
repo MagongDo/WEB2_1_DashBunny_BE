@@ -105,9 +105,6 @@ public class UserService {
                     log.info("findByProviderId - properties: {}", properties);
 
                     String nickname = (String) properties.get("nickname");
-                    // 유저 아이디에 해당하는 user테이블의 is_social 을 Y로 변경 후 소셜유저에 저장
-                    Long userId = user.getUserId();
-                    userRepository.updateIsSocialToY(userId);
 
                     SocialUser socialUser = SocialUser.builder()
                             .user(user)
@@ -276,6 +273,7 @@ public class UserService {
         // 회원 탈퇴 처리
         user = user.toBuilder()
                 .refreshToken(null)
+                .refreshTokenExpiryDate(LocalDateTime.now())
                 .isWithdrawn("Y") // 탈퇴 상태로 변경
                 .modifiedDate(LocalDateTime.now()) // 수정 시간 갱신
                 .build();

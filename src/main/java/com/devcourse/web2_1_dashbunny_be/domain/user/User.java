@@ -72,7 +72,7 @@ public class User implements UserDetails {
 
     @JsonIgnore
     @Setter(value = AccessLevel.PUBLIC)
-    @Column(nullable = false, unique = true)
+    @Column(length = 512)
     private String refreshToken;
 
     @JsonIgnore
