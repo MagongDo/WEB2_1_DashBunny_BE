@@ -1,6 +1,7 @@
 package com.devcourse.web2_1_dashbunny_be.feature.owner.common;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.*;
+import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.BasicInfoProjection;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.ownerCoupon.repository.OwnerCouponRepository;
@@ -9,6 +10,7 @@ import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreMan
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuGroupRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreOperationInfoRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.order.repository.OrdersRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,7 @@ public class Validator {
   private final DeliveryOperatingInfoRepository deliveryOperatingInfoRepository;
   private final OwnerCouponRepository ownerCouponRepository;
   private final UserRepository userRepository;
+  private final OrdersRepository ordersRepository;
 
   /**
    * 메뉴 그룹 아이디 검증 메서드.
@@ -39,31 +42,38 @@ public class Validator {
   public MenuGroup validateGroupId(Long groupId) {
     return menuGroupRepository.findById(groupId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 엔티티를 찾을 수 없습니다."));
-    }
+  }
 
-    //메뉴 아이디 검증 메서드
-    public MenuManagement validateMenuId(Long menuId) {
-        return menuRepository.findById(menuId)
+  /**
+   * 메뉴 아이디 검증 메서드.
+   */
+  public MenuManagement validateMenuId(Long menuId) {
+    return menuRepository.findById(menuId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 메뉴 엔티티를 찾을 수 없습니다."));
-    }
+  }
 
-    //가게 아이디 검증 메서드
-    public StoreManagement validateStoreId(String storeId) {
-        log.info("Validating storeId: {}", storeId); // 로그 추가
-        return storeManagementRepository.findById(storeId)
-                .orElseThrow(() -> new EntityNotFoundException("Store not found for ID: " + storeId));
-    }
+  /**
+   *가게 아이디 검증 메서드.
+   */
+  public StoreManagement validateStoreId(String storeId) {
+    return storeManagementRepository.findById(storeId)
+                .orElseThrow(() -> new EntityNotFoundException("가게 엔티티를 찾을 수 없습니다."));
+  }
 
-    //가게 아이디 검증 메서드
-    public BasicInfoProjection validateBasicStoreId(String storeId) {
-        BasicInfoProjection basicInfo = storeManagementRepository.findBasicInfoByStoreId(storeId);
-        if(basicInfo == null) {
-            new EntityNotFoundException("가게의 기본 정보를 불러올 수 없습니다.");
-        }
-        return basicInfo;
+  /**
+   *가게 아이디 검증 메서드.
+   */
+  public BasicInfoProjection validateBasicStoreId(String storeId) {
+    BasicInfoProjection basicInfo = storeManagementRepository.findBasicInfoByStoreId(storeId);
+    if (basicInfo == null) {
+      new EntityNotFoundException("가게의 기본 정보를 불러올 수 없습니다.");
     }
+    return basicInfo;
+  }
 
-    //가게 운영정보 검증 메서드
+  /**
+   *가게 운영정보 검증 메서드.
+   */
   public StoreOperationInfo validateOperationStoreId(Long operationId) {
         log.info("검증 시작");
         StoreOperationInfo operationInfo = storeOperationInfoRepository.findById(operationId)
@@ -87,4 +97,11 @@ public class Validator {
               .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
   }
 
+  /**
+  * 주문 내역 검증 메서드.
+  */
+  public Orders validateOrderId(Long orderId) {
+    return ordersRepository.findById(orderId)
+              .orElseThrow(() -> new EntityNotFoundException("주문 정보를 찾을 수 없습니다."));
+  }
 }

@@ -1,5 +1,8 @@
 package com.devcourse.web2_1_dashbunny_be.domain.user;
 
+import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
+import com.devcourse.web2_1_dashbunny_be.domain.user.role.OrderStatus;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.order.controller.dto.OrderItemDto;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -19,12 +22,13 @@ public class Orders {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "order_id")
   private Long orderId;
 
-  @JoinColumn()
-  private Long userId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-  @JoinColumn()
   private String storeId;
 
     /*  private String storeName;*/
@@ -46,6 +50,15 @@ public class Orders {
   private LocalDateTime createdAt;
 
   private Long deliveryPrice;
+
+  @Column(nullable = false)
+  private Long totalPrice; // 총 금액 (단가 * 수량)
+
+  private int totalMenuCount;
+
+  private OrderStatus orderStatus = OrderStatus.PENDING;
+
+  private int preparationTime;
 }
 
 //
