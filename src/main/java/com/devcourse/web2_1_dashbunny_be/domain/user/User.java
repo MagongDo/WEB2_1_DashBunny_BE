@@ -1,5 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -34,6 +35,7 @@ public class User implements UserDetails {
     @Column(nullable = false, length = 11)
     private String phone;
 
+    @JsonIgnore
     @NotBlank
     @Column(nullable = false)
     private String password;
@@ -67,6 +69,20 @@ public class User implements UserDetails {
     @Builder.Default
     @Pattern(regexp = "[YN]")
     private String isSocial = "N";
+
+    @JsonIgnore
+    @Setter(value = AccessLevel.PUBLIC)
+    @Column(nullable = false, unique = true)
+    private String refreshToken;
+
+    @JsonIgnore
+    @Setter(value = AccessLevel.PUBLIC)
+    @Builder.Default
+    @Column(nullable = false)
+    private LocalDateTime refreshTokenExpiryDate =
+            LocalDateTime.of(2000, 1, 1, 0, 0);
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

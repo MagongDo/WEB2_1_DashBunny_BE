@@ -21,4 +21,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("UPDATE User u SET u.isSocial = 'Y' WHERE u.userId = :userId")
     int updateIsSocialToY(@Param("userId") Long userId);
 
+    Optional<User> findByRefreshToken(String refreshToken);
+
+    @Modifying
+    @Query("UPDATE User u SET u.refreshToken = NULL WHERE u.refreshToken = :refreshToken")
+    void deleteByRefreshToken(String refreshToken);
+
 }

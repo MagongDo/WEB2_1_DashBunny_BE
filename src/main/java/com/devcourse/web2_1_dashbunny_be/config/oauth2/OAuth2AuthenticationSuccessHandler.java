@@ -4,7 +4,7 @@ package com.devcourse.web2_1_dashbunny_be.config.oauth2;
 import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
 
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
-import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDTO;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -61,7 +61,7 @@ public class OAuth2AuthenticationSuccessHandler
                 User user;
                 if(userService.findByProviderId(providerId).isEmpty()) {
                     System.out.println("세션 저장된 유저 정보 : " + request.getSession().getAttribute("AdditionalInfoUser"));
-                    UserDTO userDTO = (UserDTO) request.getSession().getAttribute("AdditionalInfoUser");
+                    UserDto userDTO = (UserDto) request.getSession().getAttribute("AdditionalInfoUser");
                     user = userService.registerUser(userDTO);
 
                     socialUser = userService.registerSocialUser(oauth2User, provider, user);
