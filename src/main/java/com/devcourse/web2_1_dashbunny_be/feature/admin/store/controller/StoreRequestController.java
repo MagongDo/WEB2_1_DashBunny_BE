@@ -35,7 +35,7 @@ public class StoreRequestController {
   /**
    * 사장님 - 가게 등록 신청 api (POST).
    */
-  @PostMapping(value = "/create")
+  @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<String> createStore(
           @RequestParam(name = "docsImageFile") MultipartFile docsImageFile,
           @RequestPart(name = "request") CreateStoreRequestDto request) {

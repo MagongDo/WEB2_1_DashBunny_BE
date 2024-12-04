@@ -57,7 +57,8 @@ public class UserCoupon {
   @Column(nullable = false)
   private boolean couponUsed = false; //쿠폰 사용 여부
 
-//  private String couponDescription; //쿠폰 상세내용
+  @Column(nullable = false)
+  private boolean isExpired = false; //쿠폰 만료 여부
 
 
 }

@@ -4,6 +4,7 @@ import com.devcourse.web2_1_dashbunny_be.domain.admin.AdminCoupon;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponStatus;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponType;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.OwnerCoupon;
+import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
 import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.domain.user.UserCoupon;
@@ -11,13 +12,15 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.role.IssuedCouponType;
 import com.devcourse.web2_1_dashbunny_be.exception.CustomException;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.repository.AdminCouponRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.ownerCoupon.repository.OwnerCouponRepository;
-import com.devcourse.web2_1_dashbunny_be.feature.user.Util.SecurityUtil;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UserCartCouponListResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCheckCouponDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.SocialUserRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UsersCartRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.dto.*;
 import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.repository.UserCouponRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -27,10 +30,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * 사용자 쿠폰 서비스.
@@ -44,6 +45,8 @@ public class UserCouponService {
   private final OwnerCouponRepository ownerCouponRepository;
   private final UserRepository userRepository;
   private final SocialUserRepository socialUserRepository;
+  private final UsersCartRepository cartRepository;
+  private final StoreManagementRepository storeManagementRepository;
   private final RedisTemplate<String, Object> redisTemplate;
 
 
@@ -269,10 +272,11 @@ public class UserCouponService {
    */
   public List<UserCouponListResponseDto> findNotUsedCoupons() {
     User currentUser = currentUserValidation();
-    List<UserCoupon> availableCoupons = userCouponRepository.findByUser_UserIdAndCouponUsedIsFalse(currentUser.getUserId());
+    List<UserCoupon> availableCoupons = userCouponRepository.findByUser_UserIdAndCouponUsedIsFalseAndExpiredIsFalse(currentUser.getUserId());
 
-    // 발급 유형에 따라 AdminCoupon 또는 OwnerCoupon 정보를 매핑
-    return availableCoupons.stream().map(coupon -> {
+    // 만료되지 않은 쿠폰 & 발급 유형에 따라 AdminCoupon 또는 OwnerCoupon 쿠폰 정보를 필터링 및 매핑
+    return availableCoupons.stream()
+            .map(coupon -> {
       if (coupon.getIssuedCouponType() == IssuedCouponType.ADMIN) {
         AdminCoupon adminCoupon = adminCouponRepository.findById(coupon.getCouponId())
                 .orElseThrow(() -> new IllegalArgumentException("관리자 쿠폰 정보를 찾을 수 없습니다."));
@@ -312,6 +316,7 @@ public class UserCouponService {
 
 
   }
+
 
   /**
    * 선착순 쿠폰 상태가 조기종료이거나, 만료일 경우 레디스에서 삭제.
