@@ -26,13 +26,17 @@ public class AuthController {
 
 
     /**
-     * 사용자 회원가입을 하는 엔드포인트입니다.코드 201(CREATED), 400(BAD_REQUEST)
+     * 사용자 회원가입을 하는 엔드포인트입니다. 코드 201(CREATED), 400(BAD_REQUEST)
      *
-     * @param userDTO UserDTO가 포함된 요청 본문
+     * @param userDTO UserDTO 가 포함된 요청 본문
+     *                   - phone;    // 휴대폰 번호 ex) 01012345678
+     *                   - password; // 비밀번호
+     *                   - name;     // 이름
+     *                   - birthday; // 생년월일 ex) 000101-3
      * @return 회원가입 성공 메시지 또는 에러 메시지를 포함한 ResponseEntity
      */
     @PostMapping("/signUp")
-    public ResponseEntity<?> signUp(@Validated @RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> signUp(@Validated @RequestBody UserDTO userDTO) {
         try {
             userService.registerUser(userDTO);
             return new ResponseEntity<>("회원가입 성공", HttpStatus.CREATED);
@@ -41,8 +45,18 @@ public class AuthController {
         }
     }
 
+    /**
+     * 사장님 회원가입을 하는 엔드포인트입니다. 코드 201(CREATED), 400(BAD_REQUEST)
+     *
+     * @param userDTO UserDTO 가 포함된 요청 본문
+     *                   - phone;    // 휴대폰 번호 ex) 01012345678
+     *                   - password; // 비밀번호
+     *                   - name;     // 이름
+     *                   - birthday; // 생년월일 ex) 000101-3
+     * @return 회원가입 성공 메시지 또는 에러 메시지를 포함한 ResponseEntity
+     */
     @PostMapping("/signUp-owner")
-    public ResponseEntity<?> signUpOwner(@Validated @RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> signUpOwner(@Validated @RequestBody UserDTO userDTO) {
         try {
             userService.registerOwner(userDTO);
             return new ResponseEntity<>("사장님 회원가입 성공", HttpStatus.CREATED);
@@ -80,7 +94,7 @@ public class AuthController {
      * @return 검증 결과를 포함한 ResponseEntity
      */
     @PostMapping("/verify-sms")
-    public ResponseEntity<?> verifySms(@RequestBody SmsVerification smsVerification) {
+    public ResponseEntity<Map<String, Object>> verifySms(@RequestBody SmsVerification smsVerification) {
         Map<String, Object> response = new HashMap<>();
 
         boolean isValid = userService.verifyCode
@@ -99,7 +113,7 @@ public class AuthController {
 
 
     @GetMapping("/test")
-    public ResponseEntity<?> getTest() {
+    public ResponseEntity<User> getTest() {
         User a = userService.getCurrentUser();
         System.out.println("getCurrentUser : " + a);
         return ResponseEntity.ok(userService.getCurrentUser());
