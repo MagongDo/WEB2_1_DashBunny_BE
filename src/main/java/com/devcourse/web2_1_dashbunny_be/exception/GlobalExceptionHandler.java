@@ -3,9 +3,11 @@ package com.devcourse.web2_1_dashbunny_be.exception;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +19,7 @@ import org.springframework.web.context.request.WebRequest;
 
 //** 전역 에러 클래스.
 
-
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -57,10 +59,10 @@ public class GlobalExceptionHandler {
 //** IllegalStateException.
 
 
-  @ExceptionHandler(IllegalStateException.class)
-  public ResponseEntity<String> handleIllegalStateException(IllegalStateException ex) {
-    return new ResponseEntity<>("요청을 처리할 수 없는 상태입니다. 잠시 후 다시 시도해주세요.", HttpStatus.BAD_REQUEST);
-  }
+//  @ExceptionHandler(IllegalStateException.class)
+//  public ResponseEntity<String> handleIllegalStateException(IllegalStateException ex) {
+//    return new ResponseEntity<>("요청을 처리할 수 없는 상태입니다. 잠시 후 다시 시도해주세요.", HttpStatus.BAD_REQUEST);
+//  }
 
 //** IOException.
 
@@ -73,11 +75,11 @@ public class GlobalExceptionHandler {
 //** SQLException.
 
 
-  @ExceptionHandler(SQLException.class)
-   public ResponseEntity<String> handleSQLException(SQLException ex) {
-    return new ResponseEntity<
-            >("데이터 처리 중 오류가 발생했습니다. 문제가 지속되면 관리자에게 문의하세요.", HttpStatus.BAD_REQUEST);
-  }
+//  @ExceptionHandler(SQLException.class)
+//   public ResponseEntity<String> handleSQLException(SQLException ex) {
+//    return new ResponseEntity<
+//            >("데이터 처리 중 오류가 발생했습니다. 문제가 지속되면 관리자에게 문의하세요.", HttpStatus.BAD_REQUEST);
+//  }
 
 //** Exception.
 
@@ -86,7 +88,6 @@ public class GlobalExceptionHandler {
 //  public ResponseEntity<String> handleAllExceptions(Exception ex) {
 //    return new ResponseEntity<>("서버 오류가 발생했습니다. 관리자에게 문의해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
 //  }
-  
   // RuntimeException 처리
   @ExceptionHandler(RuntimeException.class)
   public ResponseEntity<String> handleRuntimeException(RuntimeException e){
@@ -103,11 +104,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
-  @ExceptionHandler(CustomException.class)
-  public ResponseEntity<String> handleCustomException(CustomException ex) {
-    return ResponseEntity.status(ex.getStatus()).body(ex.getMessage());
-  }
 
+  @ExceptionHandler(CustomException.class)
+  public ResponseEntity<?> handleCustomException(CustomException e) {
+
+
+    return ResponseEntity.status(e.getStatus())
+            .body(Collections.singletonMap("error", e.getMessage()));
+  }
 }
 
 //package com.devcourse.web2_1_dashbunny_be.exception;
@@ -175,6 +179,9 @@ public class GlobalExceptionHandler {
 //  }
 //
 //
-
-
-
+//  @ExceptionHandler(CustomException.class)
+//  public ResponseEntity<String> handleCustomException(CustomException ex) {
+//    return ResponseEntity.status(ex.getStatus()).body(ex.getMessage());
+//  }
+//
+//}

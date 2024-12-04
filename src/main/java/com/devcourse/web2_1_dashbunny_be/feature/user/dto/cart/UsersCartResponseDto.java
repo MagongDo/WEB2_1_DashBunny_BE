@@ -17,10 +17,13 @@ public class UsersCartResponseDto {
   private String storeName;              // 가게 이름
   private List<UsersCartItemDto> cartItems;   // 장바구니 아이템 리스트
   private Long deliveryFee;              // 배달료
-  private Long totalAmount;              // 총 결제 금액 (주문 금액 + 배달료)
+  private Long discountPrice;                   //할인 금액
+  private Long totalAmount;              // 총 결제 금액 (주문 금액 + 배달료 - 할인금액)
   private PaymentResponseDto paymentInfo;
   private String storeRequirement;
   private String deliveryRequirement;
+
+  private UsersCheckCouponDto coupon;    // 선택된 쿠폰 정보 추가
 
   public static UsersCartResponseDto toUsersCartDto(Cart cart,
                                                     String storeName,
