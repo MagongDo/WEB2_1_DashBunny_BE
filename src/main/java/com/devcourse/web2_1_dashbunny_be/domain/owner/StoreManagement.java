@@ -107,7 +107,6 @@ public class StoreManagement {
   //가게 등록 승인 날짜
   private LocalDateTime approvedDate;
 
-
   //스토어가 가진 쿠폰 리스트
   //쿠폰이 없어도 스토어는 생성될 수 있어야한다. 리스트 초기화 진행
   @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
