@@ -272,7 +272,7 @@ public class UserCouponService {
    */
   public List<UserCouponListResponseDto> findNotUsedCoupons() {
     User currentUser = currentUserValidation();
-    List<UserCoupon> availableCoupons = userCouponRepository.findByUser_UserIdAndCouponUsedIsFalseAndExpiredIsFalse(currentUser.getUserId());
+    List<UserCoupon> availableCoupons = userCouponRepository.findByUser_UserIdAndCouponUsedIsFalseAndIsExpiredIsFalse(currentUser.getUserId());
 
     // 만료되지 않은 쿠폰 & 발급 유형에 따라 AdminCoupon 또는 OwnerCoupon 쿠폰 정보를 필터링 및 매핑
     return availableCoupons.stream()

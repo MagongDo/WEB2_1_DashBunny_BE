@@ -28,7 +28,7 @@ public interface UserCouponRepository extends JpaRepository<UserCoupon, String> 
   /**
    * 사용하지 않은 쿠폰 목록 조회.
    */
-  List<UserCoupon> findByUser_UserIdAndCouponUsedIsFalseAndExpiredIsFalse(Long userId);
+  List<UserCoupon> findByUser_UserIdAndCouponUsedIsFalseAndIsExpiredIsFalse(Long userId);
 
 
   /**

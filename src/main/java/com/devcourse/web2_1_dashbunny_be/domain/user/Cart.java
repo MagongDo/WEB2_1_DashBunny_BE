@@ -37,8 +37,8 @@ public class Cart {
   @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
   private List<CartItem> cartItems;
 
-  @OneToOne
-  @JoinColumn(name = "userCouponId") // UserCoupon과 명시적 연관 관계
+  @OneToOne(mappedBy = "cart", fetch = FetchType.LAZY)
+  @JoinColumn(name = "userCouponId", nullable = true) // UserCoupon과 명시적 연관 관계, 선택적으로 쿠폰 참조
   private UserCoupon userCoupon;
 
 
