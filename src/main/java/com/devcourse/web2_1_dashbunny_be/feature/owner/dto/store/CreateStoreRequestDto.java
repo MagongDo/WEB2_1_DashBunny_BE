@@ -7,11 +7,8 @@ import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import jakarta.validation.constraints.Size;
 import java.util.List;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
+import lombok.*;
 
 
 /**
@@ -19,7 +16,8 @@ import lombok.ToString;
  */
 @Getter
 @Setter
-@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class CreateStoreRequestDto {
   private String storeName;             // 가게 이름

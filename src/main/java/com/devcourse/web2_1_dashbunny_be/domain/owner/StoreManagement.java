@@ -55,7 +55,7 @@ public class StoreManagement {
   private String storeDescription;
 
   // 가게 전화번호 (필수, 최대 길이 13자)
-  @Column(nullable = false, length = 13)
+  @Column(nullable = false, length = 20)
   private String contactNumber;
 
   // 가게 매장 로고 (아직 작성안한 필드)
