@@ -48,7 +48,7 @@ public class ShortsService {
    * @param requestDto 쇼츠 URL, storeID, menuId가 포함된 Dto
    * @return 저장결과
    */
-  public StoreOperationInfo createShorts(ShortsCreateRequestDto requestDto) {
+  public StoreOperationInfo updateShortsUrl(ShortsCreateRequestDto requestDto) {
     // StoreManagement 및 MenuManagement 조회
     StoreManagement storeId = storeManagementRepository.findById(requestDto.getStoreId())
         .orElseThrow(() -> new IllegalArgumentException("잘못된 storeId: " + requestDto.getStoreId()));
@@ -56,21 +56,18 @@ public class ShortsService {
     MenuManagement menuId = menuRepository.findById(requestDto.getMenuId())
         .orElseThrow(() -> new IllegalArgumentException("잘못된 menuId: " + requestDto.getMenuId()));
 
-    // Shorts 엔티티 생성
-    StoreOperationInfo shorts = StoreOperationInfo.builder()
-        .shortsUrl(requestDto.getUrl())
-        .store(storeId)
-        .menuId(menuId)
-        .build();
-
-    // 저장
-    return storeOperationInfoRepository.save(shorts);
+    StoreOperationInfo shorts = storeOperationInfoRepository.findByStore(storeId);
+    if (shorts != null) {
+      shorts.setShortsUrl(requestDto.getUrl());
+      shorts.setMenuId(menuId);
+    }
+		return storeOperationInfoRepository.save(shorts);
   }
 
   // 레디스에 저장된 데이터를 활용하여 주위 모든 가게 리스트 반환
   public List<UsersStoreListResponseDto> getNearbyStoresShorts(ShortsRequestDto shortsRequestDto) {
     List<UsersStoreListResponseDto> responseDtos = new ArrayList<>();
-    String userId = shortsRequestDto.getUserId();
+    String userId = String.valueOf(shortsRequestDto.getUserId());
     String address = shortsRequestDto.getAddress();
     // 사용자의 주소를 기반으로 좌표를 가져옴
     JsonObject addressLatLon;
@@ -108,17 +105,23 @@ public class ShortsService {
     log.info("체크 storeIds != null");
     // 가게 ID로 데이터베이스에서 가게 정보 가져오기 및 필터링
     for (String storeId : storeIds) {
+      log.info("체크 storeId : {}", storeId);
       StoreManagement store = storeManagementRepository.findById(storeId)
             .orElse(null);
-      StoreFeedBack storeFeedBack = storeFeedBackRepository.findByStoreId(storeId);
+      log.info("체크 store : {}", store.getAddress());
+      log.info("체크 store : {}", store.getStoreId());
+
       StoreOperationInfo storeOperationInfo = storeOperationInfoRepository.findByStore(store);
+      log.info("체크 storeOperationInfo : {}", storeOperationInfo.toString());
+      log.info("체크 storeOperationInfo : {}", storeOperationInfo.getStore().getStoreId());
       if (store == null) {
         continue; // 가게 정보가 없으면 무시
       }
       // DTO로 변환하여 응답 리스트에 추가
-      UsersStoreListResponseDto dto = new UsersStoreListResponseDto();
-      dto.toUsersStoreShortsListResponseDto(store, storeOperationInfo, storeFeedBack);
-      responseDtos.add(dto);
+      UsersStoreListResponseDto dto = UsersStoreListResponseDto.toUsersStoreShortsListResponseDto(store, storeOperationInfo);
+      if (dto != null) {
+        responseDtos.add(dto);
+      }
     }
     log.info("getNearbyStoresShorts : {}", responseDtos);
     return responseDtos;

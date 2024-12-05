@@ -1,5 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -11,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,6 +35,7 @@ public class User implements UserDetails {
     @Column(nullable = false, length = 11)
     private String phone;
 
+    @JsonIgnore
     @NotBlank
     @Column(nullable = false)
     private String password;
@@ -69,8 +70,19 @@ public class User implements UserDetails {
     @Pattern(regexp = "[YN]")
     private String isSocial = "N";
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserCoupon> userCoupons = new ArrayList<>();
+    @JsonIgnore
+    @Setter(value = AccessLevel.PUBLIC)
+    @Column(length = 512)
+    private String refreshToken;
+
+    @JsonIgnore
+    @Setter(value = AccessLevel.PUBLIC)
+    @Builder.Default
+    @Column(nullable = false)
+    private LocalDateTime refreshTokenExpiryDate =
+            LocalDateTime.of(2000, 1, 1, 0, 0);
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

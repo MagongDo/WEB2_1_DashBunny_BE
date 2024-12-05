@@ -56,8 +56,7 @@ public class UsersStoreListResponseDto {
   }
 
   public static UsersStoreListResponseDto toUsersStoreShortsListResponseDto(StoreManagement store,
-                                                                            StoreOperationInfo storeOperationInfo,
-                                                                            StoreFeedBack storeFeedBack) {
+                                                                            StoreOperationInfo storeOperationInfo) {
     if (store == null) {
       return null;
     }
@@ -66,11 +65,6 @@ public class UsersStoreListResponseDto {
     dto.setStoreId(store.getStoreId());
     dto.setStoreName(store.getStoreName());
     dto.setStoreLogo(store.getStoreLogo());
-
-    if (storeFeedBack != null) {
-      dto.setRating(storeFeedBack.getRating());
-      dto.setReviewCount(storeFeedBack.getReviewCount());
-    }
 
     if (storeOperationInfo != null) {
       dto.setShortsUrl(storeOperationInfo.getShortsUrl());

@@ -10,13 +10,12 @@ import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreMan
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuGroupRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreOperationInfoRepository;
-import com.devcourse.web2_1_dashbunny_be.feature.user.dto.order.repository.OrdersRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.order.repository.OrdersRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 

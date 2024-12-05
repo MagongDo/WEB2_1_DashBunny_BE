@@ -1,4 +1,4 @@
-package com.devcourse.web2_1_dashbunny_be.feature.user.dto.order.controller.dto;
+package com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.user.OrderItem;
@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,10 +30,9 @@ public class OrderInfoRequestDto {
   private String riderNote; // 라이더에게 전달할 메모
 
   public Orders toEntity(List<OrderItemDto> orderItems, MenuRepository menuRepository, User user) {
-    // OrderItemDto를 OrderItem으로 변환
+
     List<OrderItem> orderItemList = orderItems.stream()
             .map(orderItemDto -> {
-              // MenuManagement를 menuId로 조회
               MenuManagement menu = menuRepository.findById(orderItemDto.getMenuId())
                       .orElseThrow(() -> new IllegalArgumentException("Invalid menu ID: " + orderItemDto.getMenuId()));
               return orderItemDto.toEntity(menu);
