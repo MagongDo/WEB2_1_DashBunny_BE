@@ -110,9 +110,10 @@ public class UserController {
 //  }
 
   @PostMapping("/wishModification")
-  public ResponseEntity<Void> getWishModification(@RequestParam String storeId) {
+  public ResponseEntity<Void> getWishModification(@RequestHeader("Authorization") String authorizationHeader,
+                                                  @RequestParam String storeId) {
     log.info("Entered wishModification with storeId: {}", storeId);
-    User currentUser = userService.getCurrentUser();
+    User currentUser = userService.getCurrentUser(authorizationHeader);
     log.info("getCurrentUser : " + currentUser);
     usersWishListService.getUsersWishModification(currentUser.getUserId(), storeId);
     log.info("getCurrentUser : " + currentUser.getUserId());
@@ -120,8 +121,8 @@ public class UserController {
   }
 
   @GetMapping("/wishList")
-  public ResponseEntity<List<UsersStoreListResponseDto>> getWishList() {
-    User currentUser = userService.getCurrentUser();
+  public ResponseEntity<List<UsersStoreListResponseDto>> getWishList(@RequestHeader("Authorization") String authorizationHeader) {
+    User currentUser = userService.getCurrentUser(authorizationHeader);
     return ResponseEntity.ok(usersWishListService.getUsersWishList(currentUser.getUserId()));
   }
 
