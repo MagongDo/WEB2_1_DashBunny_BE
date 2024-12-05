@@ -2,11 +2,15 @@ package com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.admin.AdminCoupon;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponStatus;
+import com.devcourse.web2_1_dashbunny_be.domain.user.UserCoupon;
+import com.devcourse.web2_1_dashbunny_be.domain.user.role.IssuedCouponType;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.dto.*;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.repository.AdminCouponRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.repository.UserCouponRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -20,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AdminCouponService {
   private final AdminCouponRepository adminCouponRepository;
+  private final UserCouponRepository userCouponRepository;
 
   /**
    * 쿠폰 생성.
@@ -80,8 +85,17 @@ public class AdminCouponService {
 
     for (AdminCoupon coupon : expiredCoupons) {
       coupon.setCouponStatus(CouponStatus.EXPIRED);
+
+      //사용자 쿠폰 만료상태 변환
+      List<UserCoupon> expiredUserCoupons = userCouponRepository.findByCouponIdAndAndIssuedCouponType(coupon.getCouponId(), IssuedCouponType.ADMIN);
+      for(UserCoupon userCoupon : expiredUserCoupons) {
+        userCoupon.setExpired(true);
+      }
+      userCouponRepository.saveAll(expiredUserCoupons);
     }
 
     adminCouponRepository.saveAll(expiredCoupons);
+
   }
+
 }

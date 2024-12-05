@@ -1,5 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.feature.owner.store.service;
 
+import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreOperationInfo;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
@@ -29,8 +30,8 @@ public class StoreServiceImpl implements StoreService {
    * 기본 정보를 반환 api service.
    */
   @Override
-  public BasicInfoProjection findBasicInfo(String storeId) {
-    return validator.validateBasicStoreId(storeId);
+  public BasicInfoProjection getBasicStoreInfo(String storeId) {
+    return storeManagementRepository.findBasicInfoByStoreId(storeId);
   }
 
   /**
@@ -43,19 +44,16 @@ public class StoreServiceImpl implements StoreService {
     if (updateBasicInfo.getContactNumber() != null) {
       store.setContactNumber(updateBasicInfo.getContactNumber());
     }
-    if (updateBasicInfo.getStoreLogo() != null) {
-      store.setStoreLogo(updateBasicInfo.getStoreLogo());
-    }
-    if (updateBasicInfo.getStoreBannerImage() != null) {
-      store.setStoreBannerImage(updateBasicInfo.getStoreBannerImage());
-    }
     if (updateBasicInfo.getStoreDescription() != null) {
       store.setStoreDescription(updateBasicInfo.getStoreDescription());
     }
-
     StoreOperationInfo operationInfo = store.getStoreOperation();
     if (operationInfo != null && updateBasicInfo.getShortsUrl() != null) {
       operationInfo.setShortsUrl(updateBasicInfo.getShortsUrl());
+    }
+
+    if (operationInfo != null && updateBasicInfo.getShortsMenu() != null) {
+      operationInfo.setMenuName(updateBasicInfo.getShortsMenu());
     }
 
     storeManagementRepository.save(store);

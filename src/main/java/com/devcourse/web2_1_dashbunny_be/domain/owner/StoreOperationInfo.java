@@ -28,6 +28,9 @@ public class StoreOperationInfo {
     @Column
     private String shortsUrl;
 
+    @Column(nullable = true)
+    private String menuName;
+
     //영업시간 (예: "09:00-22:00")
     private String openingHours;
 

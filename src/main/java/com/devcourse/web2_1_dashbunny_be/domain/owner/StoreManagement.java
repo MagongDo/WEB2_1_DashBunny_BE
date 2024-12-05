@@ -55,7 +55,7 @@ public class StoreManagement {
   private String storeDescription;
 
   // 가게 전화번호 (필수, 최대 길이 13자)
-  @Column(nullable = false, length = 13)
+  @Column(nullable = false, length = 20)
   private String contactNumber;
 
   // 가게 매장 로고 (아직 작성안한 필드)
@@ -106,7 +106,6 @@ public class StoreManagement {
 
   //가게 등록 승인 날짜
   private LocalDateTime approvedDate;
-
 
   //스토어가 가진 쿠폰 리스트
   //쿠폰이 없어도 스토어는 생성될 수 있어야한다. 리스트 초기화 진행
