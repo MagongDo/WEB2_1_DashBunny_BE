@@ -1,7 +1,8 @@
-package com.devcourse.web2_1_dashbunny_be.feature.user.dto.order.controller;
+package com.devcourse.web2_1_dashbunny_be.feature.order.controller;
 
+import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.*;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.order.controller.dto.*;
-import com.devcourse.web2_1_dashbunny_be.feature.user.dto.order.service.OrderService;
+import com.devcourse.web2_1_dashbunny_be.feature.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

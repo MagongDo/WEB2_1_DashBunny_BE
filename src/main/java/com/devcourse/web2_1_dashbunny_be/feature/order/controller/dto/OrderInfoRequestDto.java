@@ -1,4 +1,4 @@
-package com.devcourse.web2_1_dashbunny_be.feature.user.dto.order.controller.dto;
+package com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.user.OrderItem;
@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
