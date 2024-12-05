@@ -2,10 +2,7 @@ package com.devcourse.web2_1_dashbunny_be.domain.user;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 /**
@@ -16,6 +13,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class OrderItem {
 
   @Id
@@ -36,4 +34,6 @@ public class OrderItem {
   @Column(nullable = true)
   private Long totalPrice; // 총 합산 비용
 
+  @Column(nullable = false)
+  private boolean stockAvailableAtOrder; // 주문 당시의 재고 등록 여부
 }

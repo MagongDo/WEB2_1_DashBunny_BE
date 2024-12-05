@@ -14,7 +14,7 @@ public interface StoreService {
   /**
    * 기본 정보를 반환 api service.
    */
-  BasicInfoProjection findBasicInfo(String storeId);
+  BasicInfoProjection getBasicStoreInfo(String storeId);
 
   /**
    * 기본 정보 수정을 위한 api service.

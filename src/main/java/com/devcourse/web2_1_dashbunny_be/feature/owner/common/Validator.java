@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 검증 클래스.
  */
@@ -50,6 +52,11 @@ public class Validator {
   public MenuManagement validateMenuId(Long menuId) {
     return menuRepository.findById(menuId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 메뉴 엔티티를 찾을 수 없습니다."));
+  }
+
+  public List<String> validateAllMenuNames(String storeId) {
+    return menuRepository.findAllMenuNamesByStoreId(storeId)
+            .orElseThrow(() -> new EntityNotFoundException("해당 가게의 메뉴 이름을 찾을 수 없습니다."));
   }
 
   /**
