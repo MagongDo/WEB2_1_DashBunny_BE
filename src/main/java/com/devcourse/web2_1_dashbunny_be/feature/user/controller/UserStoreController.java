@@ -22,8 +22,9 @@ public class UserStoreController {
   private final UserService userService;
 
   @GetMapping("/stores/{category}")
-  public ResponseEntity<List<UsersStoreListResponseDto>> getUsersByCategory(@PathVariable String category, @RequestParam String address,
-                                                                            @RequestHeader("Authorization") String authorizationHeader) {
+  public ResponseEntity<List<UsersStoreListResponseDto>> getUsersByCategory(@PathVariable String category,
+                                                                            @RequestHeader("Authorization") String authorizationHeader,
+                                                                            @RequestParam String address) {
     User currentUser = userService.getCurrentUser(authorizationHeader);
     List<UsersStoreListResponseDto> storeList = usersStoreService.usersStoreListResponse(currentUser.getPhone(), address, category);
     return ResponseEntity.ok(storeList);
@@ -31,7 +32,8 @@ public class UserStoreController {
 
   @PostMapping("/stores/checking")
   public ResponseEntity<Void> getUsersStoreChecking(@RequestParam String address,
-                                                    @RequestHeader("Authorization") String authorizationHeader) {
+                                                    @RequestHeader("Authorization") String authorizationHeader
+                                                    ) {
     User currentUser = userService.getCurrentUser(authorizationHeader);
     if (!usersStoreService.checkRedisData(currentUser.getPhone(), address)) {
       // Redis 키가 없으면 데이터를 새로 추가

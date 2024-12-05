@@ -110,8 +110,8 @@ public class UserController {
 //  }
 
   @PostMapping("/wishModification")
-  public ResponseEntity<Void> getWishModification(@RequestHeader("Authorization") String authorizationHeader,
-                                                  @RequestParam String storeId) {
+  public ResponseEntity<Void> getWishModification(@RequestParam String storeId,
+                                                  @RequestHeader("Authorization") String authorizationHeader) {
     log.info("Entered wishModification with storeId: {}", storeId);
     User currentUser = userService.getCurrentUser(authorizationHeader);
     log.info("getCurrentUser : " + currentUser);
