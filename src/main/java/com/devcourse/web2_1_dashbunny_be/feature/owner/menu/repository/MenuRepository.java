@@ -20,8 +20,10 @@ public interface MenuRepository extends JpaRepository<MenuManagement, Long> {
   * storeId를 기준으로 엔티티를 찾아냔다..
   */
   @Query("SELECT m FROM MenuManagement m WHERE m.storeId = :storeId")
- List<MenuManagement> findAllByStoreId(@Param("storeId") String storeId);
+  List<MenuManagement> findAllByStoreId(@Param("storeId") String storeId);
 
+  @Query("SELECT m.menuName As menuName From MenuManagement m WHERE m.storeId = :storeId")
+  Optional<List<String>> findAllMenuNamesByStoreId(@Param("storeId") String storeId);
 
   /*  // 메뉴명이 포함된 모든 메뉴를 검색
     @Query("SELECT m FROM MenuManagement m WHERE m.menuName LIKE %:menuName%")

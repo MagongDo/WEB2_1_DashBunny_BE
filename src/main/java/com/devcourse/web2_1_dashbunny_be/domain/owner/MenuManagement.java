@@ -14,6 +14,7 @@ public class MenuManagement {
     // 메뉴 고유키 (자동 생성)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private Long menuId;
 
     // 가게 고유키 (필수)
@@ -50,9 +51,10 @@ public class MenuManagement {
     private Boolean isSoldOut = false;
 
     //상품 금액
-
     @Column(nullable = false)
     private Long price;
+
+
 
 
 

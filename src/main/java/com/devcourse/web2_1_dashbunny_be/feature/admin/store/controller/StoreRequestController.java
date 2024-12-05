@@ -8,6 +8,7 @@ import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreApplic
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.service.StoreManagementService;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.CreateStoreRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.descriptor.web.ContextHandler;
@@ -38,14 +39,15 @@ public class StoreRequestController {
   @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<String> createStore(
           @RequestParam(name = "docsImageFile") MultipartFile docsImageFile,
-          @RequestPart(name = "request") CreateStoreRequestDto request) {
+          @RequestPart(value = "request", required = false) String request) {
     String phone = SecurityContextHolder.getContext().getAuthentication().getName();
     log.info("user {}", phone);
     try {
+      CreateStoreRequestDto requestDto = new ObjectMapper().readValue(request, CreateStoreRequestDto.class);
       String docsUrl = fileUploadService.uploadFile(docsImageFile, "storeDocsImage");
-      request.setUserPhone(phone);
-      request.setStoreRegistrationDocs(docsUrl);
-      storeManagementService.create(request);
+      requestDto.setUserPhone(phone);
+      requestDto.setStoreRegistrationDocs(docsUrl);
+      storeManagementService.create(requestDto);
       return ResponseEntity.ok("가게 등록 승인 요청을 성공했습니다.");
     } catch (Exception e) {
       e.printStackTrace();
@@ -54,12 +56,6 @@ public class StoreRequestController {
     }
 
   }
-
-//      log.info("Creating a new store request{}",request.toString());
-//      String bannerImageFileUrl = fileUploadService.uploadFile(bannerImageFile, "storeBannerImage");
-//      String logoImageFileUrl = fileUploadService.uploadFile(logoImageFile, "storeLogoImage");
-//      @RequestParam(name = "bannerImageFile") MultipartFile bannerImageFile,
-//      @RequestParam(name = "logoImageFile") MultipartFile logoImageFile,
   /**
    * 사장님 - 가게 등록 재신청 api (POST).
    */
