@@ -47,7 +47,7 @@ public class MainController {
 
     @GetMapping("/main")
     public String main(Model model, @RequestHeader("Authorization") String authorizationHeader) {
-        User currentUser = userService.getCurrentUserJWT(authorizationHeader);
+        User currentUser = userService.getCurrentUser(authorizationHeader);
         model.addAttribute("user", currentUser);
         log.info("User session : " + model.getAttribute("user"));
         return "main"; // main.html로 이동

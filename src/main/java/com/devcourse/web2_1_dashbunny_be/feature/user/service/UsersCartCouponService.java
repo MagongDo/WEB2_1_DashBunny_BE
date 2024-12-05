@@ -129,7 +129,7 @@ public class UsersCartCouponService {
    */
   @Transactional
   public UsersCheckCouponDto selectCouponById(Long userId, String userCouponId) {
-    UserCoupon selectedCoupon = userCouponRepository.findByUser_UserIdAndUserCouponId(userId,userCouponId);
+    UserCoupon selectedCoupon = userCouponRepository.findByUser_UserIdAndUserCouponId(userId, userCouponId);
 
     //사장님이 발급한 쿠폰이라면
     if(selectedCoupon.getIssuedCouponType().equals(IssuedCouponType.OWNER)) {

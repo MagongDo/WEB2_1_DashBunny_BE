@@ -8,15 +8,14 @@ public class CSVGenerator {
         String csvFile = "users.csv";
         try (FileWriter writer = new FileWriter(csvFile)) {
             // 헤더 작성
-            writer.append("username,password\n");
+            writer.append("phone,password\n");
 
-            // 100명의 사용자 생성
-            for (int i = 1; i <= 100; i++) {
-                String phone = String.format("010000000%02d", i);
+            // 1000명의 사용자 생성
+            for (int i = 0; i <= 1000; i++) {
+                String phone = String.format("010%08d", i); // 010으로 시작하고 8자리로 포맷
                 String password = "testPassword" + i;
                 writer.append(phone).append(",").append(password).append("\n");
             }
-
             System.out.println("CSV 파일이 성공적으로 생성되었습니다: " + csvFile);
         } catch (IOException e) {
             e.printStackTrace();
