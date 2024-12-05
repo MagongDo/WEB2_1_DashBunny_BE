@@ -1,8 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.domain.user;
 
-import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.user.role.OrderStatus;
-import com.devcourse.web2_1_dashbunny_be.feature.user.dto.order.controller.dto.OrderItemDto;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
