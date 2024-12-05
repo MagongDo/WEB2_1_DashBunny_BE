@@ -37,17 +37,21 @@ public class PaymentService {
 
     @Transactional
     public PaymentResponseDto createPayment(PaymentRequestDto requestDto) {
+
     // 1. Cart 엔티티 조회
-    Cart cart = cartRepository.findById(requestDto.getCartId())
+    Cart cart = cartRepository.findById(Long.valueOf(requestDto.getOrderId()))
             .orElseThrow(() -> new RuntimeException("Cart not found"));
+
     // 2. StoreManagement 엔티티 조회
     StoreManagement store = storeManagementRepository.findByStoreId(cart.getStoreId());
+
     // 3. Payment 엔티티 생성 및 저장
-    Payment payment = new Payment();
-    payment.setCartId(cart.getCartId());
-    payment.setAmount(cart.getTotalPrice());
-    payment.setStatus(PaymentStatus.READY);
+    Payment payment = Payment.builder()
+         .cartId(cart.getCartId())
+         .amount(cart.getTotalPrice())
+         .status(PaymentStatus.READY).build();
     paymentRepository.save(payment);
+
     // 4. Toss Payments API 요청 생성
     String url = tossPaymentConfig.getApiBaseUrl() + "/payments";
 
@@ -56,7 +60,7 @@ public class PaymentService {
     headers.set("Authorization", "Basic " + encodeToBase64(tossPaymentConfig.getSecretKey() + ":"));
 
     JsonObject body = new JsonObject();
-    body.addProperty("method", "카드"); // 결제 수단 지정
+    body.addProperty("method", "CARD"); // 결제 수단 지정
     body.addProperty("orderId", payment.getId().toString());
     body.addProperty("orderName", requestDto.getOrderName());
     body.addProperty("amount", payment.getAmount());
@@ -190,11 +194,6 @@ public class PaymentService {
     }
     payment.setUpdatedAt(LocalDateTime.now());
     paymentRepository.save(payment);
-  }
-
-    // 결제 상세 정보 조회 메서드
-    public Optional<Payment> findByPaymentId(String paymentId) {
-      return paymentRepository.findByPaymentId(paymentId);
   }
 
     // Base64 인코딩 메서드

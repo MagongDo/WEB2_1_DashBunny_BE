@@ -7,14 +7,10 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCheckCouponD
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UsersCartCouponService;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UsersCartService;
-import java.security.Principal;
-import java.util.List;
-
-import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.dto.UserCouponListResponseDto;
-import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.service.UserCouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 
 @RestController
@@ -24,7 +20,6 @@ public class UserCartController {
 
   private final UsersCartService cartService; // 장바구니 관련 비즈니스 로직을 처리하는 서비스
   private final UserService userService; // 사용자 관련 정보를 관리하는 서비스
-  private final UserCouponService userCouponService;
   private final UsersCartCouponService usersCartCouponService; //장바구니에서 보여주는 쿠폰 정보를 관리하는 서비스
   /**
    * POST /api/users/items
@@ -38,8 +33,7 @@ public class UserCartController {
   public ResponseEntity<UsersCartResponseDto> addItemToCart(
           @RequestParam Long menuId,
           @RequestParam Long quantity,
-          @RequestParam(required = false, defaultValue = "false") boolean overwrite
-  ) {
+          @RequestParam(required = false, defaultValue = "false") boolean overwrite) {
     User currentUser = userService.getCurrentUser();
     return ResponseEntity.ok(cartService.addMenuToCart(currentUser.getPhone(), menuId, quantity, overwrite));
   }
@@ -86,7 +80,7 @@ public class UserCartController {
   @GetMapping("/carts/coupons/{userCouponId}")
   public ResponseEntity<UsersCartResponseDto> getCoupon(@PathVariable String userCouponId) {
     User currentUser = userService.getCurrentUser();
-    UsersCheckCouponDto checkCoupon = usersCartCouponService.selectCouponById(currentUser.getUserId(),userCouponId);
+    UsersCheckCouponDto checkCoupon = usersCartCouponService.selectCouponById(currentUser.getUserId(), userCouponId);
 
     // 현재 장바구니 정보 조회
     UsersCartResponseDto cartDto = cartService.getCart(currentUser.getPhone());
@@ -108,8 +102,8 @@ public class UserCartController {
   public ResponseEntity<UsersCartResponseDto> checkoutCart(@RequestParam String storeRequirement,
                                                            @RequestParam String deliveryRequirement) {
     User currentUser = userService.getCurrentUser();
-    UsersCartResponseDto cartDto = cartService.checkoutCart(currentUser.getPhone()
-            ,storeRequirement,
+    UsersCartResponseDto cartDto = cartService.checkoutCart(currentUser.getPhone(),
+            storeRequirement,
             deliveryRequirement);
     return ResponseEntity.ok(cartDto);
   }

@@ -2,8 +2,7 @@ package com.devcourse.web2_1_dashbunny_be.domain.user;
 
 import com.devcourse.web2_1_dashbunny_be.domain.user.role.PaymentStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,7 +13,10 @@ import java.time.LocalDateTime;
 @Table(name = "payments")
 @Getter
 @Setter
+@Builder
 @EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Payment {
 
   @Id
@@ -33,6 +35,9 @@ public class Payment {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private PaymentStatus status; // 결제 상태
+
+
+  private String transactionId;
 
   @CreatedDate
   @Column(nullable = false)

@@ -19,13 +19,6 @@ import org.springframework.web.bind.annotation.*;
 public class PaymentController {
   private final PaymentService paymentService;
 
-  // 결제 생성 엔드포인트
-  @PostMapping("/create")
-  public ResponseEntity<PaymentResponseDto> createPayment(@Valid @RequestBody PaymentRequestDto requestDto) {
-    log.info("Create payment request: {}", requestDto);
-    PaymentResponseDto responseDto = paymentService.createPayment(requestDto);
-    return ResponseEntity.ok(responseDto);
-  }
 
   // 결제 승인 엔드포인트
   @PostMapping("/confirm")
