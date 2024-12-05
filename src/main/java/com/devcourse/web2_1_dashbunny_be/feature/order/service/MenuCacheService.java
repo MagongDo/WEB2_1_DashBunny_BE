@@ -9,8 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,29 +17,43 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MenuCacheService {
 
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final MenuRepository menuRepository;
-    private final Validator validator;
+  private final RedisTemplate<String, Object> redisTemplate;
+  private final MenuRepository menuRepository;
+  private static final String STORE_KEY_PREFIX = "store:";
 
-    private static final String STORE_KEY_PREFIX = "store:";
+  /**
+  * 특정 가게의 메뉴를 Redis에서 조회하고, 없는 경우 DB에서 가져와 캐싱합니다.
+  * key: store:{storeId}
+  * field: 각 메뉴 ID (101, 102, 103)
+  * value: 각 메뉴의 객체 (MenuManagement)
+  */
+  public Map<Long, MenuManagement> getMenusByStore(String storeId, List<Object> menuIds) {
+    String key = STORE_KEY_PREFIX + storeId;
 
-    /**
-     * 특정 가게의 메뉴를 Redis에서 조회합니다.
-     */
-    public Map<Long, MenuManagement> getMenusByStore(String storeId) {
-        String key = STORE_KEY_PREFIX + storeId;
-        Map<Object, Object> menuMap = redisTemplate.opsForHash().entries(key);
+    // 스토어 key, 각 메뉴 아이기 필드에 해당하는 밸류(단일 메뉴 객체)가 담긴  meueList 생성
+    List<Object> meueList = redisTemplate.opsForHash().multiGet(key, menuIds);
 
-        if (menuMap.isEmpty()) {
-            return fetchAndCacheMenusByStore(storeId, key);
+    Map<Long, MenuManagement> menuCache = new HashMap<>();
+    List<Long> missingMenuIds = new ArrayList<>();
+
+    // Redis 조회 결과를 처리
+    for (int i = 0; i < menuIds.size(); i++) {
+      Object redisResult = meueList.get(i);
+      if (redisResult != null) {
+        menuCache.put((Long) menuIds.get(i), (MenuManagement) redisResult); // Redis에서 찾은 데이터 추가
+      } else {
+        missingMenuIds.add((Long) menuIds.get(i));
+      }
         }
 
-        // Redis에서 메뉴 정보를 Map<Long, MenuManagement>로 변환
-        return menuMap.entrySet().stream()
-                .collect(Collectors.toMap(
-                        entry -> Long.parseLong((String) entry.getKey()),
-                        entry -> (MenuManagement) entry.getValue()
-                ));
+        // Redis에 없는 메뉴를 DB에서 조회하고 캐싱
+        if (!missingMenuIds.isEmpty()) {
+            log.info("Redis에 없는 메뉴 ID를 DB에서 조회 중: {}", missingMenuIds);
+            Map<Long, MenuManagement> missingMenus = fetchAndCacheMenusByStore(storeId, key);
+            menuCache.putAll(missingMenus);
+        }
+
+        return menuCache;
     }
 
     /**
@@ -49,23 +62,33 @@ public class MenuCacheService {
     private Map<Long, MenuManagement> fetchAndCacheMenusByStore(String storeId, String key) {
         List<MenuManagement> menus = menuRepository.findAllByStoreId(storeId);
 
-        if (menus.isEmpty()) {
-            throw new IllegalArgumentException("해당 가게에 메뉴가 존재하지 않습니다. Store ID: " + storeId);
-        }
-
+        // Redis 캐싱 데이터 생성
         Map<String, MenuManagement> menuMap = menus.stream()
                 .collect(Collectors.toMap(
                         menu -> String.valueOf(menu.getMenuId()),
                         menu -> menu
                 ));
 
-        redisTemplate.opsForHash().putAll(key, menuMap);
-        redisTemplate.expire(key, Duration.ofHours(24)); // TTL 설정
+        // Redis에 데이터 저장
+        try {
+            redisTemplate.opsForHash().putAll(key, menuMap);
+            redisTemplate.expire(key, Duration.ofHours(24));
 
+            // 가게 엔트리에 등록
+            menus.forEach(menu -> {
+                String storeMenuKey = STORE_KEY_PREFIX + storeId;
+                redisTemplate.opsForHash().put(storeMenuKey, String.valueOf(menu.getMenuId()), menu);
+            });
+
+        } catch (Exception e) {
+            log.error("Redis 캐싱 중 오류 발생: storeId = {}", storeId, e);
+        }
+
+        // 반환할 Map 생성
         return menuMap.entrySet().stream()
                 .collect(Collectors.toMap(
-                        entry -> Long.parseLong(entry.getKey()),
-                        Map.Entry::getValue
+                        entry -> Long.parseLong(entry.getKey()), // 키를 Long으로 변환
+                        Map.Entry::getValue                     // 값 유지
                 ));
     }
 

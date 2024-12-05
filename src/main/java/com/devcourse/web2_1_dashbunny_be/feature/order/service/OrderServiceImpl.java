@@ -108,9 +108,9 @@ public class OrderServiceImpl implements OrderService {
     List<Long> menuIds = orderItems.stream()
             .map(orderItem -> orderItem.getMenu().getMenuId())
             .toList();
-/*
 
-    String storeKey = or;
+    String storeKey = orderItems.stream().map(OrderItem::getStoreId).toString();
+
     try {
       // Redis에서 한 번에 여러 메뉴를 가져오기
       List<Object> menus = redisTemplate.opsForHash().multiGet(storeKey, menuIds.stream()
@@ -136,7 +136,7 @@ public class OrderServiceImpl implements OrderService {
         menuCache.put(menuId, menu);
       }
     }
-*/
+
 
     return menuCache;
   }
