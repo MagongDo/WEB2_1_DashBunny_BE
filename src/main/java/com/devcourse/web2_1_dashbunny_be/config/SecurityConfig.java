@@ -140,35 +140,39 @@ public class SecurityConfig {
 //                );
 
                 // 세션 관리 설정
-                .sessionManagement(session -> session
-                        .sessionFixation().migrateSession()
-                        .sessionConcurrency(concurrency -> concurrency
-                                .maximumSessions(1)
-                                .maxSessionsPreventsLogin(false)
-                        )
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                        .invalidSessionUrl("/")
-                );
-
-        //jmeter로 동시성 테스트하려면 로그인 rest api가 필여해서 임시로 붙인 겁니다. 삭제하지 마시고 주석으로만 가려주세요...
-//        .sessionManagement(session -> session
-//                .sessionFixation().newSession()
-//                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-//        ) //임시로 붙인 겁니다. 삭제하지 마시고 주석으로만 가려주세요...
-//                .securityContext(context -> context
-//                        .requireExplicitSave(false) // SecurityContext 자동 저장
+//                .sessionManagement(session -> session
+//                        .sessionFixation().migrateSession()
+//                        .sessionConcurrency(concurrency -> concurrency
+//                                .maximumSessions(1)
+//                                .maxSessionsPreventsLogin(false)
+//                        )
+//                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+//                        .invalidSessionUrl("/")
 //                );
+
+        //jmeter로 동시성 테스트하려면 로그인 rest api가 필요해서 임시로 붙인 겁니다. 삭제하지 마시고 주석으로만 가려주세요...
+        //JMeter와 같은 테스트 도구에서 동시성 테스트를 수행할 때 세션 간 충돌을 방지.
+        //요청마다 새롭게 세션을 생성하므로 기존 세션 데이터를 활용하지 않고, 테스트 환경에서 세션 상태를 명확히 분리.
+        //세션 충돌 및 인증 상태 관리 문제를 방지하려는 목적으로 추가된 것
+        .sessionManagement(session -> session
+                .sessionFixation().newSession()
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+        ) //임시로 붙인 겁니다. 삭제하지 마시고 주석으로만 가려주세요...
+                .securityContext(context -> context
+                        .requireExplicitSave(false) // SecurityContext 자동 저장
+                );
 
 
 
         return http.build();
     }
 
-    //jmeter로 동시성 테스트하려면 로그인 rest api가 필여해서 임시로 붙인 겁니다. 삭제하지 마시고 주석으로만 가려주세요...
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-//        return authenticationConfiguration.getAuthenticationManager();
-//    }
+    //jmeter로 동시성 테스트하려면 로그인 rest api가 필요해서 임시로 붙인 겁니다. 삭제하지 마시고 주석으로만 가려주세요...
+    //REST API 로그인 테스트를 위한 AuthenticationManager 등록
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
 
 

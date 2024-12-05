@@ -101,4 +101,13 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + userId +
+                ", username='" + name + '\'' +
+                // userCoupons 제거
+                '}';
+    }
 }

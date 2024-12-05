@@ -270,6 +270,7 @@ public class UserCouponService {
   /**
    * 현재 사용자 쿠폰함 목록을 조회하는 메소드.
    */
+  @Transactional
   public List<UserCouponListResponseDto> findNotUsedCoupons() {
     User currentUser = currentUserValidation();
     List<UserCoupon> availableCoupons = userCouponRepository.findByUser_UserIdAndCouponUsedIsFalseAndIsExpiredIsFalse(currentUser.getUserId());
