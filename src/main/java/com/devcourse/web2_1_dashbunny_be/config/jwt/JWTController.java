@@ -76,7 +76,7 @@ public class JWTController {
 	 */
 	@GetMapping("/getCurrentUser-authorization")
 	public ResponseEntity<User> securedEndpoint(@RequestHeader("Authorization") String authorizationHeader) {
-		User currentUser = userService.getCurrentUserJWT(authorizationHeader);
+		User currentUser = userService.getCurrentUser(authorizationHeader);
 		return ResponseEntity.ok(currentUser);
 	}
 

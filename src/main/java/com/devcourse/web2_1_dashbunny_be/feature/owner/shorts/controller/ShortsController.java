@@ -1,7 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.feature.owner.shorts.controller;
 
 
-import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreOperationInfo;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.shorts.ShortsCreateRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.shorts.ShortsRequestDto;
@@ -36,7 +35,7 @@ public class ShortsController {
     @PostMapping("/nearby-store")
     public ResponseEntity<?> getNearbyShorts(@RequestHeader("Authorization") String authorizationHeader,
                                              @RequestBody ShortsRequestDto shortsRequestDto) {
-        User currentUser = userService.getCurrentUserJWT(authorizationHeader);
+        User currentUser = userService.getCurrentUser(authorizationHeader);
         log.info("getNearbyShorts - Current userId: {}, Request userId: {}",
                 currentUser.getUserId(), shortsRequestDto.getUserId());
 
@@ -66,7 +65,7 @@ public class ShortsController {
                                              @RequestBody ShortsCreateRequestDto shortsCreateRequestDto) {
         try {
             // 현재 인증된 사용자 가져오기 (필요 시)
-            User currentUser = userService.getCurrentUserJWT(authorizationHeader);
+            User currentUser = userService.getCurrentUser(authorizationHeader);
             log.info("updateShortsUrl - Current userId: {}", currentUser.getUserId());
 
             // 요청 데이터 유효성 검사
