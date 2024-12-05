@@ -11,8 +11,7 @@ import lombok.Getter;
 @Getter
 public class UpdateBasicInfoRequestDto {
   private String contactNumber;
-  private String storeLogo;
-  private String storeBannerImage;
   private String storeDescription;
   private String shortsUrl;
+  private String shortsMenu;
   }

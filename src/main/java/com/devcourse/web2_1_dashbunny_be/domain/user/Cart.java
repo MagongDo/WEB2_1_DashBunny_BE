@@ -28,8 +28,8 @@ public class Cart {
   @Column(name="storeId")
   private String storeId;
 
-  @Column(name = "userCouponId", nullable = true) // 쿠폰 ID
-  private String userCouponId; // UserCoupon의 ID를 식별자 참조 이유: 객체 참조하면 너무 복집해질거 같아서
+  @Column(name = "userCouponId")
+  private String userCouponId;
 
   @Column(name = "totalPrice")
   private Long totalPrice;

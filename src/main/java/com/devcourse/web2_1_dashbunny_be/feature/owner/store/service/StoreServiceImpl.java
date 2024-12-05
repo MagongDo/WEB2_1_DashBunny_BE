@@ -1,7 +1,9 @@
 package com.devcourse.web2_1_dashbunny_be.feature.owner.store.service;
 
+import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreOperationInfo;
+import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.common.Validator;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.*;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
@@ -9,6 +11,8 @@ import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreOpe
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 가게 관리를 위한 service class.
@@ -26,13 +30,13 @@ public class StoreServiceImpl implements StoreService {
    * 기본 정보를 반환 api service.
    */
   @Override
-  public BasicInfoProjection findBasicInfo(String storeId) {
-    return validator.validateBasicStoreId(storeId);
+  public BasicInfoProjection getBasicStoreInfo(String storeId) {
+    return storeManagementRepository.findBasicInfoByStoreId(storeId);
   }
 
   /**
-  *기본 정보 수정을 위한 api service.
-  */
+   *기본 정보 수정을 위한 api service.
+   */
   @Override
   public void updateBasicInfo(String storeId, UpdateBasicInfoRequestDto updateBasicInfo) {
     StoreManagement store = validator.validateStoreId(storeId);
@@ -40,26 +44,23 @@ public class StoreServiceImpl implements StoreService {
     if (updateBasicInfo.getContactNumber() != null) {
       store.setContactNumber(updateBasicInfo.getContactNumber());
     }
-    if (updateBasicInfo.getStoreLogo() != null) {
-      store.setStoreLogo(updateBasicInfo.getStoreLogo());
-    }
-    if (updateBasicInfo.getStoreBannerImage() != null) {
-      store.setStoreBannerImage(updateBasicInfo.getStoreBannerImage());
-    }
     if (updateBasicInfo.getStoreDescription() != null) {
       store.setStoreDescription(updateBasicInfo.getStoreDescription());
     }
-
     StoreOperationInfo operationInfo = store.getStoreOperation();
     if (operationInfo != null && updateBasicInfo.getShortsUrl() != null) {
       operationInfo.setShortsUrl(updateBasicInfo.getShortsUrl());
+    }
+
+    if (operationInfo != null && updateBasicInfo.getShortsMenu() != null) {
+      operationInfo.setMenuName(updateBasicInfo.getShortsMenu());
     }
 
     storeManagementRepository.save(store);
   }
 
   /**
-  * 가게 운영 정보 조회를 위한 api service.
+   * 가게 운영 정보 조회를 위한 api service.
    * 운영 정보가 없을 때, 기본 정보를 기반으로 새로운 운영 정보를 생성하고 반환하도록 코드를 작성.
    */
   @Override
@@ -120,7 +121,7 @@ public class StoreServiceImpl implements StoreService {
     storeOperationInfo.setPauseStartTime(pauseTimeDto.getPauseStartTime());
     log.info("시작 시간 {}", pauseTimeDto.getPauseStartTime());
     storeOperationInfo.setPauseEndTime(pauseTimeDto.getPauseEndTime());
-    log.info("종료 시간 ()", pauseTimeDto.getPauseEndTime());
+    log.info("종료 시간 {}", pauseTimeDto.getPauseEndTime());
     storeOperationInfo.setPaused(false);
 
     storeOperationInfoRepository.save(storeOperationInfo);
@@ -128,7 +129,7 @@ public class StoreServiceImpl implements StoreService {
 
   /**
    *가게 운영 재시작 위한 api service.
-  */
+   */
   @Override
   public void updateResumeTime(String storeId) {
     StoreManagement store = validator.validateStoreId(storeId);
@@ -137,5 +138,17 @@ public class StoreServiceImpl implements StoreService {
     storeOperationInfo.setPaused(true);
 
     storeOperationInfoRepository.save(storeOperationInfo);
-    }
+  }
+
+  /**
+   *내 가게 목록 리스트 반환을 위한 api service.
+   */
+  @Override
+  public List<StoreManagementListDto> findAllStore(String phone) {
+    User user = validator.validateUserId(phone);
+    List<StoreManagement> storeList = storeManagementRepository.findAll();
+    List<StoreManagementListDto> storeDtoList =
+           storeList.stream().map(StoreManagementListDto::fromEntity).toList();
+    return storeDtoList;
+  }
 }

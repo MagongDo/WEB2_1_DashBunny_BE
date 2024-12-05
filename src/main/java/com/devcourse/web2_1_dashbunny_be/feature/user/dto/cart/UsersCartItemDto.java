@@ -4,6 +4,9 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.CartItem;
 import lombok.Builder;
 import lombok.Getter;
 
+/**
+ * 메뉴를 장바구니에 추가하기 위한 Dto.
+ */
 @Builder
 @Getter
 public class UsersCartItemDto {

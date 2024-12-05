@@ -28,7 +28,7 @@ public class BasicInfoController {
   @GetMapping("/basic-info/{storeId}")
   public ResponseEntity<BasicInfoProjection> getBasicInfo(
           @PathVariable("storeId") String storeId) {
-    BasicInfoProjection basicInfoResponse = storeService.findBasicInfo(storeId);
+    BasicInfoProjection basicInfoResponse = storeService.getBasicStoreInfo(storeId);
     return ResponseEntity.ok(basicInfoResponse);
   }
 
