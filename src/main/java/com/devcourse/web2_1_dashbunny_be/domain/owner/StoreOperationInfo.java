@@ -20,6 +20,10 @@ public class StoreOperationInfo {
     @JoinColumn(name = "store_id",nullable = false, unique = true)
     private StoreManagement store;
 
+    @OneToOne
+    @JoinColumn(name = "menu_id")
+    private MenuManagement menuId;
+
         // 쇼츠 링크 (필요시 필드명 수정)
     @Column
     private String shortsUrl;

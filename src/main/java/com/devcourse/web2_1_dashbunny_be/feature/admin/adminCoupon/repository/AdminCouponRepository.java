@@ -37,4 +37,10 @@ public interface AdminCouponRepository extends JpaRepository<AdminCoupon, Long> 
    * @return
    */
   AdminCoupon findFirstByCouponTypeAndCouponStatus(CouponType couponType, CouponStatus couponStatus);
+
+  /**
+   * 특정 쿠폰 상태에 해당하는 쿠폰목록 반환.
+   */
+  List<AdminCoupon> findByCouponStatusIn(List<CouponStatus> statuses);
+
 }

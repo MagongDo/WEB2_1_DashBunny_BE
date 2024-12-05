@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
-    @GetMapping("/info")
-    public ResponseEntity<AdminInfoResponseDto> getAdminInfo(@AuthenticationPrincipal UserDetails userDetails) {
-        String adminName = userDetails.getUsername(); // 로그인된 사용자 이름 가져오기
-        AdminInfoResponseDto response = new AdminInfoResponseDto(adminName, "관리자");
-        return ResponseEntity.ok(response);
-    }
+  @GetMapping("/info")
+  public ResponseEntity<AdminInfoResponseDto> getAdminInfo(@AuthenticationPrincipal UserDetails userDetails) {
+    String adminName = userDetails.getUsername(); // 로그인된 사용자 이름 가져오기
+    AdminInfoResponseDto response = new AdminInfoResponseDto(adminName, "관리자");
+    return ResponseEntity.ok(response);
+  }
 }

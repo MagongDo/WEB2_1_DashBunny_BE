@@ -1,6 +1,7 @@
 package com.devcourse.web2_1_dashbunny_be.feature.admin.store.controller;
 
 import com.devcourse.web2_1_dashbunny_be.config.s3.FileUploadService;
+import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.AdminStoreResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreClosureRequestDto;
@@ -39,8 +40,10 @@ public class StoreRequestController {
   @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<String> createStore(
           @RequestParam(name = "docsImageFile") MultipartFile docsImageFile,
-          @RequestPart(value = "request", required = false) String request) {
-    String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+          @RequestPart(value = "request", required = false) String request,
+          @RequestHeader("Authorization") String authorizationHeader) {
+
+    String phone = userService.getCurrentUser(authorizationHeader).getPhone();
     log.info("user {}", phone);
     try {
       CreateStoreRequestDto requestDto = new ObjectMapper().readValue(request, CreateStoreRequestDto.class);

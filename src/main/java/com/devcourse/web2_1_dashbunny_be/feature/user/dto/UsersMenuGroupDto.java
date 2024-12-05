@@ -2,12 +2,11 @@ package com.devcourse.web2_1_dashbunny_be.feature.user.dto;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuGroup;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
+import lombok.*;
+
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

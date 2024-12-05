@@ -24,7 +24,7 @@ class AdminCouponTest {
   void saveCouponRepository() {
     //Given
     AdminCoupon coupon = AdminCoupon.builder()
-            .couponId("Test123")
+            .couponId(1234L)
             .couponName("welcome!")
             .discountPrice(5000L)
             .minOrderPrice(15000L)

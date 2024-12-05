@@ -13,32 +13,30 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
-/*
-  @Value("${spring.data.redis.host}")
-  private String redisHost;
-  @Value("${spring.data.redis.port}")
-  private String redisPort;
-
-  @Bean
-  public RedisConnectionFactory redisConnectionFactory () {
-    RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-    redisStandaloneConfiguration.setHostName(redisHost);
-    redisStandaloneConfiguration.setPort(Integer.parseInt(redisPort));
-    return new LettuceConnectionFactory(redisStandaloneConfiguration);
-  }
-*/
+//  @Value("${spring.data.redis.host}")
+//  private String redisHost;
+//  @Value("${spring.data.redis.port}")
+//  private String redisPort;
+//
+//  @Bean
+//  public RedisConnectionFactory redisConnectionFactory () {
+//    RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+//    redisStandaloneConfiguration.setHostName(redisHost);
+//    redisStandaloneConfiguration.setPort(Integer.parseInt(redisPort));
+//    return new LettuceConnectionFactory(redisStandaloneConfiguration);
+//  }
 
 
   @Bean
   public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
     RedisTemplate<String, Object> template = new RedisTemplate<>();
     template.setConnectionFactory(connectionFactory);
-      // Key를 String으로 직렬화
+    // Key를 String으로 직렬화
     template.setKeySerializer(new StringRedisSerializer());
-      // Value를 JSON으로 직렬화
+    // Value를 JSON으로 직렬화
     template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 
-        return template;
+    return template;
     }
 }
 
