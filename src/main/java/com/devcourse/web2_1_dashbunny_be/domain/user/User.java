@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -68,6 +69,9 @@ public class User implements UserDetails {
     @Pattern(regexp = "[YN]")
     private String isSocial = "N";
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserCoupon> userCoupons = new ArrayList<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role));
@@ -96,5 +100,14 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + userId +
+                ", username='" + name + '\'' +
+                // userCoupons 제거
+                '}';
     }
 }

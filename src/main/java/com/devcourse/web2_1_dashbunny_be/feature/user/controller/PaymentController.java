@@ -3,13 +3,11 @@ package com.devcourse.web2_1_dashbunny_be.feature.user.controller;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.PaymentService;
-
 import com.nimbusds.jose.shaded.gson.JsonObject;
 import com.nimbusds.jose.shaded.gson.JsonParser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +15,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentController {
   private final PaymentService paymentService;
-  private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
 
   // 결제 생성 엔드포인트
   @PostMapping("/create")
   public ResponseEntity<PaymentResponseDto> createPayment(@Valid @RequestBody PaymentRequestDto requestDto) {
+    log.info("Create payment request: {}", requestDto);
     PaymentResponseDto responseDto = paymentService.createPayment(requestDto);
     return ResponseEntity.ok(responseDto);
   }
@@ -40,7 +39,6 @@ public class PaymentController {
   @PostMapping("/webhook")
   public ResponseEntity<Void> handleWebhook(@RequestBody String payload) {
     try {
-      logger.info("Received webhook payload: {}", payload);
 
       // JSON 파싱
       JsonObject jsonObject = JsonParser.parseString(payload).getAsJsonObject();
@@ -50,7 +48,6 @@ public class PaymentController {
       paymentService.handleWebhook(paymentKey, status);
       return ResponseEntity.ok().build();
     } catch (Exception e) {
-      logger.error("Error processing webhook payload", e);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
   }
@@ -63,7 +60,6 @@ public class PaymentController {
       paymentService.approvePayment(paymentKey, orderId, amount);
       return ResponseEntity.ok("Payment approved successfully.");
     } catch (Exception e) {
-      logger.error("Error approving payment", e);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Payment approval failed.");
     }
   }

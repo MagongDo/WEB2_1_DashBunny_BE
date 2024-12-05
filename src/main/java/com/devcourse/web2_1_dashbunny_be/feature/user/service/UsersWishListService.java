@@ -8,12 +8,10 @@ import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.Delivery
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreFeedBackRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreListResponseDto;
-import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersWishListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UsersWishListRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +38,6 @@ public class UsersWishListService {
               .userId(userId)
               .storeId(storeId)
               .build();
-
       usersWishListRepository.save(wishList);
       storeFeedBack.setWishlistCount(storeFeedBack.increaseWishCount());
     } else {

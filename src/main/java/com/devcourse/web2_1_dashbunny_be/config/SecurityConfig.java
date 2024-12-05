@@ -8,7 +8,10 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.service.CustomUserDetailsS
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -110,9 +113,9 @@ public class SecurityConfig {
 //                        .loginProcessingUrl("/loginForm") // 로그인 폼 제출 시 처리할 URL
                         .usernameParameter("phone") // 폼에서 사용하는 username 파라미터 이름
                         .passwordParameter("password") // 폼에서 사용하는 password 파라미터 이름
-                        .defaultSuccessUrl("/api/main", true) // 로그인 성공 시 이동할 URL
+//                        .defaultSuccessUrl("/api/main", true) // 로그인 성공 시 이동할 URL
                         .failureUrl("/api/login?error=true") // 로그인 실패 시 이동할 URL
-//                        .successHandler(successHandler) // 성공 핸들러 등록
+                        .successHandler(successHandler) // 성공 핸들러 등록
                         .failureHandler(failureHandler) // 실패 핸들러 등록
                         .permitAll()
                 )
@@ -137,19 +140,40 @@ public class SecurityConfig {
 //                );
 
                 // 세션 관리 설정
-                .sessionManagement(session -> session
-                        .sessionFixation().migrateSession()
-                        .sessionConcurrency(concurrency -> concurrency
-                                .maximumSessions(1)
-                                .maxSessionsPreventsLogin(false)
-                        )
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                        .invalidSessionUrl("/")
+//                .sessionManagement(session -> session
+//                        .sessionFixation().migrateSession()
+//                        .sessionConcurrency(concurrency -> concurrency
+//                                .maximumSessions(1)
+//                                .maxSessionsPreventsLogin(false)
+//                        )
+//                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+//                        .invalidSessionUrl("/")
+//                );
+
+        //jmeter로 동시성 테스트하려면 로그인 rest api가 필요해서 임시로 붙인 겁니다. 삭제하지 마시고 주석으로만 가려주세요...
+        //JMeter와 같은 테스트 도구에서 동시성 테스트를 수행할 때 세션 간 충돌을 방지.
+        //요청마다 새롭게 세션을 생성하므로 기존 세션 데이터를 활용하지 않고, 테스트 환경에서 세션 상태를 명확히 분리.
+        //세션 충돌 및 인증 상태 관리 문제를 방지하려는 목적으로 추가된 것
+        .sessionManagement(session -> session
+                .sessionFixation().newSession()
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+        ) //임시로 붙인 겁니다. 삭제하지 마시고 주석으로만 가려주세요...
+                .securityContext(context -> context
+                        .requireExplicitSave(false) // SecurityContext 자동 저장
                 );
 
 
 
         return http.build();
     }
+
+    //jmeter로 동시성 테스트하려면 로그인 rest api가 필요해서 임시로 붙인 겁니다. 삭제하지 마시고 주석으로만 가려주세요...
+    //REST API 로그인 테스트를 위한 AuthenticationManager 등록
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+
 
 }

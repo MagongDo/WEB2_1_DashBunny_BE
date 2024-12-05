@@ -18,8 +18,6 @@ import java.util.Optional;
 import com.nimbusds.jose.shaded.gson.JsonObject;
 import com.nimbusds.jose.shaded.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +32,6 @@ public class PaymentService {
   private final PaymentRepository paymentRepository;
   private final UsersCartRepository cartRepository;
   private final TossPaymentConfig tossPaymentConfig;
-  private static final Logger logger = LoggerFactory.getLogger(PaymentService.class);
   private final StoreManagementRepository storeManagementRepository;
   private final RestTemplate restTemplate;
 
@@ -47,7 +44,7 @@ public class PaymentService {
     StoreManagement store = storeManagementRepository.findByStoreId(cart.getStoreId());
     // 3. Payment 엔티티 생성 및 저장
     Payment payment = new Payment();
-    payment.setCart(cart);
+    payment.setCartId(cart.getCartId());
     payment.setAmount(cart.getTotalPrice());
     payment.setStatus(PaymentStatus.READY);
     paymentRepository.save(payment);
@@ -81,7 +78,6 @@ public class PaymentService {
           }
         }
         if (paymentKey == null || paymentUrl == null) {
-          logger.error("Missing paymentKey or checkout.url in the response");
           throw new RuntimeException("Invalid response from Toss Payments API");
         }
         // 5. Payment 엔티티에 paymentKey 설정
@@ -102,15 +98,11 @@ public class PaymentService {
 
         return responseDto;
       } else {
-        logger.error("Failed to create payment. Status: {}, Body: {}", response.getStatusCode(), response.getBody());
         throw new RuntimeException("Failed to create payment");
       }
     } catch (HttpClientErrorException | HttpServerErrorException e) {
-      logger.error("Toss Payments API error response status: {}", e.getStatusCode());
-      logger.error("Toss Payments API error response body: {}", e.getResponseBodyAsString());
       throw new RuntimeException("Toss Payments API error: " + e.getMessage(), e);
     } catch (Exception e) {
-      logger.error("Exception occurred while creating payment: ", e);
       throw new RuntimeException("Exception occurred while creating payment", e);
     }
   }
@@ -122,14 +114,12 @@ public class PaymentService {
     // Payment 엔티티 조회
     Payment payment = paymentRepository.findById(Long.parseLong(orderId))
             .orElseThrow(() -> {
-        logger.error("Payment with orderId {} not found.", orderId);
         return new RuntimeException("Payment not found");
     });
     if (payment.getStatus() == PaymentStatus.SUCCESS) {
-      logger.info("Payment {} is already approved.", paymentKey);
       return PaymentResponseDto.builder()
                   .paymentId(paymentKey)
-                  .orderName(payment.getCart().getCartId().toString())
+                  .orderName(payment.getCartId().toString())
                   .amount(payment.getAmount())
                   .status(payment.getStatus().name())
                   .build();
@@ -151,8 +141,6 @@ public class PaymentService {
 
     try {
       ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-      logger.info("Toss Payments API response: {}", response.getBody());
-
       if (response.getStatusCode() == HttpStatus.OK) {
         // 결제 성공 처리
         payment.setStatus(PaymentStatus.SUCCESS);
@@ -160,30 +148,24 @@ public class PaymentService {
         paymentRepository.save(payment);
 
         // 결제 성공 시 장바구니 비우기
-        Cart cart = payment.getCart();
+        Cart cart =cartRepository.findById(payment.getCartId()).orElseThrow(IllegalStateException::new);
         cart.getCartItems().clear();
         cart.setStoreId(null);
         cartRepository.save(cart);
-
-        logger.info("Payment {} approved successfully.", paymentKey);
-
         PaymentResponseDto responseDto = PaymentResponseDto.builder()
                 .paymentId(paymentKey)
-                .orderName(payment.getCart().getCartId().toString())
+                .orderName(payment.getCartId().toString())
                 .amount(payment.getAmount())
                 .status(payment.getStatus().name())
                 .build();
 
         return responseDto;
       } else {
-        logger.error("Failed to approve payment: {}", response.getBody());
         throw new RuntimeException("Failed to approve payment");
       }
     } catch (HttpClientErrorException | HttpServerErrorException e) {
-      logger.error("Toss Payments API error response: {}", e.getResponseBodyAsString());
       throw new RuntimeException("Toss Payments API error: " + e.getMessage(), e);
     } catch (Exception e) {
-      logger.error("Exception occurred while approving payment: ", e);
       throw new RuntimeException("Exception occurred while approving payment", e);
     }
   }
@@ -193,21 +175,18 @@ public class PaymentService {
     public void handleWebhook(String paymentKey, String status) {
     Payment payment = paymentRepository.findByPaymentId(paymentKey)
             .orElseThrow(() -> {
-      logger.warn("Payment with paymentKey {} not found.", paymentKey);
       return new RuntimeException("Payment not found for webhook");
     });
 
     if ("DONE".equalsIgnoreCase(status)) {
       payment.setStatus(PaymentStatus.SUCCESS);
       // 결제 성공 시 장바구니 비우기
-      Cart cart = payment.getCart();
+      Cart cart =cartRepository.findById(payment.getCartId()).orElseThrow(IllegalStateException::new);
       cart.getCartItems().clear();
       cart.setStoreId(null);
       cartRepository.save(cart);
-      logger.info("Payment {} updated to status {} and cart {} has been cleared", paymentKey, status, cart.getCartId());
     } else {
       payment.setStatus(PaymentStatus.FAIL);
-      logger.info("Payment {} updated to status {}", paymentKey, status);
     }
     payment.setUpdatedAt(LocalDateTime.now());
     paymentRepository.save(payment);

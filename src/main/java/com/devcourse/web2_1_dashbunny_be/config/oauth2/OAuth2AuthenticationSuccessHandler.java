@@ -9,28 +9,30 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
 import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 
-@Log4j2
+@Slf4j
 @Component
-@RequiredArgsConstructor
-public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+//@RequiredArgsConstructor
+public class OAuth2AuthenticationSuccessHandler
+        extends SavedRequestAwareAuthenticationSuccessHandler {
 
     private static final String SESSION_USER_KEY = "SESSION_USER";
-
     private final UserService userService;
+
+    public OAuth2AuthenticationSuccessHandler(UserService userService) {
+        this.userService = userService;
+        setDefaultTargetUrl("/api/main"); // 기본 리디렉션 URL 설정
+        setAlwaysUseDefaultTargetUrl(true); // 항상 기본 URL로 리디렉션
+    }
     /**
      * 사용자 세션에 등록
      * 사용자를 가입시키는 처리
@@ -38,9 +40,11 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
-                                        Authentication authentication) throws ServletException, IOException {
+                                        Authentication authentication)
+            throws ServletException, IOException {
         // Authentication 객체는 이미 SecurityContextHolder에 설정됨
         Object principal = authentication.getPrincipal();
+
         log.info("OAuth2 authentication success: {}", principal);
 
         try {
@@ -56,8 +60,8 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
                 SocialUser socialUser;
                 User user;
                 if(userService.findByProviderId(providerId).isEmpty()) {
+                    System.out.println("세션 저장된 유저 정보 : " + request.getSession().getAttribute("AdditionalInfoUser"));
                     UserDTO userDTO = (UserDTO) request.getSession().getAttribute("AdditionalInfoUser");
-                    System.out.println("세션 저장된 유저 정보 : " + userDTO);
                     user = userService.registerUser(userDTO);
 
                     socialUser = userService.registerSocialUser(oauth2User, provider, user);
