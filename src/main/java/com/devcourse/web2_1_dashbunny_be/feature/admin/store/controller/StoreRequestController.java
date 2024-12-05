@@ -56,12 +56,6 @@ public class StoreRequestController {
     }
 
   }
-
-//      log.info("Creating a new store request{}",request.toString());
-//      String bannerImageFileUrl = fileUploadService.uploadFile(bannerImageFile, "storeBannerImage");
-//      String logoImageFileUrl = fileUploadService.uploadFile(logoImageFile, "storeLogoImage");
-//      @RequestParam(name = "bannerImageFile") MultipartFile bannerImageFile,
-//      @RequestParam(name = "logoImageFile") MultipartFile logoImageFile,
   /**
    * 사장님 - 가게 등록 재신청 api (POST).
    */
