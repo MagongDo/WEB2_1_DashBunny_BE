@@ -10,6 +10,7 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.dto.StoreClosureRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.store.repository.StoreApplicationRepository;
 
+import com.devcourse.web2_1_dashbunny_be.feature.owner.common.Validator;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.CreateStoreRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
@@ -28,6 +29,7 @@ public class StoreManagementService {
   private final StoreManagementRepository storeManagementRepository;
   private final StoreApplicationRepository storeApplicationRepository;
   private final UserRepository userRepository;
+  private final Validator validator;
 
   /**
    * 가게 등록 신청 메서드.
@@ -114,6 +116,25 @@ public class StoreManagementService {
     //가게 상태가 TEMP_CLOSE 가 아닐시 에러 반환
     throw new IllegalStateException("Cannot apply for closure: Store is not in TEMP_CLOSE status.");
   }
+
+  /**
+   * 기본 정보 - 스토어 로고 이미지 변경.
+   */
+  public void updateLogoImage(String storeId, String fileUrl) {
+    StoreManagement store = validator.validateStoreId(storeId);
+    store.setStoreLogo(fileUrl);
+    storeManagementRepository.save(store);
+  }
+
+  /**
+   * 기본 정보 - 스토어 배너 이미지 변경.
+   */
+  public void updateBannerImage(String storeId, String fileUrl) {
+    StoreManagement store = validator.validateStoreId(storeId);
+    store.setStoreBannerImage(fileUrl);
+    storeManagementRepository.save(store);
+  }
+  //storeBannerImage
 
 }
 

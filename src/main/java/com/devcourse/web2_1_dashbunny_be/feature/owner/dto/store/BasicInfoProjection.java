@@ -1,6 +1,9 @@
 package com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store;
 
+import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
+
+import java.util.List;
 
 /**
  * 가게 기본 정보를 조회하기 위한 Projection 인터페이스.
@@ -48,8 +51,13 @@ public interface BasicInfoProjection {
   String getStoreDescription();
 
   /**
+   * StoreOperationInfo.
+   */
+  String getShortsInfo();
+
+  /**
    * StoreMenagement.
    */
-  String getShortsUrl();
+  List<String> getMenuList();
 
 }

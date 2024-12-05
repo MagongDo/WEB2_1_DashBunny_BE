@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SocialUserDTO {
+public class SocialUserDto {
 
   private String providerId;
 
@@ -20,7 +20,7 @@ public class SocialUserDTO {
 
   private String userName;
 
-  public SocialUserDTO(SocialUser socialUser) {
+  public SocialUserDto(SocialUser socialUser) {
     this.providerId = socialUser.getProviderId();
     this.provider = socialUser.getProvider();
     this.userName = socialUser.getUserName();

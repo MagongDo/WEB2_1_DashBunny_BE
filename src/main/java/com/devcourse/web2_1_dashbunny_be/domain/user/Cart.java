@@ -18,20 +18,20 @@ import java.util.List;
 public class Cart {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "cartId")
+  @Column(name = "cart_id")
   private Long cartId;
 
   @OneToOne
-  @JoinColumn(name = "userId", nullable = false)
+  @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  @Column(name="storeId")
+  @Column(name = "store_id")
   private String storeId;
 
-  @Column(name = "userCouponId", nullable = true) // 쿠폰 ID
-  private String userCouponId; // UserCoupon의 ID를 식별자 참조 이유: 객체 참조하면 너무 복집해질거 같아서
+  @Column(name = "user_coupon_id")
+  private String userCouponId;
 
-  @Column(name = "totalPrice")
+  @Column(name = "total_price")
   private Long totalPrice;
 
   @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

@@ -1,4 +1,4 @@
-package com.devcourse.web2_1_dashbunny_be.feature.user.dto.order;
+package com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto;
 
 /**
  * 주문내역 요청과 동시에 사용자에게 전달되는 알람 dto.
