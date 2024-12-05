@@ -18,20 +18,20 @@ import java.util.List;
 public class Cart {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "cart_id")
+  @Column(name = "cartId")
   private Long cartId;
 
   @OneToOne
-  @JoinColumn(name = "user_id", nullable = false)
+  @JoinColumn(name = "userId", nullable = false)
   private User user;
 
-  @Column(name = "store_id")
+  @Column(name="storeId")
   private String storeId;
 
-  @Column(name = "user_coupon_id")
+  @Column(name = "userCouponId")
   private String userCouponId;
 
-  @Column(name = "total_price")
+  @Column(name = "totalPrice")
   private Long totalPrice;
 
   @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

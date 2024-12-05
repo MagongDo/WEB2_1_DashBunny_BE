@@ -1,5 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.service;
 
+import com.devcourse.web2_1_dashbunny_be.config.TossPaymentConfig;
 import com.devcourse.web2_1_dashbunny_be.domain.common.role.DiscountType;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.DeliveryOperatingInfo;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
@@ -30,6 +31,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 /**
  * 사용자의 장바구니 수정, 조회, 추가, 삭제, 결제를 포함한 모든 기능을 제공하는 서비스.
  */
@@ -44,6 +50,7 @@ public class UsersCartService {
   private final UserRepository userRepository; // 사용자 정보 저장소
   private final PaymentService paymentService; // 결제 서비스
   private final UserCouponRepository userCouponRepository; //사용자 쿠폰 저장소
+  private final TossPaymentConfig tossPaymentConfig;
 
   /**
    * 사용자의 장바구니를 생성하는 기능.
@@ -225,6 +232,7 @@ public class UsersCartService {
    * @param deliveryRequirement 배달 요청사항
    * @return 결제 후 장바구니 정보
    */
+
   @Transactional
   public UsersCartResponseDto checkoutCart(String userId, String storeRequirement, String deliveryRequirement) {
     // 장바구니 확인
@@ -260,11 +268,23 @@ public class UsersCartService {
 
     // 총 결제 금액 (주문 금액 + 배달료 - 할인금액)
     Long totalAmount = totalPrice + cartDto.getDeliveryFee() - discountPrice;
+    String orderName = cart.getCartItems()
+            .stream()
+            .findFirst()
+            .map(cartItem -> cartItem.getMenuManagement().getMenuName()) // 메뉴 이름 추출
+            .orElse("Default Order Name"); // 장바구니가 비어 있을 경우 기본값
 
+    String url = tossPaymentConfig.getApiBaseUrl() + "/payments";
     // 결제 요청 생성 및 처리
-    PaymentRequestDto paymentRequest = new PaymentRequestDto();
+  /*  PaymentRequestDto paymentRequest = new PaymentRequestDto();
     paymentRequest.setCartId(cartDto.getCartId());
-    paymentRequest.setOrderName("Order for Cart ID: " + cartDto.getCartId());
+    paymentRequest.setOrderName("Order for Cart ID: " + cartDto.getCartId());*/
+    PaymentRequestDto paymentRequest = PaymentRequestDto.builder()
+            .orderId(cartDto.getCartId().toString())
+            .orderName(orderName)
+            .amount(totalAmount)
+            .failUrl(tossPaymentConfig.getFailUrl())
+            .successUrl(tossPaymentConfig.getSuccessUrl()).build();
     PaymentResponseDto paymentResponse = paymentService.createPayment(paymentRequest);
 
     // 최종 응답 DTO 생성

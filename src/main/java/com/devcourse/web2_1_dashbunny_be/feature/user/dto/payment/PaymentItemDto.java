@@ -1,3 +1,4 @@
+/*
 package com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment;
 
 import jakarta.validation.constraints.Min;
@@ -21,3 +22,4 @@ public class PaymentItemDto {
   @Min(value = 1, message = "Price는 최소 1 이상이어야 합니다.")
   private Long price;
 }
+*/
