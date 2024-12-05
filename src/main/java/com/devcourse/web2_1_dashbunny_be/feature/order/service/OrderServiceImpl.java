@@ -31,6 +31,7 @@ public class OrderServiceImpl implements OrderService {
   private final OrdersRepository ordersRepository;
   private final MenuRepository menuRepository;
   private final SimpMessagingTemplate messageTemplate;
+  private final MenuCacheService menuCacheService;
   private static final String ERROR_TOPIC = "/topic/order/error";
 
   /**
@@ -104,18 +105,41 @@ public class OrderServiceImpl implements OrderService {
   */
   public Map<Long, MenuManagement> getMenuCache(List<OrderItem> orderItems) {
     Map<Long, MenuManagement> menuCache = new HashMap<>();
-    for (OrderItem orderItem : orderItems) {
-      Long key = orderItem.getMenu().getMenuId();
-      try {
-        MenuManagement menuManagement = validator.validateMenuId(key);
-        menuCache.put(key, menuManagement);
-      } catch (Exception e) {
-        log.error("키 {}에 대한 메뉴 검증 중 오류 발생", key, e);
+    List<Long> menuIds = orderItems.stream()
+            .map(orderItem -> orderItem.getMenu().getMenuId())
+            .toList();
+/*
+
+    String storeKey = or;
+    try {
+      // Redis에서 한 번에 여러 메뉴를 가져오기
+      List<Object> menus = redisTemplate.opsForHash().multiGet(storeKey, menuIds.stream()
+              .map(String::valueOf)
+              .toList());
+
+      // Redis에서 가져온 메뉴들을 Map에 저장
+      for (int i = 0; i < menuIds.size(); i++) {
+        MenuManagement menu = (MenuManagement) menus.get(i);
+        if (menu != null) {
+          menuCache.put(menuIds.get(i), menu);
+        } else {
+          // Redis에 없는 메뉴는 DB에서 조회 후 캐싱
+          MenuManagement dbMenu = menuCacheService.getMenu(menuIds.get(i));
+          menuCache.put(menuIds.get(i), dbMenu);
+        }
+      }
+    } catch (Exception e) {
+      log.error("Redis에서 메뉴 캐싱 중 오류 발생", e);
+      // Redis 오류 발생 시 DB에서 데이터를 가져옴
+      for (Long menuId : menuIds) {
+        MenuManagement menu = menuCacheService.getMenu(menuId);
+        menuCache.put(menuId, menu);
       }
     }
+*/
+
     return menuCache;
   }
-
   /**
    * 재고 확인 메서드.
    * 사용자가 주문한 메뉴의 수량과 기존 메뉴의 수량을 비교합니다.
@@ -153,6 +177,7 @@ public class OrderServiceImpl implements OrderService {
       log.info("재고 업데이트 진행"+menu.getMenuStock());
   menuRepository.save(menu);
     });
+    //레디스 변경
   }
 
   @Async

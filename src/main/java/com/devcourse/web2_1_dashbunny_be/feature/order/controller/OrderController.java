@@ -77,4 +77,11 @@ public class OrderController {
                 return ResponseEntity.ok(declineOrdersResponseDto);
               });
   }
+
+  /**
+  * 사장님 주문 관리 페이지.
+   * 모든 오더 객체의 정보를 리스트로 담아서 반환합니다.
+   * 관리 페이지가 자주 갱신되는 데이터를 실시간으로 반영-> 비동기
+  */
+
 }
