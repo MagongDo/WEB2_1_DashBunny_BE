@@ -29,7 +29,7 @@ public class AdminCouponService {
   /**
    * 쿠폰 생성.
    */
-  public AdminCoupon saveAdminCoupon(AddAdminCouponRequestDto request) {
+  public AdminCoupon saveAdminCoupon(AddAdminCouponRequestDto request,String phone) {
     return adminCouponRepository.save(request.toEntity());
   }
 

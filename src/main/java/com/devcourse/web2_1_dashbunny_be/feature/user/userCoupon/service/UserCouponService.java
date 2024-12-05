@@ -53,10 +53,8 @@ public class UserCouponService {
   /**
    * 관리자가 발급한 활성화된 일반 쿠폰 목록을 조회하는 메서드.
    */
-  public List<GeneralCouponListResponseDto> findActiveRegularCoupons() {
+  public List<GeneralCouponListResponseDto> findActiveRegularCoupons(User currentUser) {
 
-    // 현재 사용자 정보 가져오기
-    User currentUser = currentUserValidation();
 
     // 사용자가 이미 다운로드한 쿠폰 ID 목록 조회
     List<Long> downloadedCouponIds = userCouponRepository.findCouponIdsByUser_UserIdAndIssuedCouponType(
@@ -154,10 +152,7 @@ public class UserCouponService {
    * 관리자가 발급한 활성화된  쿠폰을 다운로드하는 메서드.
    */
   @Transactional
-  public UserCoupon downloadCoupon(Long couponId, IssuedCouponType issuedCouponType) {
-
-    // 현재 로그인된 사용자 정보 가져오기
-    User currentUser = currentUserValidation();
+  public UserCoupon downloadCoupon(Long couponId, IssuedCouponType issuedCouponType,User currentUser) {
 
     //이미 다운로드한 쿠폰인지 확인
     boolean alreadyDownloaded = userCouponRepository.existsByUser_UserIdAndCouponIdAndIssuedCouponType(currentUser.getUserId(), couponId, issuedCouponType);
