@@ -22,16 +22,17 @@ public class UserStoreController {
   private final UserService userService;
 
   @GetMapping("/stores/{category}")
-  public ResponseEntity<List<UsersStoreListResponseDto>> getUsersByCategory(@PathVariable String category, @RequestParam String address) {
-    User currentUser = userService.getCurrentUser();
+  public ResponseEntity<List<UsersStoreListResponseDto>> getUsersByCategory(@PathVariable String category, @RequestParam String address,
+                                                                            @RequestHeader("Authorization") String authorizationHeader) {
+    User currentUser = userService.getCurrentUser(authorizationHeader);
     List<UsersStoreListResponseDto> storeList = usersStoreService.usersStoreListResponse(currentUser.getPhone(), address, category);
     return ResponseEntity.ok(storeList);
   }
 
   @PostMapping("/stores/checking")
-  public ResponseEntity<Void> getUsersStoreChecking(@RequestParam String address
-                                                    ) {
-    User currentUser = userService.getCurrentUser();
+  public ResponseEntity<Void> getUsersStoreChecking(@RequestParam String address,
+                                                    @RequestHeader("Authorization") String authorizationHeader) {
+    User currentUser = userService.getCurrentUser(authorizationHeader);
     if (!usersStoreService.checkRedisData(currentUser.getPhone(), address)) {
       // Redis 키가 없으면 데이터를 새로 추가
       usersStoreService.redisAddStoreList(currentUser.getPhone(), address);
@@ -41,9 +42,10 @@ public class UserStoreController {
   }
 
   @GetMapping("/stores/details")
-  public ResponseEntity<UsersStoreResponseDto> getUsersDetailPage(@RequestParam String storeId) {
-    User currentUser = userService.getCurrentUser();
-    log.info(userService.getCurrentUser());
+  public ResponseEntity<UsersStoreResponseDto> getUsersDetailPage(@RequestParam String storeId,
+                                                                  @RequestHeader("Authorization") String authorizationHeader) {
+    User currentUser = userService.getCurrentUser(authorizationHeader);
+    log.info(userService.getCurrentUser(authorizationHeader));
     return ResponseEntity.ok(usersStoreService.getStoreDetails(currentUser.getUserId(), storeId));
   }
 }

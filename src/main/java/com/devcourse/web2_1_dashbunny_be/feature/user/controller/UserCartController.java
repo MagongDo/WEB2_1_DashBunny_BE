@@ -38,9 +38,10 @@ public class UserCartController {
   public ResponseEntity<UsersCartResponseDto> addItemToCart(
           @RequestParam Long menuId,
           @RequestParam Long quantity,
-          @RequestParam(required = false, defaultValue = "false") boolean overwrite
+          @RequestParam(required = false, defaultValue = "false") boolean overwrite,
+          @RequestHeader("Authorization") String authorizationHeader
   ) {
-    User currentUser = userService.getCurrentUser();
+    User currentUser = userService.getCurrentUser(authorizationHeader);
     return ResponseEntity.ok(cartService.addMenuToCart(currentUser.getPhone(), menuId, quantity, overwrite));
   }
 
@@ -54,9 +55,10 @@ public class UserCartController {
   @PatchMapping("/items/{menuId}")
   public ResponseEntity<UsersCartResponseDto> updateItemQuantity(
           @PathVariable Long menuId,
-          @RequestParam Long quantity
+          @RequestParam Long quantity,
+          @RequestHeader("Authorization") String authorizationHeader
   ) {
-    User currentUser = userService.getCurrentUser();
+    User currentUser = userService.getCurrentUser(authorizationHeader);
     return ResponseEntity.ok(cartService.updateItemQuantity(currentUser.getPhone(), menuId, quantity));
   }
 
@@ -66,8 +68,8 @@ public class UserCartController {
    * @return 장바구니 상태를 담은 응답 DTO.
    */
   @GetMapping("/carts")
-  public ResponseEntity<UsersCartResponseDto> getCart() {
-    User currentUser = userService.getCurrentUser();
+  public ResponseEntity<UsersCartResponseDto> getCart(@RequestHeader("Authorization") String authorizationHeader) {
+    User currentUser = userService.getCurrentUser(authorizationHeader);
     return ResponseEntity.ok(cartService.getCart(currentUser.getPhone()));
   }
 
@@ -77,15 +79,16 @@ public class UserCartController {
    * @return 사용가능한 쿠폰 목록를 담은 응답 DTO.
    */
   @GetMapping("/carts/coupons")
-  public ResponseEntity<List<UserCartCouponListResponseDto>> getCoupons() {
-    User currentUser = userService.getCurrentUser();
+  public ResponseEntity<List<UserCartCouponListResponseDto>> getCoupons(@RequestHeader("Authorization") String authorizationHeader) {
+    User currentUser = userService.getCurrentUser(authorizationHeader);
     List<UserCartCouponListResponseDto> availableCoupons = usersCartCouponService.findCouponsInCart(currentUser.getUserId());
     return ResponseEntity.ok(availableCoupons);
   }
 
   @GetMapping("/carts/coupons/{userCouponId}")
-  public ResponseEntity<UsersCartResponseDto> getCoupon(@PathVariable String userCouponId) {
-    User currentUser = userService.getCurrentUser();
+  public ResponseEntity<UsersCartResponseDto> getCoupon(@PathVariable String userCouponId,
+                                                        @RequestHeader("Authorization") String authorizationHeader) {
+    User currentUser = userService.getCurrentUser(authorizationHeader);
     UsersCheckCouponDto checkCoupon = usersCartCouponService.selectCouponById(currentUser.getUserId(),userCouponId);
 
     // 현재 장바구니 정보 조회
@@ -106,8 +109,9 @@ public class UserCartController {
    */
   @PostMapping("/carts/checkout")
   public ResponseEntity<UsersCartResponseDto> checkoutCart(@RequestParam String storeRequirement,
-                                                           @RequestParam String deliveryRequirement) {
-    User currentUser = userService.getCurrentUser();
+                                                           @RequestParam String deliveryRequirement,
+                                                           @RequestHeader("Authorization") String authorizationHeader) {
+    User currentUser = userService.getCurrentUser(authorizationHeader);
     UsersCartResponseDto cartDto = cartService.checkoutCart(currentUser.getPhone()
             ,storeRequirement,
             deliveryRequirement);
