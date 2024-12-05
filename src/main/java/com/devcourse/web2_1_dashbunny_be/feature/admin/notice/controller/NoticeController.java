@@ -12,6 +12,8 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,19 +32,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/notice")
 public class NoticeController {
   private final NoticeService noticeService;
-  //private final UserService userService;
+  private final UserService userService;
 
   /**
    * 공지사항 등록 api (POST).
    */
   @PostMapping("/admin")
-  public ResponseEntity<Notice> addNotice(@RequestBody AdminAddNoticeRequestDto request,
-                                          Principal principal) {
-    String currentUser= SecurityContextHolder.getContext().getAuthentication().getName();
+  public ResponseEntity<Notice> addNotice(@RequestBody AdminAddNoticeRequestDto request
+          , @RequestHeader("Authorization") String authorizationHeader) {
+    String phone = userService.getCurrentUser(authorizationHeader).getPhone();
 
-    log.info("------------currentUser: "+currentUser);
-
-    log.info("------------currentUserPrincipal: "+principal.getName());
+    log.info("------------currentUser: "+phone);
 
     Notice saveNotice = noticeService.saveNotice(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(saveNotice);
@@ -55,11 +55,12 @@ public class NoticeController {
    */
   //http://localhost:8080/api/notice/admin?role=OWNER이게 아님..
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<List<AdminNoticeListResponseDto>> getNotices()  {
-    String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-    log.info("------------currentUser: " + currentUser);
+  public ResponseEntity<List<AdminNoticeListResponseDto>> getNotices(   @RequestHeader("Authorization") String authorizationHeader)  {
+    String phone = userService.getCurrentUser(authorizationHeader).getPhone();
 
-    String currentUserRole = noticeService.getCurrentUserRole(currentUser);
+    log.info("------------currentUser: " + phone);
+
+    String currentUserRole = noticeService.getCurrentUserRole(phone);
     log.info("------------currentUserRole: " + currentUserRole);
 
     List<AdminNoticeListResponseDto> notices;
@@ -77,7 +78,9 @@ public class NoticeController {
    *단일 공지사항 조회 api (GET).
    */
   @GetMapping(value = "/id/{noticeId}",produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<AdminNoticeResponseDto> getNotice(@PathVariable Long noticeId) {
+  public ResponseEntity<AdminNoticeResponseDto> getNotice(@PathVariable Long noticeId
+          , @RequestHeader("Authorization") String authorizationHeader) {
+    String phone = userService.getCurrentUser(authorizationHeader).getPhone();
     AdminNoticeResponseDto adminNoticeResponseDto = noticeService.getNotice(noticeId);
     return ResponseEntity.ok().body(adminNoticeResponseDto);
   }
@@ -86,7 +89,10 @@ public class NoticeController {
    *공지사항 삭제 api (DELETE).
    */
   @DeleteMapping("/admin/{noticeId}")
-  public ResponseEntity<?> deleteNotice(@PathVariable Long noticeId) {
+  public ResponseEntity<?> deleteNotice(@PathVariable Long noticeId
+          , @RequestHeader("Authorization") String authorizationHeader) {
+    String phone = userService.getCurrentUser(authorizationHeader).getPhone();
+
     noticeService.deleteNotice(noticeId);
     Map<String, String> response = new HashMap<>();
     response.put("message", "NoticeId: " + noticeId + " deleted successfully");
@@ -97,7 +103,9 @@ public class NoticeController {
    * 공지사항 수정 api (PUT).
    */
   @PutMapping("/admin/{noticeId}")
-  public ResponseEntity<AdminUpdateNoticeRequestDto> updateNotice(@PathVariable Long noticeId, @RequestBody AdminAddNoticeRequestDto request) {
+  public ResponseEntity<AdminUpdateNoticeRequestDto> updateNotice(@PathVariable Long noticeId, @RequestBody AdminAddNoticeRequestDto request
+          , @RequestHeader("Authorization") String authorizationHeader) {
+    String phone = userService.getCurrentUser(authorizationHeader).getPhone();
     AdminUpdateNoticeRequestDto adminUpdateNoticeRequestDto = noticeService.updateNotice(noticeId, request);
     return ResponseEntity.ok().body(adminUpdateNoticeRequestDto);
   }
