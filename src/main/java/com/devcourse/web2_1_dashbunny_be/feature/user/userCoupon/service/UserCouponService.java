@@ -4,7 +4,6 @@ import com.devcourse.web2_1_dashbunny_be.domain.admin.AdminCoupon;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponStatus;
 import com.devcourse.web2_1_dashbunny_be.domain.admin.role.CouponType;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.OwnerCoupon;
-import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
 import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.domain.user.UserCoupon;
@@ -13,8 +12,6 @@ import com.devcourse.web2_1_dashbunny_be.exception.CustomException;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.repository.AdminCouponRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.ownerCoupon.repository.OwnerCouponRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
-import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UserCartCouponListResponseDto;
-import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCheckCouponDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.SocialUserRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UsersCartRepository;
@@ -91,7 +88,7 @@ public class UserCouponService {
   /**
    * 관리자가 발급한 활성화된 선착순 쿠폰을 조회하는 메서드.
    */
-  public FirstComeCouponResponseWrapper findActiveFirstComeCoupon() {
+  public FirstComeCouponResponseWrapper findActiveFirstComeCoupon(User currentUser) {
 
     //활성화된 선착순 쿠폰이 있는지 확인
     AdminCoupon activeFirstComeCoupon = adminCouponRepository.findFirstByCouponTypeAndCouponStatus(
@@ -126,8 +123,7 @@ public class UserCouponService {
     if (issuedCount >= activeFirstComeCoupon.getMaxIssuance()) {
       return FirstComeCouponResponseWrapper.alreadyParticipated("선착순 쿠폰이 모두 소진되었습니다.");
     }
-    //현재 사용자 정보
-    User currentUser = currentUserValidation();
+
 
     //이미 다운로드를 받았는지 확인
     boolean hasParticipated = userCouponRepository.existsByUser_UserIdAndCouponIdAndIssuedCouponType(
@@ -266,8 +262,7 @@ public class UserCouponService {
    * 현재 사용자 쿠폰함 목록을 조회하는 메소드.
    */
   @Transactional
-  public List<UserCouponListResponseDto> findNotUsedCoupons() {
-    User currentUser = currentUserValidation();
+  public List<UserCouponListResponseDto> findNotUsedCoupons(User currentUser) {
     List<UserCoupon> availableCoupons = userCouponRepository.findByUser_UserIdAndCouponUsedIsFalseAndIsExpiredIsFalse(currentUser.getUserId());
 
     // 만료되지 않은 쿠폰 & 발급 유형에 따라 AdminCoupon 또는 OwnerCoupon 쿠폰 정보를 필터링 및 매핑
@@ -348,26 +343,26 @@ public class UserCouponService {
   /**
    * 현재 사용자의 로그인 정보를 조회.
    */
-  public User currentUserValidation() {
-    //String currentUser = SecurityUtil.getCurrentUsername(); // 현재 로그인한 사용자 ID (전화번호 또는 providerId)
-    String currentUser = SecurityContextHolder.getContext().getAuthentication().getName(); // 현재 로그인한 사용자 ID (전화번호 또는 providerId)
-
-    Optional<User> generalUser = userRepository.findByPhone(currentUser);  //일반 로그인 사용자인지 확인
-
-    if (generalUser.isPresent()) {
-      return generalUser.get();
-    }
-
-
-    Optional<SocialUser> socialUser = socialUserRepository.findByProviderId(currentUser); //소셜 로그인 사용자인지 확인
-
-    if (socialUser.isPresent()) {
-      return userRepository.findById(socialUser.get().getUser().getUserId())
-                .orElseThrow(() -> new IllegalStateException("해당 소셜 사용자에 연결된 일반 사용자를 찾을 수 없습니다."));
-    }
-
-    // 예외 처리
-    throw new IllegalStateException("로그인된 사용자를 찾을 수 없습니다.");
-  }
+//  public User currentUserValidation() {
+//    //String currentUser = SecurityUtil.getCurrentUsername(); // 현재 로그인한 사용자 ID (전화번호 또는 providerId)
+//    String currentUser = SecurityContextHolder.getContext().getAuthentication().getName(); // 현재 로그인한 사용자 ID (전화번호 또는 providerId)
+//
+//    Optional<User> generalUser = userRepository.findByPhone(currentUser);  //일반 로그인 사용자인지 확인
+//
+//    if (generalUser.isPresent()) {
+//      return generalUser.get();
+//    }
+//
+//
+//    Optional<SocialUser> socialUser = socialUserRepository.findByProviderId(currentUser); //소셜 로그인 사용자인지 확인
+//
+//    if (socialUser.isPresent()) {
+//      return userRepository.findById(socialUser.get().getUser().getUserId())
+//                .orElseThrow(() -> new IllegalStateException("해당 소셜 사용자에 연결된 일반 사용자를 찾을 수 없습니다."));
+//    }
+//
+//    // 예외 처리
+//    throw new IllegalStateException("로그인된 사용자를 찾을 수 없습니다.");
+//  }
 
 }
