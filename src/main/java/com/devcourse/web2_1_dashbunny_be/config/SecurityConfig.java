@@ -1,6 +1,7 @@
 package com.devcourse.web2_1_dashbunny_be.config;
 
 
+import com.devcourse.web2_1_dashbunny_be.config.jwt.JwtAuthenticationFilter;
 import com.devcourse.web2_1_dashbunny_be.config.oauth2.OAuth2AuthenticationSuccessHandler;
 import com.devcourse.web2_1_dashbunny_be.feature.user.handler.CustomAuthenticationFailureHandler;
 import com.devcourse.web2_1_dashbunny_be.feature.user.handler.CustomAuthenticationSuccessHandler;
@@ -8,13 +9,16 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.service.CustomUserDetailsS
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -32,6 +36,12 @@ public class SecurityConfig {
     private final CustomAuthenticationFailureHandler failureHandler;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final PasswordEncoder passwordEncoder;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
 
     // 인증 제공자
     @Bean
@@ -100,22 +110,21 @@ public class SecurityConfig {
                 )
 
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
                         .successHandler(oAuth2AuthenticationSuccessHandler)
                 )
 
                 // 폼 로그인 설정
-                .formLogin(form -> form
-                        .loginPage("/api/login") // 로그인 폼을 제공하는 페이지 URL
-//                        .loginProcessingUrl("/loginForm") // 로그인 폼 제출 시 처리할 URL
-                        .usernameParameter("phone") // 폼에서 사용하는 username 파라미터 이름
-                        .passwordParameter("password") // 폼에서 사용하는 password 파라미터 이름
-                        .defaultSuccessUrl("/api/main", true) // 로그인 성공 시 이동할 URL
-                        .failureUrl("/api/login?error=true") // 로그인 실패 시 이동할 URL
+//                .formLogin(form -> form
+//                        .loginPage("/api/login") // 로그인 폼을 제공하는 페이지 URL
+////                        .loginProcessingUrl("/loginForm") // 로그인 폼 제출 시 처리할 URL
+//                        .usernameParameter("phone") // 폼에서 사용하는 username 파라미터 이름
+//                        .passwordParameter("password") // 폼에서 사용하는 password 파라미터 이름
+////                        .defaultSuccessUrl("/api/main", true) // 로그인 성공 시 이동할 URL
+//                        .failureUrl("/api/login?error=true") // 로그인 실패 시 이동할 URL
 //                        .successHandler(successHandler) // 성공 핸들러 등록
-                        .failureHandler(failureHandler) // 실패 핸들러 등록
-                        .permitAll()
-                )
+//                        .failureHandler(failureHandler) // 실패 핸들러 등록
+//                        .permitAll()
+//                )
 
                 // 로그아웃 설정
                 .logout(logout -> logout
@@ -136,17 +145,24 @@ public class SecurityConfig {
 //                        )
 //                );
 
-                // 세션 관리 설정
+                // 세션 관리 STATELESS로 설정
                 .sessionManagement(session -> session
-                        .sessionFixation().migrateSession()
-                        .sessionConcurrency(concurrency -> concurrency
-                                .maximumSessions(1)
-                                .maxSessionsPreventsLogin(false)
-                        )
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                        .invalidSessionUrl("/")
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
 
+                // 세션 관리 설정
+//                .sessionManagement(session -> session
+//                        .sessionFixation().migrateSession()
+//                        .sessionConcurrency(concurrency -> concurrency
+//                                .maximumSessions(1)
+//                                .maxSessionsPreventsLogin(false)
+//                        )
+//                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+//                        .invalidSessionUrl("/")
+//                );
+
+        // JWT 필터를 UsernamePasswordAuthenticationFilter 전에 추가
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 
         return http.build();

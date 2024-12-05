@@ -113,7 +113,6 @@ public class UsersCartService {
     Optional<CartItem> existingItem = cart.getCartItems().stream()
                 .filter(item -> item.getMenuManagement().getMenuId().equals(menuId))
                 .findFirst();
-
     if (existingItem.isPresent()) {
       CartItem cartItem = existingItem.get();
       cartItem.setQuantity(cartItem.getQuantity() + quantity);
@@ -125,7 +124,6 @@ public class UsersCartService {
                     .build();
       cart.getCartItems().add(newItem);
     }
-
     cart.setTotalPrice(calculateTotalPrice(cart));
     cartRepository.save(cart);
 
@@ -140,7 +138,6 @@ public class UsersCartService {
     StoreManagement store = storeManagementRepository.findById(menu.getStoreId()).orElseThrow(IllegalArgumentException::new);
     DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperationInfoRepository.findByStoreId(store.getStoreId());
     List<CartItem> itemsToRemove = new ArrayList<>();
-
     cart.getCartItems().forEach(item -> {
       if (item.getMenuManagement().getMenuId().equals(menuId)) {
 
@@ -152,7 +149,6 @@ public class UsersCartService {
         }
       }
     });
-
     cart.getCartItems().removeAll(itemsToRemove);
     if (cart.getCartItems().isEmpty()) {
       cart.setStoreId(null);
@@ -196,7 +192,7 @@ public class UsersCartService {
     PaymentResponseDto paymentResponse = paymentService.createPayment(paymentRequest);
 
     cartDto.setStoreRequirement(storeRequirement);
-    cartDto.setDeliveryRequest(deliveryRequirement);
+    cartDto.setDeliveryRequirement(deliveryRequirement);
     // 새로운 UsersCartResponseDto 생성하여 반환
     return UsersCartResponseDto.builder()
             .cartId(cart.getCartId())
@@ -207,9 +203,8 @@ public class UsersCartService {
             .totalAmount(totalAmount)  // 총 결제 금액
             .paymentInfo(paymentResponse)
             .storeRequirement(storeRequirement)
-            .deliveryRequest(deliveryRequirement)
+            .deliveryRequirement(deliveryRequirement)
             .build();
-
   }
 
 }

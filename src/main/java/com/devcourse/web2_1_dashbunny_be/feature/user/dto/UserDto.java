@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO implements Serializable {
+public class UserDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotBlank
@@ -41,8 +41,8 @@ public class UserDTO implements Serializable {
      * @param user 변환할 User 엔티티
      * @return 변환된 UserDTO
      */
-    public static UserDTO toDTO(User user) {
-        return UserDTO.builder()
+    public static UserDto toDTO(User user) {
+        return UserDto.builder()
                 .phone(user.getPhone())
                 .name(user.getName())
                 .birthday(user.getBirthday())

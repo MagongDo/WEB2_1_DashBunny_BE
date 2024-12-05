@@ -23,7 +23,7 @@ public class UsersCartResponseDto {
   private Long totalAmount;              // 총 결제 금액 (주문 금액 + 배달료)
   private PaymentResponseDto paymentInfo;
   private String storeRequirement;
-  private String deliveryRequest;
+  private String deliveryRequirement;
 
   public static UsersCartResponseDto toUsersCartDto(Cart cart,
                                                     String storeName,
