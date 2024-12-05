@@ -24,7 +24,8 @@ public class PaymentController {
   @PostMapping("/confirm")
   public ResponseEntity<PaymentResponseDto> confirmPayment(@RequestParam String paymentKey,
                                                            @RequestParam String orderId,
-                                                           @RequestParam Long amount) {
+                                                           @RequestParam Long amount
+                                                           ) {
     PaymentResponseDto responseDto = paymentService.approvePayment(paymentKey, orderId, amount);
     return ResponseEntity.ok(responseDto);
   }
