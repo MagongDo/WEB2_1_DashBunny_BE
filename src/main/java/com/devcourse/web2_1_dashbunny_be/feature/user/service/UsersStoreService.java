@@ -18,6 +18,7 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UsersWishListRe
 import com.nimbusds.jose.shaded.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +30,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class UsersStoreService {
+  @Qualifier("genericRedisTemplate")
+  private final RedisTemplate<String, Object> redisTemplate;
   private final StoreManagementRepository storeManagementRepository;
   private final UserRepository userRepository;
-  private final RedisTemplate<String, Object> redisTemplate;
   private final DeliveryOperatingInfoRepository deliveryOperationInfoRepository;
   private final MenuGroupRepository menuGroupRepository;
   private final MenuRepository menuRepository;

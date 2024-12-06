@@ -1,5 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.config;
 
+import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +28,7 @@ public class RedisConfig {
 //  }
 
 
-  @Bean
+  @Bean(name = "genericRedisTemplate")
   public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
     RedisTemplate<String, Object> template = new RedisTemplate<>();
     template.setConnectionFactory(connectionFactory);
@@ -38,5 +39,25 @@ public class RedisConfig {
 
     return template;
     }
+
+  // MenuManagement 용도의 RedisTemplate
+  @Bean(name = "menuRedisTemplate")
+  public RedisTemplate<String, MenuManagement> menuRedisTemplate(RedisConnectionFactory connectionFactory) {
+    RedisTemplate<String, MenuManagement> template = new RedisTemplate<>();
+    template.setConnectionFactory(connectionFactory);
+
+    // Key를 String으로 직렬화
+    template.setKeySerializer(new StringRedisSerializer());
+    // Hash Key를 String으로 직렬화
+    template.setHashKeySerializer(new StringRedisSerializer());
+
+    // Value를 JSON으로 직렬화
+    template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+    // Hash Value를 JSON으로 직렬화
+    template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+    template.afterPropertiesSet();
+    return template;
+  }
 }
 

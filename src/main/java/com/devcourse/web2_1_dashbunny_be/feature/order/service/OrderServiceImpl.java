@@ -62,9 +62,15 @@ public class OrderServiceImpl implements OrderService {
       ordersRepository.save(orders);
       // 메시지 알림
       StoreOrderAlarmResponseDto responseDto = StoreOrderAlarmResponseDto.fromEntity(orders);
+      // 메시지 페이로드 구성
+      Map<String, Object> payload = new HashMap<>();
+      payload.put("type", "ORDER_RECEIVED"); // 이벤트 타입
+      payload.put("message", "새로운 주문이 접수되었습니다.");
+      payload.put("data", responseDto); // DTO를 데이터에 포함
+
       String orderTopic = String.format("/topic/storeOrder/" + orders.getOrderId());
       messageTemplate.convertAndSend(orderTopic, responseDto);
-      log.info("사장님 알람 전송" + responseDto);
+      log.info("사장님 알람 전송" + payload);
 
       return orders;
     });

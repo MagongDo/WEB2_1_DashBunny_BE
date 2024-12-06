@@ -1,10 +1,10 @@
 package com.devcourse.web2_1_dashbunny_be.feature.order.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
-import com.devcourse.web2_1_dashbunny_be.feature.owner.common.Validator;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MenuCacheService {
 
-  private final RedisTemplate<String, Object> redisTemplate;
+  @Qualifier("menuRedisTemplate")
+  private final RedisTemplate<String, MenuManagement> menuRedisTemplate;
   private final MenuRepository menuRepository;
   private static final String STORE_KEY_PREFIX = "store:";
 
@@ -27,11 +28,12 @@ public class MenuCacheService {
   * field: 각 메뉴 ID (101, 102, 103)
   * value: 각 메뉴의 객체 (MenuManagement)
   */
-  public Map<Long, MenuManagement> getMenusByStore(String storeId, List<Object> menuIds) {
+  public Map<Long, MenuManagement> getMenusByStore(String storeId, List<Long> menuIds) {
     String key = STORE_KEY_PREFIX + storeId;
 
+    List<String> menuId = menuIds.stream().map(String::valueOf).collect(Collectors.toList());
     // 스토어 key, 각 메뉴 아이기 필드에 해당하는 밸류(단일 메뉴 객체)가 담긴  meueList 생성
-    List<Object> meueList = redisTemplate.opsForHash().multiGet(key, menuIds);
+    List<MenuManagement> meueList = menuRedisTemplate.opsForHash().multiGet(key,menuId);
 
     Map<Long, MenuManagement> menuCache = new HashMap<>();
     List<Long> missingMenuIds = new ArrayList<>();
@@ -40,7 +42,7 @@ public class MenuCacheService {
     for (int i = 0; i < menuIds.size(); i++) {
       Object redisResult = meueList.get(i);
       if (redisResult != null) {
-        menuCache.put((Long) menuIds.get(i), (MenuManagement) redisResult); // Redis에서 찾은 데이터 추가
+        menuCache.put(menuIds.get(i), (MenuManagement) redisResult); // Redis에서 찾은 데이터 추가
       } else {
         missingMenuIds.add((Long) menuIds.get(i));
       }
