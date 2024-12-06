@@ -57,7 +57,7 @@ public class ShortsController {
      * @param shortsCreateRequestDto ShortsCreateRequestDto 가 포함된 요청 본문
      *                   - url;     // URL
      *                   - storeId; // 가게 ID
-     *                   - menuId;  // 메뉴 ID
+     *                   - menuName;  // 메뉴이름
      * @return 쇼츠 URL 등록/수정 성공 메시지 또는 에러 메시지를 포함한 ResponseEntity
      */
     @PostMapping("/update/shortsUrl")
@@ -79,21 +79,20 @@ public class ShortsController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("가게 ID가 누락되었습니다.");
             }
-            if (shortsCreateRequestDto.getMenuId() == null) {
-                log.warn("메뉴 ID가 누락되었습니다.");
+            if (shortsCreateRequestDto.getMenuName() == null) {
+                log.warn("메뉴이름이 누락되었습니다.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("메뉴 ID가 누락되었습니다.");
+                        .body("메뉴이름이 누락되었습니다.");
             }
             // 쇼츠 URL 업데이트 또는 등록
-            shortsService.updateShortsUrl(shortsCreateRequestDto);
+            shortsService.updateShortsUrl(shortsCreateRequestDto, currentUser);
 
             log.info("쇼츠 URL 업데이트 성공: {}", shortsCreateRequestDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(shortsCreateRequestDto);
         } catch (Exception e) {
             // 일반 예외 처리
             log.error("쇼츠 URL 업데이트 중 오류 발생", e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("쇼츠 URL 업데이트에 실패했습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("쇼츠 URL 업데이트에 실패했습니다.");
         }
     }
 }

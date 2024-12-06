@@ -7,6 +7,7 @@ import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreFeedBack;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreOperationInfo;
+import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.shorts.ShortsCreateRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.shorts.ShortsRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
@@ -45,21 +46,25 @@ public class ShortsService {
   /**
    * 쇼츠 url 저장
    *
-   * @param requestDto 쇼츠 URL, storeID, menuId가 포함된 Dto
+   * @param requestDto 쇼츠 URL, storeID, menuName 포함된 Dto
    * @return 저장결과
    */
-  public StoreOperationInfo updateShortsUrl(ShortsCreateRequestDto requestDto) {
+  public StoreOperationInfo updateShortsUrl(ShortsCreateRequestDto requestDto, User currentUser) {
     // StoreManagement 및 MenuManagement 조회
-    StoreManagement storeId = storeManagementRepository.findById(requestDto.getStoreId())
+    StoreManagement store = storeManagementRepository.findById(requestDto.getStoreId())
         .orElseThrow(() -> new IllegalArgumentException("잘못된 storeId: " + requestDto.getStoreId()));
+    // 스토어 오너 == 토큰 유저 동일 체크
+    if(!store.getUser().getUserId().equals(currentUser.getUserId())){
+      throw new IllegalArgumentException("현재 사용자에게 권한이 없습니다.");
+    }
 
-    MenuManagement menuId = menuRepository.findById(requestDto.getMenuId())
-        .orElseThrow(() -> new IllegalArgumentException("잘못된 menuId: " + requestDto.getMenuId()));
+    MenuManagement menuManagement = menuRepository.findByStoreIdAndMenuName(requestDto.getStoreId(), requestDto.getMenuName())
+        .orElseThrow(() -> new IllegalArgumentException("잘못된 menuId: " + requestDto.getMenuName()));
 
-    StoreOperationInfo shorts = storeOperationInfoRepository.findByStore(storeId);
+    StoreOperationInfo shorts = storeOperationInfoRepository.findByStore(store);
     if (shorts != null) {
       shorts.setShortsUrl(requestDto.getUrl());
-      shorts.setMenuId(menuId);
+      shorts.setMenuName(menuManagement.getMenuName());
     }
 		return storeOperationInfoRepository.save(shorts);
   }

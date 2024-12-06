@@ -31,7 +31,6 @@ public class UserCartController {
    */
   @PostMapping("/items")
   public ResponseEntity<UsersCartResponseDto> addItemToCart(
-          @RequestHeader("Authorization") String authorizationHeader,
           @RequestParam Long menuId,
           @RequestParam Long quantity,
           @RequestParam(required = false, defaultValue = "false") boolean overwrite,
