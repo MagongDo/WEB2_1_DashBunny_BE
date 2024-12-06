@@ -25,6 +25,7 @@ public class UsersCartResponseDto {
   private PaymentResponseDto paymentInfo;
   private String storeRequirement;
   private String deliveryRequirement;
+  private String redirectUrl;
 
   private UsersCheckCouponDto coupon;    // 선택된 쿠폰 정보 추가
 

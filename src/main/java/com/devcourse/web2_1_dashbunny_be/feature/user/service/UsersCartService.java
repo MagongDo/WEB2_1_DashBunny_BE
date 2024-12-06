@@ -31,10 +31,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * 사용자의 장바구니 수정, 조회, 추가, 삭제, 결제를 포함한 모든 기능을 제공하는 서비스.
@@ -106,49 +102,50 @@ public class UsersCartService {
    * @return 업데이트된 장바구니 정보
    */
   @Transactional
-  public UsersCartResponseDto addMenuToCart(String userId, Long menuId, Long quantity, boolean overwrite) {
-    // 수량이 0 이하인 경우 예외 발생
+  public UsersCartResponseDto addMenuToCart(String userId, Long menuId, Long quantity, Boolean overwrite) {
     if (quantity <= 0) {
       throw new IllegalArgumentException("수량은 0보다 커야 합니다.");
     }
 
-    // 사용자와 장바구니를 조회
     User user = userRepository.findByPhone(userId)
             .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
     Cart cart = cartRepository.findByUser(user);
 
-    // 장바구니가 없으면 생성
     if (cart == null) {
       cart = Cart.builder()
               .user(user)
-              .cartItems(new ArrayList<>()) // 빈 아이템 리스트
+              .cartItems(new ArrayList<>())
               .build();
       cartRepository.save(cart);
     }
 
-    // 메뉴와 가게, 배달 정보 조회
     MenuManagement menu = menuManagementRepository.findById(menuId)
             .orElseThrow(() -> new RuntimeException("메뉴를 찾을 수 없습니다."));
-
     StoreManagement store = storeManagementRepository.findById(menu.getStoreId())
             .orElseThrow(IllegalArgumentException::new);
 
     DeliveryOperatingInfo deliveryOperatingInfo = deliveryOperationInfoRepository.findByStoreId(store.getStoreId());
 
-    // 장바구니의 가게가 동일한지 확인
-    if (cart.getStoreId() == null || cart.getStoreId().equals(store.getStoreId())) {
-      cart.setStoreId(store.getStoreId()); // 가게 설정
-    } else {
-      // 다른 가게일 경우
-      if (overwrite) {
-        cart.getCartItems().clear(); // 기존 아이템 초기화
-        cart.setStoreId(store.getStoreId()); // 새로운 가게 설정
+    // 가게가 다른 경우 처리 로직
+    if (cart.getStoreId() != null && !cart.getStoreId().equals(store.getStoreId())) {
+      // overwrite가 아직 결정되지 않은(null) 상태면 예외 발생 → 클라이언트가 어떻게 할지 선택하도록 함
+      if (overwrite == null) {
+        throw new IllegalArgumentException("현재 장바구니에 다른 가게의 메뉴가 담겨 있습니다. overwrite 파라미터를 true 또는 false로 재요청해주세요.");
+      } else if (!overwrite) {
+        // 클라이언트가 overwrite=false로 재요청 → 기존 가게 유지, 새로운 메뉴 추가하지 않고 현재 상태 반환
+        return UsersCartResponseDto.toUsersCartDto(cart,
+                storeManagementRepository.findById(cart.getStoreId()).orElseThrow().getStoreName(),
+                deliveryOperationInfoRepository.findByStoreId(cart.getStoreId()).getDeliveryTip(), null);
       } else {
-        throw new IllegalArgumentException("현재 장바구니에 다른 가게의 메뉴가 담겨 있습니다.");
+        // overwrite=true 경우 → 기존 장바구니 초기화 후 새로운 가게로 교체
+        cart.getCartItems().clear();
+        cart.setStoreId(null);
       }
     }
 
-    // 기존 메뉴가 있으면 수량 업데이트, 없으면 새로 추가
+    // 여기 도착했다면 같은 가게거나, overwrite=true로 장바구니 초기화 완료
+    cart.setStoreId(store.getStoreId());
+
     Optional<CartItem> existingItem = cart.getCartItems().stream()
             .filter(item -> item.getMenuManagement().getMenuId().equals(menuId))
             .findFirst();
@@ -165,12 +162,12 @@ public class UsersCartService {
       cart.getCartItems().add(newItem);
     }
 
-    // 총 금액 계산 후 저장
     cart.setTotalPrice(calculateTotalPrice(cart));
     cartRepository.save(cart);
 
     return UsersCartResponseDto.toUsersCartDto(cart, store.getStoreName(), deliveryOperatingInfo.getDeliveryTip(), null);
   }
+
 
   /**
    * 장바구니에서 특정 메뉴의 수량을 업데이트하거나 삭제하는 메소드.
@@ -319,6 +316,7 @@ public class UsersCartService {
             .storeRequirement(storeRequirement)
             .deliveryRequirement(deliveryRequirement)
             .coupon(selectedCoupon)
+            .redirectUrl(paymentResponse.getRedirectUrl())
             .build();
   }
 

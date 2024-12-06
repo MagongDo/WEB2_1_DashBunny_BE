@@ -7,9 +7,12 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCheckCouponD
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UsersCartCouponService;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UsersCartService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 import java.util.List;
 
 
@@ -34,7 +37,7 @@ public class UserCartController {
           @RequestHeader("Authorization") String authorizationHeader,
           @RequestParam Long menuId,
           @RequestParam Long quantity,
-          @RequestParam(required = false, defaultValue = "false") boolean overwrite) {
+          @RequestParam(required = false) Boolean overwrite) {
     User currentUser = userService.getCurrentUser(authorizationHeader);
     return ResponseEntity.ok(cartService.addMenuToCart(currentUser.getPhone(), menuId, quantity, overwrite));
   }
@@ -103,14 +106,15 @@ public class UserCartController {
    * @return 결제된 장바구니 상태를 담은 응답 DTO
    */
   @PostMapping("/carts/checkout")
-  public ResponseEntity<UsersCartResponseDto> checkoutCart(@RequestParam String storeRequirement,
+  public void checkoutCart(@RequestParam String storeRequirement,
                                                            @RequestParam String deliveryRequirement,
-                                                           @RequestHeader("Authorization") String authorizationHeader) {
+                                                           @RequestHeader("Authorization") String authorizationHeader,
+                                                           HttpServletResponse response) throws IOException {
     User currentUser = userService.getCurrentUser(authorizationHeader);
     UsersCartResponseDto cartDto = cartService.checkoutCart(currentUser.getPhone(),
             storeRequirement,
             deliveryRequirement);
-    return ResponseEntity.ok(cartDto);
+    response.sendRedirect(cartDto.getRedirectUrl());
   }
 }
 
