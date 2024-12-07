@@ -58,11 +58,11 @@ public class PaymentController {
             PaymentApproveResponseDto approveResponse = paymentService.approvePayment(approveRequest);
 
             // 결제 성공 시 /carts로 리다이렉트 (쿼리 파라미터에 상태 포함)
-            String redirectUrl = "http://localhost:3000/cart?status=success&orderId=" + approveResponse.getOrderId();
+            String redirectUrl = "http://localhost:3000/payment-result?status=success&orderId=" + approveResponse.getOrderId();
             response.sendRedirect(redirectUrl);
         } catch (Exception e) {
             // 승인 실패 시 /carts로 리다이렉트
-            String redirectUrl = "http://localhost:3000/cart?status=failure&reason=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+            String redirectUrl = "http://localhost:3000/payment-result?status=failure&reason=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
             response.sendRedirect(redirectUrl);
         }
     }
@@ -82,7 +82,7 @@ public class PaymentController {
         paymentService.failPayment(orderId, paymentKey, code, message);
 
         // 실패 시 /carts로 리다이렉트 (쿼리 파라미터에 실패 정보 포함)
-        String redirectUrl = "http://localhost:3000/cart?status=failure&reason=" + URLEncoder.encode(message, StandardCharsets.UTF_8);
+        String redirectUrl = "http://localhost:3000/payment-result?status=failure&reason=" + URLEncoder.encode(message, StandardCharsets.UTF_8);
         response.sendRedirect(redirectUrl);
     }
 }
