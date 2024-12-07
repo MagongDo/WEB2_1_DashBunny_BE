@@ -65,11 +65,12 @@ public class StoreRequestController {
   @PostMapping("/recreate/{storeId}")
   public ResponseEntity<String> recreateStore(@PathVariable String storeId,
                                               @RequestParam(name = "docsImageFile") MultipartFile docsImageFile,
-                                              @RequestPart(name = "request") CreateStoreRequestDto request) {
+                                              @RequestPart(name = "request") CreateStoreRequestDto request,
+                                              @RequestHeader("Authorization") String authorizationHeader) {
 //    storeManagementService.reCreate(storeId, request);
 //    return ResponseEntity.ok("가게 등록 재승인 요청을 성공했습니다.");
 
-    String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+    String phone = userService.getCurrentUser(authorizationHeader).getPhone();
     log.info("user {}", phone);
     try {
       String docsUrl = fileUploadService.uploadFile(docsImageFile, "storeDocsImage");
@@ -89,7 +90,8 @@ public class StoreRequestController {
    * 사장님 - 가게 폐업 신청 api (POST).
    */
   @PostMapping("/closure/{storeId}")
-  public ResponseEntity<String> closeStore(@PathVariable String storeId) {
+  public ResponseEntity<String> closeStore(@PathVariable String storeId,
+                                           @RequestHeader("Authorization") String authorizationHeader) {
     storeManagementService.close(storeId);
     return ResponseEntity.ok("가게 폐업 승인 요청을 성공했습니다.");
   }
@@ -105,7 +107,8 @@ public class StoreRequestController {
    * 관리자 - 가게 등록 승인 api (PUT).
    */
   @PutMapping("/approve/{storeId}")
-  public ResponseEntity<String> approveCreatedStore(@PathVariable String storeId) {
+  public ResponseEntity<String> approveCreatedStore(@PathVariable String storeId,
+                                                    @RequestHeader("Authorization") String authorizationHeader) {
     storeApplicationService.approve(storeId);
     return ResponseEntity.ok("가게 등록을 승인했습니다.");
   }
@@ -116,7 +119,8 @@ public class StoreRequestController {
    * 관리자 - 가게 등록 거절 api (PUT).
    */
   @PutMapping("/reject/{storeId}")
-  public ResponseEntity<String> rejectCreatedStore(@PathVariable String storeId, @RequestBody String reason) {
+  public ResponseEntity<String> rejectCreatedStore(@PathVariable String storeId, @RequestBody String reason,
+                                                   @RequestHeader("Authorization") String authorizationHeader) {
     storeApplicationService.reject(storeId, reason);
     return ResponseEntity.ok("가게 등록을 거절했습니다. 사유: " + reason);
   }
@@ -126,7 +130,8 @@ public class StoreRequestController {
    * 관리자 - 가게 폐업 승인 api (PUT).
    */
   @PutMapping("/closure/approve/{storeId}")
-  public ResponseEntity<String> approveClosedStore(@PathVariable String storeId) {
+  public ResponseEntity<String> approveClosedStore(@PathVariable String storeId
+  , @RequestHeader("Authorization") String authorizationHeader) {
     storeApplicationService.close(storeId);
     return ResponseEntity.ok("가게 폐업 신청을 승인했습니다.");
   }
@@ -137,7 +142,8 @@ public class StoreRequestController {
    * 관리자 - 가게 조회 api (GET).
    */
   @GetMapping(value = "/{storeId}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<AdminStoreResponseDto> getStore(@PathVariable String storeId) {
+  public ResponseEntity<AdminStoreResponseDto> getStore(@PathVariable String storeId,
+                                                        @RequestHeader("Authorization") String authorizationHeader) {
     AdminStoreResponseDto adminStoreResponseDto = storeApplicationService.getStore(storeId);
     return ResponseEntity.ok().body(adminStoreResponseDto);
   }
@@ -171,7 +177,8 @@ public class StoreRequestController {
   public ResponseEntity<Page<AdminStoreListResponseDto>> getStores(
           @RequestParam(defaultValue = "ENTIRE") String status,
           @RequestParam(defaultValue = "1") int page,
-          @RequestParam(defaultValue = "10") int size
+          @RequestParam(defaultValue = "10") int size,
+          @RequestHeader("Authorization") String authorizationHeader
   ) {
     Page<AdminStoreListResponseDto> stores = storeApplicationService.getStores(status, page, size);
     return ResponseEntity.ok().body(stores);

@@ -33,9 +33,6 @@ import java.util.List;
 @RequestMapping("/api/user/coupon")
 public class UserCouponController {
   private final UserCouponService userCouponService;
-  private final AdminCouponService adminCouponService;
-  private final OwnerCouponService ownerCouponService;
-  private final CustomUserDetailsService customUserDetailsService;
   private final UserService userService;
 
   /**
@@ -54,7 +51,7 @@ public class UserCouponController {
   @GetMapping("/first-come")
   public ResponseEntity<?> getFirstComeCoupon(@RequestHeader("Authorization") String authorizationHeader) {
     User currentUser = userService.getCurrentUser(authorizationHeader);
-    FirstComeCouponResponseWrapper response = userCouponService.findActiveFirstComeCoupon();
+    FirstComeCouponResponseWrapper response = userCouponService.findActiveFirstComeCoupon(currentUser);
 
     if (response.getCoupon() != null) {
       return ResponseEntity.ok(response.getCoupon());
@@ -97,7 +94,6 @@ public class UserCouponController {
   @PostMapping("/download/owner/{couponId}")
   public ResponseEntity<?> downloadOwnerCoupon(@PathVariable Long couponId
           , @RequestHeader("Authorization") String authorizationHeader) {
-    String phone = userService.getCurrentUser(authorizationHeader).getPhone();
     User currentUser = userService.getCurrentUser(authorizationHeader);
     //현재 사용자의 userId를 가져와야함
     userCouponService.downloadCoupon(couponId, IssuedCouponType.OWNER,currentUser);
@@ -108,17 +104,17 @@ public class UserCouponController {
   /**
    * 선착순 쿠폰 다운로드 api (POST).
    */
-  @PostMapping("/download/first-come/{couponId}")
-  public ResponseEntity<?> downloadFirstComeCoupon(@PathVariable Long couponId, HttpServletRequest request
+  @PostMapping("/download/first-come/{couponId}") //, HttpServletRequest request
+  public ResponseEntity<?> downloadFirstComeCoupon(@PathVariable Long couponId
           , @RequestHeader("Authorization") String authorizationHeader) {
-    String phone = userService.getCurrentUser(authorizationHeader).getPhone();
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    log.debug("현재 인증 사용자: {}", authentication);
-    log.debug("세션 ID: {}", request.getSession(false).getId());
     User currentUser = userService.getCurrentUser(authorizationHeader);
-    if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인된 사용자를 찾을 수 없습니다.");
-    }
+
+//    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//    log.debug("현재 인증 사용자: {}", authentication);
+//    log.debug("세션 ID: {}", request.getSession(false).getId());
+//    if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+//      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인된 사용자를 찾을 수 없습니다.");
+//    }
     //현재 사용자의 userId를 가져와야함
     userCouponService.downloadCoupon(couponId, IssuedCouponType.ADMIN,currentUser);
     return ResponseEntity.ok(Collections.singletonMap("message", "선착순 쿠폰 다운로드에 성공했습니다!"));
@@ -131,7 +127,9 @@ public class UserCouponController {
   public ResponseEntity<List<UserCouponListResponseDto>> getBoxCoupon(
            @RequestHeader("Authorization") String authorizationHeader
   ) {
-    List<UserCouponListResponseDto> coupons = userCouponService.findNotUsedCoupons();
+    User currentUser = userService.getCurrentUser(authorizationHeader);
+
+    List<UserCouponListResponseDto> coupons = userCouponService.findNotUsedCoupons(currentUser);
     return ResponseEntity.status(HttpStatus.OK).body(coupons);
   }
 
