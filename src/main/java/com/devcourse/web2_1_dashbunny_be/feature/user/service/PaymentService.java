@@ -1,46 +1,71 @@
 package com.devcourse.web2_1_dashbunny_be.feature.user.service;
 
 import com.devcourse.web2_1_dashbunny_be.config.TossPaymentConfig;
+import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Payment;
+import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentApproveRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentApproveResponseDto;
-import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.PaymentRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UsersCartRepository;
+import com.nimbusds.jose.shaded.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentService {
 
-  private final RestTemplate restTemplate;
+  private final WebClient webClient;
   private final TossPaymentConfig tossPaymentsConfig;
   private final PaymentRepository paymentRepository;
+  private final RestTemplate restTemplate;
+  private final UsersCartRepository usersCartRepository;
 
   /**
    * 결제 준비 요청
    */
-  public PaymentResponseDto requestPayment(PaymentRequestDto requestDto) {
+  public PaymentResponseDto requestPayment(PaymentRequestDto requestDto)  {
     // DB에 결제 요청 정보 저장 (status: READY)
     Payment payment = Payment.builder()
             .orderId(requestDto.getOrderId())
             .orderName(requestDto.getOrderName())
             .amount(requestDto.getAmount())
-            .customerName(requestDto.getCustomerName())
+            .method(requestDto.getMethod())
             .status("READY")
             .build();
     paymentRepository.save(payment);
 
     String url = tossPaymentsConfig.getApiBaseUrl() + "/payments";
+     log.info(url);
+ /*   return webClient.post()
+            .uri(url)
+            .header("Authorization", "Basic " + encodeToBase64(tossPaymentsConfig.getSecretKey() + ":"))
+            .header("Content-Type", "application/json")
+            .bodyValue(requestDto)
+            .retrieve()
+            .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+                    clientResponse -> clientResponse.bodyToMono(String.class).flatMap(body -> {
+                      log.error("Error Body: {}", body);
+                      return Mono.error(new RuntimeException("Failed to request payment"));
+                    }))
+            .bodyToMono(PaymentResponseDto.class)
+            .block(); // 동기적으로 대기 (필요 시 비동기로 처리할 수도 있음)*/
+
     HttpHeaders headers = new HttpHeaders();
     headers.add("Authorization", "Basic " + encodeToBase64(tossPaymentsConfig.getSecretKey() + ":"));
     headers.add("Content-Type", "application/json");
@@ -52,31 +77,71 @@ public class PaymentService {
 
     PaymentResponseDto responseBody = response.getBody();
     return responseBody;
+
   }
 
   /**
    * 결제 승인 요청
    */
   public PaymentApproveResponseDto approvePayment(PaymentApproveRequestDto approveRequest) {
-    String url = tossPaymentsConfig.getApiBaseUrl() + "/payments/confirm";
+    String url = tossPaymentsConfig.getApiBaseUrl() + "/payments/" + approveRequest.getPaymentKey();
 
+    // HTTP 헤더 생성
     HttpHeaders headers = new HttpHeaders();
     headers.add("Authorization", "Basic " + encodeToBase64(tossPaymentsConfig.getSecretKey() + ":"));
     headers.add("Content-Type", "application/json");
 
+    // HTTP 요청 엔티티 생성
     HttpEntity<PaymentApproveRequestDto> entity = new HttpEntity<>(approveRequest, headers);
-    ResponseEntity<PaymentApproveResponseDto> response = restTemplate.exchange(
-            url, HttpMethod.POST, entity, PaymentApproveResponseDto.class
-    );
+    ResponseEntity<String> responses = restTemplate.exchange(
+            url, HttpMethod.POST, entity, String.class);
+    log.info(responses.getBody());
+    try {
+      // REST API 호출
+      ResponseEntity<PaymentApproveResponseDto> response = restTemplate.exchange(
+              url, HttpMethod.POST, entity, PaymentApproveResponseDto.class
+      );
 
-    PaymentApproveResponseDto res = response.getBody();
-    // DB 업데이트
-    Payment payment = paymentRepository.findByOrderId(res.getOrderId()).orElseThrow(() -> new RuntimeException("Payment not found"));
-    payment.setPaymentKey(res.getPaymentKey());
-    payment.setStatus(res.getStatus()); // "DONE" 등
-    paymentRepository.save(payment);
+      // 응답 본문 처리
+      PaymentApproveResponseDto responseBody = response.getBody();
 
-    return res;
+      if (responseBody == null) {
+        log.error("Response body is null");
+        throw new RuntimeException("PaymentApproveResponseDto is null");
+      }
+
+      log.info("Response received: {}", responseBody);
+
+      // 결제 승인 후 처리
+      Payment payment = paymentRepository.findByOrderId(responseBody.getOrderId())
+              .orElseThrow(() -> new RuntimeException("Payment not found"));
+      payment.setPaymentKey(responseBody.getPaymentKey());
+      payment.setStatus(responseBody.getStatus());
+      paymentRepository.save(payment);
+
+      log.info("Payment status updated: {}", payment.getStatus());
+
+      // 성공적인 결제의 경우 카트 비우기
+      if ("DONE".equals(responseBody.getStatus())) {
+        Cart cart = usersCartRepository.findByOrderId(approveRequest.getOrderId());
+        if (cart != null) {
+          cart.setOrderId(null);
+          cart.setTotalPrice(null);
+          cart.setStoreId(null);
+          cart.setCartItems(null);
+          usersCartRepository.save(cart);
+          log.info("Cart cleared for orderId: {}", approveRequest.getOrderId());
+        } else {
+          log.warn("No cart found for orderId: {}", approveRequest.getOrderId());
+        }
+      }
+
+      return responseBody;
+
+    } catch (Exception e) {
+      log.error("Exception occurred during approvePayment: {}", e.getMessage(), e);
+      throw new RuntimeException("Failed to approve payment", e);
+    }
   }
 
   /**
@@ -96,4 +161,6 @@ public class PaymentService {
   private String encodeToBase64(String value) {
     return Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8));
   }
+
+
 }

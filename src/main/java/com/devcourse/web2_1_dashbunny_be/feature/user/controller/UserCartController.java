@@ -4,6 +4,7 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UserCartCouponListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCartResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCheckCouponDto;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UsersCartCouponService;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UsersCartService;
@@ -106,15 +107,14 @@ public class UserCartController {
    * @return 결제된 장바구니 상태를 담은 응답 DTO
    */
   @PostMapping("/carts/checkout")
-  public void checkoutCart(@RequestParam String storeRequirement,
+  public ResponseEntity<UsersCartResponseDto> checkoutCart(@RequestParam String storeRequirement,
                                                            @RequestParam String deliveryRequirement,
-                                                           @RequestHeader("Authorization") String authorizationHeader,
-                                                           HttpServletResponse response) throws IOException {
+                                                           @RequestHeader("Authorization") String authorizationHeader) {
     User currentUser = userService.getCurrentUser(authorizationHeader);
     UsersCartResponseDto cartDto = cartService.checkoutCart(currentUser.getPhone(),
             storeRequirement,
             deliveryRequirement);
-    response.sendRedirect(cartDto.getRedirectUrl());
+    return ResponseEntity.ok(cartDto);
   }
 }
 

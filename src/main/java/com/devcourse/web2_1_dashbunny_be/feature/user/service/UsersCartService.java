@@ -25,9 +25,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.repository.UserCouponRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UsersCartService {
 
   private final UsersCartRepository cartRepository; // 장바구니 저장 및 조회
@@ -271,18 +274,16 @@ public class UsersCartService {
             .map(cartItem -> cartItem.getMenuManagement().getMenuName()) // 메뉴 이름 추출
             .orElse("Default Order Name"); // 장바구니가 비어 있을 경우 기본값
 
-    String url = tossPaymentConfig.getApiBaseUrl() + "/payments";
-    // 결제 요청 생성 및 처리
-  /*  PaymentRequestDto paymentRequest = new PaymentRequestDto();
-    paymentRequest.setCartId(cartDto.getCartId());
-    paymentRequest.setOrderName("Order for Cart ID: " + cartDto.getCartId());*/
+    String orderId = UUID.randomUUID().toString();
+
     PaymentRequestDto paymentRequest = PaymentRequestDto.builder()
-            .orderId(cartDto.getCartId().toString())
+            .orderId(orderId)
+            .method("card")
             .orderName(orderName)
             .amount(totalAmount)
             .failUrl(tossPaymentConfig.getFailUrl())
             .successUrl(tossPaymentConfig.getSuccessUrl()).build();
-    PaymentResponseDto paymentResponse = paymentService.createPayment(paymentRequest);
+    PaymentResponseDto paymentResponse = paymentService.requestPayment(paymentRequest);
 
     // 최종 응답 DTO 생성
     cartDto.setStoreRequirement(storeRequirement);
@@ -301,7 +302,7 @@ public class UsersCartService {
       userCoupon.setUsedDate(LocalDateTime.now());
       userCouponRepository.save(userCoupon);
     }
-
+    cart.setOrderId(orderId);
     cartRepository.save(cart); // 장바구니 업데이트
 
     return UsersCartResponseDto.builder()
@@ -316,7 +317,6 @@ public class UsersCartService {
             .storeRequirement(storeRequirement)
             .deliveryRequirement(deliveryRequirement)
             .coupon(selectedCoupon)
-            .redirectUrl(paymentResponse.getRedirectUrl())
             .build();
   }
 

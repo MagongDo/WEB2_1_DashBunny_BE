@@ -27,8 +27,7 @@ public class Payment {
   private String paymentKey;   // 결제 완료 시 발급받은 키
   private String status;       // READY, DONE, FAIL 등
   private String failReason;   // 실패 시 사유
-  @Column(nullable = false)
-  private Long cartId; // 장바구니와의 관계
+  private String method;
   private LocalDateTime updatedAt;
 
 }

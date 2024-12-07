@@ -34,6 +34,8 @@ public class Cart {
   @Column(name = "totalPrice")
   private Long totalPrice;
 
+  private String orderId;
+
   @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
   private List<CartItem> cartItems;
 
