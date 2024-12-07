@@ -31,18 +31,17 @@ public class MenuCacheService {
   public Map<Long, MenuManagement> getMenusByStore(String storeId, List<Long> menuIds) {
     String key = STORE_KEY_PREFIX + storeId;
 
-    List<String> menuId = menuIds.stream().map(String::valueOf).collect(Collectors.toList());
+    List<String> menuId = menuIds.stream().map(String::valueOf).toList();
     // 스토어 key, 각 메뉴 아이기 필드에 해당하는 밸류(단일 메뉴 객체)가 담긴  meueList 생성
-    List<MenuManagement> meueList = menuRedisTemplate.opsForHash().multiGet(key,menuId);
+    List<Object> meueList = menuRedisTemplate.opsForHash().multiGet(key, Collections.singleton(menuId));
 
     Map<Long, MenuManagement> menuCache = new HashMap<>();
     List<Long> missingMenuIds = new ArrayList<>();
 
-    // Redis 조회 결과를 처리
     for (int i = 0; i < menuIds.size(); i++) {
       Object redisResult = meueList.get(i);
       if (redisResult != null) {
-        menuCache.put(menuIds.get(i), (MenuManagement) redisResult); // Redis에서 찾은 데이터 추가
+        menuCache.put(menuIds.get(i), (MenuManagement) redisResult);
       } else {
         missingMenuIds.add((Long) menuIds.get(i));
       }
@@ -73,13 +72,13 @@ public class MenuCacheService {
 
         // Redis에 데이터 저장
         try {
-            redisTemplate.opsForHash().putAll(key, menuMap);
-            redisTemplate.expire(key, Duration.ofHours(24));
+            menuRedisTemplate.opsForHash().putAll(key, menuMap);
+            menuRedisTemplate.expire(key, Duration.ofHours(24));
 
             // 가게 엔트리에 등록
             menus.forEach(menu -> {
                 String storeMenuKey = STORE_KEY_PREFIX + storeId;
-                redisTemplate.opsForHash().put(storeMenuKey, String.valueOf(menu.getMenuId()), menu);
+                menuRedisTemplate.opsForHash().put(storeMenuKey, String.valueOf(menu.getMenuId()), menu);
             });
 
         } catch (Exception e) {
@@ -99,7 +98,7 @@ public class MenuCacheService {
      */
     public void updateMenuInStore(String storeId, MenuManagement menu) {
         String key = STORE_KEY_PREFIX + storeId;
-        redisTemplate.opsForHash().put(key, String.valueOf(menu.getMenuId()), menu);
+        menuRedisTemplate.opsForHash().put(key, String.valueOf(menu.getMenuId()), menu);
         log.info("메뉴 업데이트 완료 - Store ID: {}, Menu ID: {}", storeId, menu.getMenuId());
     }
 
@@ -108,7 +107,7 @@ public class MenuCacheService {
      */
     public void deleteMenuFromStore(String storeId, Long menuId) {
         String key = STORE_KEY_PREFIX + storeId;
-        redisTemplate.opsForHash().delete(key, String.valueOf(menuId));
+        menuRedisTemplate.opsForHash().delete(key, String.valueOf(menuId));
         log.info("메뉴 삭제 완료 - Store ID: {}, Menu ID: {}", storeId, menuId);
     }
 }

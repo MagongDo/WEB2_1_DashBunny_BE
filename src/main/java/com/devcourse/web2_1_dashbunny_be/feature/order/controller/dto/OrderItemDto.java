@@ -31,4 +31,16 @@ public class OrderItemDto {
     orderItem.setTotalPrice(menu.getPrice() * this.quantity);
     return orderItem;
   }
+
+  public static OrderItemDto fromEntity(OrderItem orderItem) {
+    return OrderItemDto.builder()
+            .menuId(orderItem.getMenu().getMenuId())
+            .menuName(orderItem.getMenu().getMenuName())
+            .stockAvailableAtOrder(orderItem.isStockAvailableAtOrder())
+            .quantity(orderItem.getQuantity())
+            .totalPrice(orderItem.getTotalPrice())
+            .build();
+  }
+
+
 }

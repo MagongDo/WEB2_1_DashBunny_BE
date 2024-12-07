@@ -6,6 +6,7 @@ import com.devcourse.web2_1_dashbunny_be.annotation.config.lifecycle.TSIDListene
 import com.devcourse.web2_1_dashbunny_be.domain.admin.StoreApplication;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
+import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -115,4 +116,7 @@ public class StoreManagement {
   @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<StoreApplication> storeApplications = new ArrayList<>();
 
+  //스토어가 가진 모든 주문 정보
+  @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Orders> ordersList = new ArrayList<>();
 }
