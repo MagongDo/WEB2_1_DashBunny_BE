@@ -24,24 +24,6 @@ public class PaymentController {
     private final PaymentService paymentService;
 
 
-    /**
-     * 결제 요청 API
-     * 프론트에서 orderId, orderName, amount, customerName, successUrl, failUrl를 포함하여 요청
-     */
-    @PostMapping("/request")
-    public PaymentResponseDto requestPayment(@RequestBody PaymentRequestDto requestDto) {
-        return paymentService.requestPayment(requestDto);
-    }
-
-    /**
-   * 결제 완료 후 승인 처리 API
-   * successUrl로 리다이렉트된 후 클라이언트나 프론트엔드에서 paymentKey, orderId, amount를 받아 이 API 호출
-   */
-  @PostMapping("/approve")
-  public PaymentApproveResponseDto approvePayment(@RequestBody PaymentApproveRequestDto approveRequest) {
-      return paymentService.approvePayment(approveRequest);
-  }
-
     @GetMapping("/success")
     public void paymentSuccess(
             @RequestParam("orderId") String orderId,
