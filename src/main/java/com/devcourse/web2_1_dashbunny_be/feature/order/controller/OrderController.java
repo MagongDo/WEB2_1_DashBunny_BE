@@ -105,5 +105,8 @@ public class OrderController {
    * 모든 오더 객체의 정보를 리스트로 담아서 반환합니다.
    * 관리 페이지가 자주 갱신되는 데이터를 실시간으로 반영-> 비동기
   */
-
+  @GetMapping("store/order-list/{storeId}")
+  public ResponseEntity<OrdersListResponseDto> getOrderList(){
+      return ResponseEntity.ok(null);
+  }
 }
