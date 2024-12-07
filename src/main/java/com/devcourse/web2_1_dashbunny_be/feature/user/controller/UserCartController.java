@@ -4,16 +4,13 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UserCartCouponListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCartResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCheckCouponDto;
-import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UsersCartCouponService;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UsersCartService;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 

@@ -32,9 +32,11 @@ public class UserStoreController {
 
   @PostMapping("/stores/checking")
   public ResponseEntity<Void> getUsersStoreChecking(@RequestParam String address,
+                                                    @RequestParam String detailAddress,
                                                     @RequestHeader("Authorization") String authorizationHeader
                                                     ) {
     User currentUser = userService.getCurrentUser(authorizationHeader);
+    usersStoreService.checkAddressData(currentUser.getPhone(), address, detailAddress);
     if (!usersStoreService.checkRedisData(currentUser.getPhone(), address)) {
       // Redis 키가 없으면 데이터를 새로 추가
       usersStoreService.redisAddStoreList(currentUser.getPhone(), address);

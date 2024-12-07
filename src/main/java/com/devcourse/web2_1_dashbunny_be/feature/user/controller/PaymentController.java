@@ -8,6 +8,7 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentRequest
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.PaymentService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentController {
 
     private final PaymentService paymentService;
@@ -54,7 +56,8 @@ public class PaymentController {
                     .paymentKey(paymentKey)
                     .amount(amount)
                     .build();
-
+            log.info("Payment approve request: {}", orderId);
+            log.info("Payment approve request: {}", paymentKey);
             PaymentApproveResponseDto approveResponse = paymentService.approvePayment(approveRequest);
 
             // 결제 성공 시 /carts로 리다이렉트 (쿼리 파라미터에 상태 포함)
@@ -63,6 +66,7 @@ public class PaymentController {
         } catch (Exception e) {
             // 승인 실패 시 /carts로 리다이렉트
             String redirectUrl = "http://localhost:3000/payment-result?status=failure&reason=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+            paymentService.deleteOrders(orderId);
             response.sendRedirect(redirectUrl);
         }
     }
@@ -80,7 +84,9 @@ public class PaymentController {
     ) throws IOException {
         // 결제 실패 처리
         paymentService.failPayment(orderId, paymentKey, code, message);
-
+        paymentService.deleteOrders(orderId);
+        log.info("Payment approve request: {}", orderId);
+        log.info("Payment approve request: {}", paymentKey);
         // 실패 시 /carts로 리다이렉트 (쿼리 파라미터에 실패 정보 포함)
         String redirectUrl = "http://localhost:3000/payment-result?status=failure&reason=" + URLEncoder.encode(message, StandardCharsets.UTF_8);
         response.sendRedirect(redirectUrl);

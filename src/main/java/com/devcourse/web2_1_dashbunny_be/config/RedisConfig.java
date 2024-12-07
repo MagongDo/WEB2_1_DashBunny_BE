@@ -13,7 +13,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
- /*@Value("${spring.data.redis.host}")
+ @Value("${spring.data.redis.host}")
  private String redisHost;
  @Value("${spring.data.redis.port}")
  private String redisPort;
@@ -25,7 +25,6 @@ public class RedisConfig {
    redisStandaloneConfiguration.setPort(Integer.parseInt(redisPort));
    return new LettuceConnectionFactory(redisStandaloneConfiguration);
  }
-*/
   @Bean
   public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
     RedisTemplate<String, Object> template = new RedisTemplate<>();

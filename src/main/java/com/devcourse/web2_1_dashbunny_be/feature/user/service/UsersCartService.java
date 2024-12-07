@@ -5,10 +5,11 @@ import com.devcourse.web2_1_dashbunny_be.domain.common.role.DiscountType;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.DeliveryOperatingInfo;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
-import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
-import com.devcourse.web2_1_dashbunny_be.domain.user.CartItem;
-import com.devcourse.web2_1_dashbunny_be.domain.user.User;
-import com.devcourse.web2_1_dashbunny_be.domain.user.UserCoupon;
+import com.devcourse.web2_1_dashbunny_be.domain.user.*;
+import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrderInfoRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrderItemDto;
+import com.devcourse.web2_1_dashbunny_be.feature.order.repository.OrdersRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.order.service.OrderService;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.DeliveryOperatingInfoRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
@@ -50,6 +51,8 @@ public class UsersCartService {
   private final PaymentService paymentService; // 결제 서비스
   private final UserCouponRepository userCouponRepository; //사용자 쿠폰 저장소
   private final TossPaymentConfig tossPaymentConfig;
+  private final OrderService orderService;
+
 
   /**
    * 사용자의 장바구니를 생성하는 기능.
@@ -235,6 +238,7 @@ public class UsersCartService {
 
   @Transactional
   public UsersCartResponseDto checkoutCart(String userId, String storeRequirement, String deliveryRequirement) {
+    User user = userRepository.findByPhone(userId).orElseThrow(null);
     // 장바구니 확인
     UsersCartResponseDto cartDto = getCart(userId);
     if (cartDto == null || cartDto.getCartItems() == null || cartDto.getCartItems().isEmpty()) {
@@ -250,6 +254,9 @@ public class UsersCartService {
             .map(UsersCartItemDto::toUsersCartItemDto)
             .toList();
 
+    List<OrderItemDto> orderItemDtos = cart.getCartItems().stream()
+            .map(OrderItemDto::toDto)
+            .toList();
     // 총 금액 및 배달료 합산
     Long totalPrice = cartItemDtos.stream()
             .mapToLong(UsersCartItemDto::getTotalPrice)
@@ -304,6 +311,21 @@ public class UsersCartService {
     }
     cart.setOrderId(orderId);
     cartRepository.save(cart); // 장바구니 업데이트
+
+    OrderInfoRequestDto orders = OrderInfoRequestDto.builder()
+            .storeId(cart.getStoreId())
+            .paymentId(orderId)
+            .userPhone(cart.getUser().getPhone())
+            .orderItems(orderItemDtos)
+            .orderDate(LocalDateTime.now())
+            .deliveryPrice(cartDto.getDeliveryFee())
+            .deliveryAddress(user.getAddress() + user.getDetailAddress())
+            .storeNote(storeRequirement)
+            .riderNote(deliveryRequirement)
+            .totalAmount(totalAmount)
+            .build();
+
+    orderService.creatOrder(orders);
 
     return UsersCartResponseDto.builder()
             .cartId(cart.getCartId())

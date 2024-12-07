@@ -28,6 +28,8 @@ public class OrderInfoRequestDto {
   private String deliveryAddress; // 배달 주소
   private String storeNote; // 사장님에게 전달할 메모
   private String riderNote; // 라이더에게 전달할 메모
+  private String paymentId;
+  private Long totalAmount;
 
   public Orders toEntity(List<OrderItemDto> orderItems, MenuRepository menuRepository, User user) {
 
@@ -47,6 +49,8 @@ public class OrderInfoRequestDto {
     orders.setDeliveryAddress(this.deliveryAddress);
     orders.setStoreNote(this.storeNote);
     orders.setRiderNote(this.riderNote);
+    orders.setPaymentId(this.paymentId);
+    orders.setTotalPrice(this.totalAmount);
 
     // 양방향 관계 설정
     orderItemList.forEach(orderItem -> orderItem.setOrder(orders));

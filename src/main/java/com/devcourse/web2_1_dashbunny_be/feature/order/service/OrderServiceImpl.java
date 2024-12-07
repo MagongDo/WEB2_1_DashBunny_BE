@@ -1,14 +1,18 @@
 package com.devcourse.web2_1_dashbunny_be.feature.order.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.user.OrderItem;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.domain.user.role.OrderStatus;
 import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.*;
+import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.user.UserOrderInfoRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.common.Validator;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.order.repository.OrdersRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -16,6 +20,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,13 +37,15 @@ public class OrderServiceImpl implements OrderService {
   private final MenuRepository menuRepository;
   private final SimpMessagingTemplate messageTemplate;
   private static final String ERROR_TOPIC = "/topic/order/error";
+  private final UserRepository userRepository;
+  private final StoreManagementRepository storeManagementRepository;
 
   /**
    * 사용자의 주문 요청을 처리합니다.
    * Async 어노테이션을 사용 하지 않고 .supplyAsync 사용하여 명시적으로 비동기 처리를 진행하였습니다.
    * 재고 등록 여부에 따라 각각 비동기 처리를 하였습니다.
    */
-  @Transactional
+ /* @Transactional
   @Override
   public CompletableFuture<Orders> creatOrder(OrderInfoRequestDto orderInfoRequestDto) {
     return CompletableFuture.supplyAsync(() -> {
@@ -67,6 +74,36 @@ public class OrderServiceImpl implements OrderService {
 
       return orders;
     });
+  }*/
+  @Transactional
+  @Override
+  public Orders creatOrder(OrderInfoRequestDto orderInfoRequestDto) {
+
+      User user = validator.validateUserId(orderInfoRequestDto.getUserPhone());
+      Orders orders = orderInfoRequestDto.toEntity(orderInfoRequestDto.getOrderItems(), menuRepository, user);
+
+      //재고 등록이 된 메뉴 리스트
+      List<OrderItem> stockItems = filterStockItems(orders.getOrderItems(),true);
+      //재고등록이 안된 메뉴 리스트
+      List<OrderItem> nonStockItems = filterStockItems(orders.getOrderItems(),false);
+
+      Map<Long, MenuManagement> nonStockItemsMenuCache = getMenuCache(nonStockItems);
+      Map<Long, MenuManagement> stockItemsMenuCache = getMenuCache(stockItems);
+
+      CompletableFuture<Void> stockProcessing = processStockItems(stockItems, stockItemsMenuCache);
+      CompletableFuture<Void> nonStockProcessing = processNonStockItems(nonStockItems, nonStockItemsMenuCache);
+
+      CompletableFuture.allOf(stockProcessing, nonStockProcessing).join();
+      // 주문 저장
+      ordersRepository.save(orders);
+      // 메시지 알림
+      StoreOrderAlarmResponseDto responseDto = StoreOrderAlarmResponseDto.fromEntity(orders);
+      String orderTopic = String.format("/topic/storeOrder/" + orders.getOrderId());
+      messageTemplate.convertAndSend(orderTopic, responseDto);
+      log.info("사장님 알람 전송" + responseDto);
+
+      return orders;
+
   }
 
   private CompletableFuture<Void> processNonStockItems(List<OrderItem> nonStockItems,
@@ -188,5 +225,38 @@ public class OrderServiceImpl implements OrderService {
             .fromEntity(orders, declineRequestDto.getDeclineReasonType());
 
     return CompletableFuture.completedFuture(responseDto);
+  }
+
+  @Override
+  public List<UserOrderInfoRequestDto> getUserOrderInfoList(String userId) {
+    // 사용자 조회
+    log.info(userId);
+    User user = userRepository.findByPhone(userId).orElseThrow(() ->
+            new IllegalArgumentException("해당 사용자를 찾을 수 없습니다.")
+    );
+    log.info("why not?");
+    // 사용자의 주문 조회
+    List<Orders> ordersList = ordersRepository.findByUser(user);
+    log.info("please");
+    // Orders -> UserOrderInfoRequestDto 변환 및 정렬
+    List<UserOrderInfoRequestDto> userOrderInfoRequestDtos = ordersList.stream()
+            .map(order -> {
+              // 주문 아이템 정보 추출
+              int totalQuantity = order.getOrderItems().stream()
+                      .mapToInt(OrderItem::getQuantity) // OrderItem에서 수량 추출
+                      .sum();
+
+              String menuName = order.getOrderItems().stream()
+                      .map(orderItem -> orderItem.getMenu().getMenuName()) // OrderItem에서 메뉴 이름 추출
+                      .findFirst() // 첫 번째 메뉴 이름 가져오기
+                      .orElse("메뉴 이름 없음");
+
+              // DTO 변환
+              return UserOrderInfoRequestDto.todo(order, storeManagementRepository, totalQuantity, menuName);
+            })
+            .sorted((dto1, dto2) -> dto2.getOrderDate().compareTo(dto1.getOrderDate())) // orderDate 기준 내림차순 정렬
+            .toList();
+    log.info(userOrderInfoRequestDtos.toString());
+    return userOrderInfoRequestDtos;
   }
 }

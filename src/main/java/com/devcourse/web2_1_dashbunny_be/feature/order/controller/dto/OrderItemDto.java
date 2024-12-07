@@ -1,7 +1,9 @@
 package com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
+import com.devcourse.web2_1_dashbunny_be.domain.user.CartItem;
 import com.devcourse.web2_1_dashbunny_be.domain.user.OrderItem;
+import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCartItemDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,5 +32,13 @@ public class OrderItemDto {
     orderItem.setQuantity(quantity);
     orderItem.setTotalPrice(menu.getPrice() * this.quantity);
     return orderItem;
+  }
+
+  public static OrderItemDto toDto(CartItem cartItem) {
+    return OrderItemDto.builder()
+            .menuId(cartItem.getMenuManagement().getMenuId())
+            .menuName(cartItem.getMenuManagement().getMenuName())
+            .quantity(cartItem.getQuantity().intValue())
+            .totalPrice(cartItem.getMenuManagement().getPrice() * cartItem.getQuantity()).build();
   }
 }
