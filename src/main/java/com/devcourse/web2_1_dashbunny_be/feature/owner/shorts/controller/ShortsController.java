@@ -25,33 +25,6 @@ public class ShortsController {
     private final UserService userService;
 
     /**
-     * 쇼츠Url 등록 및 수정 하는 엔드포인트입니다.
-     * 응답 코드: 200(OK), 400(BAD_REQUEST), 403(FORBIDDEN)
-     * @param shortsRequestDto ShortsRequestDto 가 포함된 요청 본문
-     *                   - userId;
-     *                   - address; // 사용자 주소
-     * @return 회원가입 성공 메시지 또는 에러 메시지를 포함한 ResponseEntity
-     */
-    @PostMapping("/nearby-store")
-    public ResponseEntity<?> getNearbyShorts(@RequestHeader("Authorization") String authorizationHeader,
-                                             @RequestBody ShortsRequestDto shortsRequestDto) {
-        User currentUser = userService.getCurrentUser(authorizationHeader);
-        log.info("getNearbyShorts - Current userId: {}, Request userId: {}",
-                currentUser.getUserId(), shortsRequestDto.getUserId());
-
-        if (!currentUser.getUserId().equals(shortsRequestDto.getUserId())) {
-            log.warn("사용자 ID가 일치하지 않습니다.: currentUserId={}, requestUserId={}",
-                    currentUser.getUserId(), shortsRequestDto.getUserId());
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("사용자 ID가 일치하지 않습니다.");
-        }
-
-        List<UsersStoreListResponseDto> listNearbyShorts = shortsService.getNearbyStoresShorts(shortsRequestDto);
-        log.info("주위 가게 쇼츠 개수 {}", listNearbyShorts.size());
-        return ResponseEntity.ok(listNearbyShorts);
-    }
-
-    /**
      * 쇼츠Url 등록 및 수정 하는 엔드포인트입니다. 코드 201(CREATED), 400(BAD_REQUEST)
      *
      * @param shortsCreateRequestDto ShortsCreateRequestDto 가 포함된 요청 본문
