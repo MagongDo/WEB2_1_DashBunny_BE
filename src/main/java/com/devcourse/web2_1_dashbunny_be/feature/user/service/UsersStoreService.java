@@ -4,6 +4,7 @@ import com.devcourse.web2_1_dashbunny_be.config.GeoUtils;
 import com.devcourse.web2_1_dashbunny_be.config.KakaoGeocoding;
 import com.devcourse.web2_1_dashbunny_be.config.RedisKeyUtil;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.*;
+import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.domain.user.WishList;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuGroupRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
@@ -147,7 +148,9 @@ public class UsersStoreService {
 
   // 사용자의 레디스 키 유무 확인
   public Boolean checkRedisData(String userId, String address) {
+
     JsonObject addressLatLon = getUserAdressLatLon(address);
+
     double userLatitude = addressLatLon.get("latitude").getAsDouble();
     double userLongitude = addressLatLon.get("longitude").getAsDouble();
     String redisKey = RedisKeyUtil.generateKey(userId, userLatitude, userLongitude);
@@ -155,6 +158,16 @@ public class UsersStoreService {
     log.info("Redis check result: {}", redisTemplate.opsForValue().get(redisKey));
     log.info("Redis Key: {}", redisKey);
     return hasKey;
+  }
+  public void checkAddressData(String userId, String address, String detailAddress) {
+    User user = userRepository.findByPhone(userId).orElse(null);
+    if (!user.getAddress().equals(address)) {
+      user.setAddress(address);
+      user.setDetailAddress(detailAddress);
+    } else if (user.getAddress().equals(address) && !user.getDetailAddress().equals(detailAddress)) {
+      user.setDetailAddress(detailAddress);
+    }
+    userRepository.save(user);
   }
 
   public JsonObject getUserAdressLatLon(String address) {

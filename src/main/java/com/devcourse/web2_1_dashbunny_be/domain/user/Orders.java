@@ -17,6 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+
 public class Orders {
 
   @Id
@@ -47,6 +48,8 @@ public class Orders {
   private LocalDateTime createdAt;
 
   private Long deliveryPrice;
+
+  private String paymentId;
 
   @Column(nullable = false)
   private Long totalPrice; // 총 금액 (단가 * 수량)

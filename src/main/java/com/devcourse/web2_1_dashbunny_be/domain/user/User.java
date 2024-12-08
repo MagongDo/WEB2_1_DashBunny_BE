@@ -82,7 +82,15 @@ public class User implements UserDetails {
     private LocalDateTime refreshTokenExpiryDate =
             LocalDateTime.of(2000, 1, 1, 0, 0);
 
+    private String address;
+    private String detailAddress;
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    public void setDetailAddress(String detailAddress) {
+        this.detailAddress = detailAddress;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
