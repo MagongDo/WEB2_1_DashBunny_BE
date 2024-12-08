@@ -45,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
    * Async 어노테이션을 사용 하지 않고 .supplyAsync 사용하여 명시적으로 비동기 처리를 진행하였습니다.
    * 재고 등록 여부에 따라 각각 비동기 처리를 하였습니다.
    */
- /* @Transactional
+  @Transactional
   @Override
   public CompletableFuture<Orders> creatOrder(OrderInfoRequestDto orderInfoRequestDto) {
     return CompletableFuture.supplyAsync(() -> {
@@ -53,9 +53,9 @@ public class OrderServiceImpl implements OrderService {
       Orders orders = orderInfoRequestDto.toEntity(orderInfoRequestDto.getOrderItems(), menuRepository, user);
 
       //재고 등록이 된 메뉴 리스트
-      List<OrderItem> stockItems = filterStockItems(orders.getOrderItems(),true);
+      List<OrderItem> stockItems = filterStockItems(orders.getOrderItems(), true);
       //재고등록이 안된 메뉴 리스트
-      List<OrderItem> nonStockItems = filterStockItems(orders.getOrderItems(),false);
+      List<OrderItem> nonStockItems = filterStockItems(orders.getOrderItems(), false);
 
       Map<Long, MenuManagement> nonStockItemsMenuCache = getMenuCache(nonStockItems);
       Map<Long, MenuManagement> stockItemsMenuCache = getMenuCache(stockItems);
@@ -74,37 +74,8 @@ public class OrderServiceImpl implements OrderService {
 
       return orders;
     });
-  }*/
-  @Transactional
-  @Override
-  public Orders creatOrder(OrderInfoRequestDto orderInfoRequestDto) {
-
-      User user = validator.validateUserId(orderInfoRequestDto.getUserPhone());
-      Orders orders = orderInfoRequestDto.toEntity(orderInfoRequestDto.getOrderItems(), menuRepository, user);
-
-      //재고 등록이 된 메뉴 리스트
-      List<OrderItem> stockItems = filterStockItems(orders.getOrderItems(),true);
-      //재고등록이 안된 메뉴 리스트
-      List<OrderItem> nonStockItems = filterStockItems(orders.getOrderItems(),false);
-
-      Map<Long, MenuManagement> nonStockItemsMenuCache = getMenuCache(nonStockItems);
-      Map<Long, MenuManagement> stockItemsMenuCache = getMenuCache(stockItems);
-
-      CompletableFuture<Void> stockProcessing = processStockItems(stockItems, stockItemsMenuCache);
-      CompletableFuture<Void> nonStockProcessing = processNonStockItems(nonStockItems, nonStockItemsMenuCache);
-
-      CompletableFuture.allOf(stockProcessing, nonStockProcessing).join();
-      // 주문 저장
-      ordersRepository.save(orders);
-      // 메시지 알림
-      StoreOrderAlarmResponseDto responseDto = StoreOrderAlarmResponseDto.fromEntity(orders);
-      String orderTopic = String.format("/topic/storeOrder/" + orders.getOrderId());
-      messageTemplate.convertAndSend(orderTopic, responseDto);
-      log.info("사장님 알람 전송" + responseDto);
-
-      return orders;
-
   }
+
 
   private CompletableFuture<Void> processNonStockItems(List<OrderItem> nonStockItems,
                                                  Map<Long, MenuManagement> nonStockItemsMenuCache) {

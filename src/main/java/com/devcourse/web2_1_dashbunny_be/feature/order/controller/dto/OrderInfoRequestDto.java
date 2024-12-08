@@ -24,7 +24,6 @@ public class OrderInfoRequestDto {
   private String userPhone;
   private List<OrderItemDto> orderItems; // 주문 항목
   private LocalDateTime orderDate; // 주문 날짜
-  private Long deliveryPrice; // 배달 가격
   private String deliveryAddress; // 배달 주소
   private String storeNote; // 사장님에게 전달할 메모
   private String riderNote; // 라이더에게 전달할 메모
@@ -45,7 +44,6 @@ public class OrderInfoRequestDto {
     orders.setUser(user);
     orders.setOrderDate(this.orderDate);
     orders.setOrderItems(orderItemList);
-    orders.setDeliveryPrice(this.deliveryPrice);
     orders.setDeliveryAddress(this.deliveryAddress);
     orders.setStoreNote(this.storeNote);
     orders.setRiderNote(this.riderNote);

@@ -4,7 +4,10 @@ import com.devcourse.web2_1_dashbunny_be.config.TossPaymentConfig;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Payment;
+import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrderInfoRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrderItemDto;
 import com.devcourse.web2_1_dashbunny_be.feature.order.repository.OrdersRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.order.service.OrderService;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentApproveRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentApproveResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentRequestDto;
@@ -13,32 +16,34 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.repository.PaymentReposito
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UsersCartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentService {
-
-  private final WebClient webClient;
+  private final String ERROR_TOPIC = "/topic/order/error";
   private final TossPaymentConfig tossPaymentsConfig;
   private final PaymentRepository paymentRepository;
   private final RestTemplate restTemplate;
   private final UsersCartRepository usersCartRepository;
   private final OrdersRepository ordersRepository;
+  private final OrderService orderService;
+  private final SimpMessagingTemplate messageTemplate;
 
   /**
    * 결제 준비 요청
    */
+  @Transactional
   public PaymentResponseDto requestPayment(PaymentRequestDto requestDto)  {
     // DB에 결제 요청 정보 저장 (status: READY)
     Payment payment = Payment.builder()
@@ -51,7 +56,6 @@ public class PaymentService {
     paymentRepository.save(payment);
 
     String url = tossPaymentsConfig.getApiBaseUrl() + "/payments";
-     log.info(url);
 
     HttpHeaders headers = new HttpHeaders();
     headers.add("Authorization", "Basic " + encodeToBase64(tossPaymentsConfig.getSecretKey() + ":"));
@@ -92,11 +96,9 @@ public class PaymentService {
       PaymentApproveResponseDto responseBody = response.getBody();
 
       if (responseBody == null) {
-        log.error("Response body is null");
         throw new RuntimeException("PaymentApproveResponseDto is null");
       }
 
-      log.info("Response received: {}", responseBody);
 
       // 결제 승인 후 처리
       Payment payment = paymentRepository.findByOrderId(responseBody.getOrderId())
@@ -105,11 +107,41 @@ public class PaymentService {
       payment.setStatus(responseBody.getStatus());
       paymentRepository.save(payment);
 
-      log.info("Payment status updated: {}", payment.getStatus());
 
       // 성공적인 결제의 경우 카트 비우기
       if ("DONE".equals(responseBody.getStatus())) {
         Cart cart = usersCartRepository.findByOrderId(approveRequest.getOrderId());
+
+        List<OrderItemDto> orderItemDtos = cart.getCartItems().stream()
+                .map(OrderItemDto::toDto)
+                .toList();
+
+        OrderInfoRequestDto orders = OrderInfoRequestDto.builder()
+                .storeId(cart.getStoreId())
+                .paymentId(cart.getOrderId())
+                .userPhone(cart.getUser().getPhone())
+                .orderItems(orderItemDtos)
+                .orderDate(LocalDateTime.now())
+                .deliveryAddress(cart.getUser().getAddress() + cart.getUser().getDetailAddress())
+                .storeNote(cart.getStoreRequirement())
+                .riderNote(cart.getDeliveryRequirement())
+                .totalAmount(cart.getTotalPrice())
+                .build();
+
+        orderService.creatOrder(orders)
+                .thenApply(order -> {
+                  String topic = String.format("/topic/userOrder/%s/%s",
+                          orders.getStoreId(), order.getOrderId());
+                  messageTemplate.convertAndSend(topic, "주문 접수 중");
+                  return ResponseEntity.ok("주문 접수 요청에 성공했습니다." + order.getOrderStatus());
+                })
+                .exceptionally(ex -> {
+                  log.error("주문 처리 중 예외 발생", ex);
+                  messageTemplate.convertAndSend(ERROR_TOPIC, "주문 접수 실패");
+                  return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                          .body("주문 처리 중 문제가 발생했습니다: " + ex.getMessage());
+                });
+
         if (cart != null) {
           cart.setOrderId(null);
           cart.setTotalPrice(null);
@@ -118,9 +150,6 @@ public class PaymentService {
             cart.getCartItems().clear();
           }
           usersCartRepository.save(cart);
-          log.info("Cart cleared for orderId: {}", approveRequest.getOrderId());
-        } else {
-          log.warn("No cart found for orderId: {}", approveRequest.getOrderId());
         }
       }
 
@@ -128,7 +157,6 @@ public class PaymentService {
       return responseBody;
 
     } catch (Exception e) {
-      log.error("Exception occurred during approvePayment: {}", e.getMessage(), e);
       throw new RuntimeException("Failed to approve payment", e);
     }
   }
@@ -137,6 +165,7 @@ public class PaymentService {
    * 결제 실패 처리
    */
   public void failPayment(String orderId, String paymentKey, String code, String message) {
+
     Payment payment = paymentRepository.findByOrderId(orderId).orElse(null);
     if (payment != null) {
       payment.setPaymentKey(paymentKey);

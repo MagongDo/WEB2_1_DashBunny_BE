@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public interface OrderService {
-    Orders creatOrder(OrderInfoRequestDto orderInfoRequestDto);
-//    CompletableFuture<Orders> creatOrder(OrderInfoRequestDto orderInfoRequestDto);
+
+    CompletableFuture<Orders> creatOrder(OrderInfoRequestDto orderInfoRequestDto);
     CompletableFuture<AcceptOrdersResponseDto> acceptOrder(OrderAcceptRequestDto acceptRequestDto);
     CompletableFuture<DeclineOrdersResponseDto> declineOrder(OrderDeclineRequestDto declineRequestDto);
     List<UserOrderInfoRequestDto> getUserOrderInfoList(String userId);

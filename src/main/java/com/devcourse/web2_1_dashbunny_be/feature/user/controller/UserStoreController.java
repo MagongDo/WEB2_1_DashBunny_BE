@@ -5,7 +5,6 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreListResponse
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UsersStoreResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UsersStoreService;
-import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
