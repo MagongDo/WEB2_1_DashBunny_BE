@@ -2,7 +2,9 @@ package com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.controller;
 
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.domain.user.role.IssuedCouponType;
+import com.devcourse.web2_1_dashbunny_be.exception.CustomException;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.service.AdminCouponService;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.kafka.KafkaProducerService;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.ownerCoupon.service.OwnerCouponService;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.CustomUserDetailsService;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
@@ -34,6 +36,7 @@ import java.util.List;
 public class UserCouponController {
   private final UserCouponService userCouponService;
   private final UserService userService;
+  private final KafkaProducerService kafkaProducerService;
 
   /**
    * 관리자 발급한 일반 쿠폰 목록 조회 api (GET).
@@ -116,9 +119,33 @@ public class UserCouponController {
 //      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인된 사용자를 찾을 수 없습니다.");
 //    }
     //현재 사용자의 userId를 가져와야함
-    userCouponService.downloadCoupon(couponId, IssuedCouponType.ADMIN,currentUser);
-    return ResponseEntity.ok(Collections.singletonMap("message", "선착순 쿠폰 다운로드에 성공했습니다!"));
+//    userCouponService.downloadCoupon(couponId, IssuedCouponType.ADMIN,currentUser);
+//    return ResponseEntity.ok(Collections.singletonMap("message", "선착순 쿠폰 다운로드에 성공했습니다!"));
+
+    // Kafka Producer 호출
+//    kafkaProducerService.sendCouponRequest(couponId, currentUser.getUserId());
+//    return ResponseEntity.ok(Collections.singletonMap("message", "쿠폰 발급 요청이 접수되었습니다."));
+
+
+    try {
+      userCouponService.processCouponDownloadRequest(couponId, currentUser.getUserId());
+      return ResponseEntity.ok(Collections.singletonMap("message", "쿠폰 발급 요청이 접수되었습니다."));
+    } catch (CustomException e) {
+      return ResponseEntity.status(e.getStatus()).body(Collections.singletonMap("message", e.getMessage()));
+    }
   }
+
+//  /**
+//   * 선착순 쿠폰 다운로드 api (POST).
+//   */
+//  @PostMapping("/download/first-come-Test/{couponId}")
+//  public ResponseEntity<?> downloadFirstComeCouponTest(
+//          @PathVariable Long couponId,
+//          @RequestHeader("Authorization") String authorizationHeader) {
+//    Long userId = userService.getCurrentUserId(authorizationHeader).;
+//    userCouponService.downloadFirstComeCouponTest(couponId, userId);
+//    return ResponseEntity.ok(Collections.singletonMap("message", "쿠폰 다운로드 성공"));
+//  }
 
   /**
    * 사용자 쿠폰함 쿠폰 목록 조회 api (GET).

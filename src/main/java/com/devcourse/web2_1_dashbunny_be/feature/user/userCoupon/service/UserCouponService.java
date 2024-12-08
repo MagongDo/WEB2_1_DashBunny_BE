@@ -10,6 +10,7 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.UserCoupon;
 import com.devcourse.web2_1_dashbunny_be.domain.user.role.IssuedCouponType;
 import com.devcourse.web2_1_dashbunny_be.exception.CustomException;
 import com.devcourse.web2_1_dashbunny_be.feature.admin.adminCoupon.repository.AdminCouponRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.admin.kafka.KafkaProducerService;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.ownerCoupon.repository.OwnerCouponRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.SocialUserRepository;
@@ -44,6 +45,7 @@ public class UserCouponService {
   private final SocialUserRepository socialUserRepository;
   private final UsersCartRepository cartRepository;
   private final StoreManagementRepository storeManagementRepository;
+  private final KafkaProducerService kafkaProducerService;
   private final RedisTemplate<String, Object> redisTemplate;
 
 
@@ -54,7 +56,7 @@ public class UserCouponService {
 
 
     // 사용자가 이미 다운로드한 쿠폰 ID 목록 조회
-    List<Long> downloadedCouponIds = userCouponRepository.findCouponIdsByUser_UserIdAndIssuedCouponType(
+    List<Long> downloadedCouponIds = userCouponRepository.findCouponIdsByUserIdAndIssuedCouponType(
             currentUser.getUserId(),
             IssuedCouponType.ADMIN
     );
@@ -88,6 +90,7 @@ public class UserCouponService {
   /**
    * 관리자가 발급한 활성화된 선착순 쿠폰을 조회하는 메서드.
    */
+  @Transactional
   public FirstComeCouponResponseWrapper findActiveFirstComeCoupon(User currentUser) {
 
     //활성화된 선착순 쿠폰이 있는지 확인
@@ -126,7 +129,7 @@ public class UserCouponService {
 
 
     //이미 다운로드를 받았는지 확인
-    boolean hasParticipated = userCouponRepository.existsByUser_UserIdAndCouponIdAndIssuedCouponType(
+    boolean hasParticipated = userCouponRepository.existsByUserIdAndCouponIdAndIssuedCouponType(
             currentUser.getUserId(),
             activeFirstComeCoupon.getCouponId(),
             IssuedCouponType.ADMIN
@@ -151,7 +154,7 @@ public class UserCouponService {
   public UserCoupon downloadCoupon(Long couponId, IssuedCouponType issuedCouponType,User currentUser) {
 
     //이미 다운로드한 쿠폰인지 확인
-    boolean alreadyDownloaded = userCouponRepository.existsByUser_UserIdAndCouponIdAndIssuedCouponType(currentUser.getUserId(), couponId, issuedCouponType);
+    boolean alreadyDownloaded = userCouponRepository.existsByUserIdAndCouponIdAndIssuedCouponType(currentUser.getUserId(), couponId, issuedCouponType);
 
     // 다운로드 받은 적이 있으면 에러 메시지 반환
     if (alreadyDownloaded) {
@@ -175,19 +178,20 @@ public class UserCouponService {
   /**
    * 관리자가 발급한 쿠폰 다운로드 메소드.
    */
-  private UserCoupon downloadAdminCoupon(User currentUser, Long couponId) {
+  @Transactional
+  public UserCoupon downloadAdminCoupon(User currentUser, Long couponId) {
     //Admin 쿠폰 조회
     AdminCoupon adminCoupon = adminCouponRepository.findById(couponId)
             .orElseThrow(() -> new CustomException("해당 쿠폰이 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
 
     //선착순 쿠폰이면 분리된 메소드 이용(레디스 사용)
-    if (adminCoupon.getCouponType() == CouponType.FirstCome) {
-      return downloadFirstComeCoupon(currentUser, couponId);
-    }
+//    if (adminCoupon.getCouponType() == CouponType.FirstCome) {
+//      return processCouponDownloadRequest( couponId, currentUser.getUserId());
+//    }
 
     //UserCoupon 객체 생성
     UserCoupon downloadCoupon = UserCoupon.builder()
-            .user(currentUser)
+            .userId(currentUser.getUserId())
             .couponId(couponId)
             .issuedCouponType(IssuedCouponType.ADMIN)
             .usedDate(null)
@@ -203,13 +207,14 @@ public class UserCouponService {
    * @param couponId
    * @return
    */
-  private UserCoupon downloadOwnerCoupon(User currentUser, Long couponId) {
+  @Transactional
+  public UserCoupon downloadOwnerCoupon(User currentUser, Long couponId) {
     //Owner 쿠폰 조회
     OwnerCoupon ownerCoupon = ownerCouponRepository.findById(couponId)
             .orElseThrow(() -> new CustomException("해당 쿠폰이 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
     //UserCoupon 객체 생성
     UserCoupon downloadCoupon = UserCoupon.builder()
-            .user(currentUser)
+            .userId(currentUser.getUserId())
             .couponId(couponId)
             .issuedCouponType(IssuedCouponType.OWNER)
             .usedDate(null)
@@ -223,14 +228,65 @@ public class UserCouponService {
   /**
    * 관리자가 발급한 선착순 쿠폰 다운로드 메서드.
    */
-  private UserCoupon downloadFirstComeCoupon(User currentUser, Long couponId) {
+  @Transactional
+  //원래 반환 타입 UserCoupon 이었음
+  public void processCouponDownloadRequest(Long couponId, Long userId) {
+//    String redisKey = "firstComeCoupon:" + couponId;
+//    ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
+//
+//    // Redis에서 발급 개수를 원자적으로 증가
+//    Long newCount = valueOps.increment(redisKey, 1);
+//    // 현재 발급된 개수를 로그로 출력
+//    //log.info("쿠폰 ID: {}, Redis 발급 개수: {}", couponId, newCount);
+//    log.info("Request handled: User {}, Coupon ID {}, Order {}", userId, couponId, newCount);
+//
+//    // AdminCoupon에서 발급 가능한 최대 개수 가져오기
+//    AdminCoupon adminCoupon = adminCouponRepository.findById(couponId)
+//            .orElseThrow(() -> new IllegalArgumentException("해당 쿠폰이 존재하지 않습니다."));
+//
+//    if (newCount > adminCoupon.getMaxIssuance()) {
+//      // 발급 한도를 초과한 경우 Redis의 발급 개수를 감소
+//      valueOps.increment(redisKey, -1);
+//      log.warn("쿠폰 ID: {}, Redis 발급 한도 초과! 현재 Redis 발급 개수: {}", couponId, newCount - 1);
+//      log.error("에러 발생: 선착순 쿠폰 발급 한도를 초과하였습니다."); // 에러를 로그에 기록
+//      throw new CustomException("선착순 쿠폰이 모두 소진되었습니다. 다음 이벤트를 기대해주세요!", HttpStatus.BAD_REQUEST);
+//
+//    }
+//
+//    // Create UserCoupon
+//    UserCoupon downloadCoupon = UserCoupon.builder()
+//            .userId(userId)
+//            .couponId(couponId)
+//            .issuedCouponType(IssuedCouponType.ADMIN)
+//            .usedDate(null)
+//            .couponUsed(false)
+//            .build();
+//
+//    log.info("쿠폰 ID: {}, 사용자 ID: {} - 쿠폰 발급 완료", couponId, userId);
+//    return userCouponRepository.save(downloadCoupon); // Save to DB
+//  }
+//
+//  public void downloadFirstComeCouponTest(Long couponId, Long userId) {
+//    String redisKey = "firstComeCoupon:" + couponId;
+//
+//    // Redis INCR
+//    Long issuedOrder = redisTemplate.opsForValue().increment(redisKey);
+//    log.info("User {} received coupon {} with order {}", userId, couponId, issuedOrder);
+//
+//    // 중복 다운로드 방지
+//    if (userCouponRepository.existsByCouponIdAndUserId(couponId,userId)) {
+//      throw new IllegalArgumentException("이미 쿠폰을 다운로드했습니다.");
+//    }
+//
+//    // 쿠폰 저장
+//    //UserCoupon userCoupon = new UserCoupon(couponId, userId, issuedOrder);
+//    //userCouponRepository.save(userCoupon);
     String redisKey = "firstComeCoupon:" + couponId;
     ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
 
     // Redis에서 발급 개수를 원자적으로 증가
     Long newCount = valueOps.increment(redisKey, 1);
-    // 현재 발급된 개수를 로그로 출력
-    log.info("쿠폰 ID: {}, Redis 발급 개수: {}", couponId, newCount);
+    log.info("Request handled: User {}, Coupon ID {}, Order {}", userId, couponId, newCount);
 
     // AdminCoupon에서 발급 가능한 최대 개수 가져오기
     AdminCoupon adminCoupon = adminCouponRepository.findById(couponId)
@@ -240,22 +296,40 @@ public class UserCouponService {
       // 발급 한도를 초과한 경우 Redis의 발급 개수를 감소
       valueOps.increment(redisKey, -1);
       log.warn("쿠폰 ID: {}, Redis 발급 한도 초과! 현재 Redis 발급 개수: {}", couponId, newCount - 1);
-      log.error("에러 발생: 선착순 쿠폰 발급 한도를 초과하였습니다."); // 에러를 로그에 기록
+      log.error("에러 발생: 선착순 쿠폰 발급 한도를 초과하였습니다.");
       throw new CustomException("선착순 쿠폰이 모두 소진되었습니다. 다음 이벤트를 기대해주세요!", HttpStatus.BAD_REQUEST);
-
     }
 
-    // Create UserCoupon
-    UserCoupon downloadCoupon = UserCoupon.builder()
-            .user(currentUser)
-            .couponId(couponId)
-            .issuedCouponType(IssuedCouponType.ADMIN)
-            .usedDate(null)
-            .couponUsed(false)
-            .build();
+    try {
+      // Kafka Producer 호출 (트랜잭션 내에서 처리)
+      kafkaProducerService.sendCouponDownloadRequest(couponId, userId);
+      log.info("쿠폰 발급 요청 Kafka 메시지 전송 완료: User {}, Coupon ID {}", userId, couponId);
+    } catch (Exception e) {
+      // Kafka 메시지 전송 실패 시 Redis 발급 개수를 감소
+      valueOps.increment(redisKey, -1);
+      log.error("Kafka 메시지 전송 실패: {}", e.getMessage());
+      throw new CustomException("쿠폰 발급 요청 중 오류가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 
-    log.info("쿠폰 ID: {}, 사용자 ID: {} - 쿠폰 발급 완료", couponId, currentUser.getUserId());
-    return userCouponRepository.save(downloadCoupon); // Save to DB
+  /**
+   Redis 발급 개수를 감소시키는 메서드.
+   */
+  @Transactional
+  public void decrementCouponCount(Long couponId) {
+    String redisKey = "firstComeCoupon:" + couponId;
+    ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
+    Long newCount = valueOps.increment(redisKey, -1);
+    log.info("Decremented coupon count for Coupon ID: {}. New count: {}", couponId, newCount);
+  }
+
+  /**
+   * 배치로 사용자 쿠폰 저장 메서드.
+   */
+  @Transactional
+  public void saveAll(List<UserCoupon> userCoupons) {
+    userCouponRepository.saveAll(userCoupons);
+    log.info("Batch saved {} user coupons", userCoupons.size());
   }
 
   /**
@@ -263,7 +337,7 @@ public class UserCouponService {
    */
   @Transactional
   public List<UserCouponListResponseDto> findNotUsedCoupons(User currentUser) {
-    List<UserCoupon> availableCoupons = userCouponRepository.findByUser_UserIdAndCouponUsedIsFalseAndIsExpiredIsFalse(currentUser.getUserId());
+    List<UserCoupon> availableCoupons = userCouponRepository.findByUserIdAndCouponUsedIsFalseAndIsExpiredIsFalse(currentUser.getUserId());
 
     // 만료되지 않은 쿠폰 & 발급 유형에 따라 AdminCoupon 또는 OwnerCoupon 쿠폰 정보를 필터링 및 매핑
     return availableCoupons.stream()

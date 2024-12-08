@@ -141,7 +141,7 @@ public class StoreApplicationService {
    * @return 페이징된 가게 목록
    */
   public Page<AdminStoreListResponseDto> getStores(String status, int page, int size) {
-    Pageable pageable = PageRequest.of(page - 1, size, Sort.by("approvedDate").descending()); //승인 날짜기준으로 내림차순 정렬
+    Pageable pageable = PageRequest.of(page - 1, size,  Sort.by(Sort.Order.desc("approvedDate"), Sort.Order.asc("storeId"))); //승인 날짜기준으로 내림차순 정렬
     Page<StoreManagement> stores;
 
     // 상태별 필터링

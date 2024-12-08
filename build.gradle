@@ -67,6 +67,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.session:spring-session-data-redis:3.3.2'
 
+    //Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
     //websocket
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     // Lombok

@@ -66,7 +66,7 @@ public class UsersCartCouponService {
     String storeName = storeManagementRepository.findByStoreId(storeId).getStoreName();
 
     // 사용자 쿠폰 목록 가져오기 (만료되지 않은 쿠폰)
-    List<UserCoupon> userCoupons = userCouponRepository.findByUser_UserIdAndCouponUsedIsFalseAndIsExpiredIsFalse(userId);
+    List<UserCoupon> userCoupons = userCouponRepository.findByUserIdAndCouponUsedIsFalseAndIsExpiredIsFalse(userId);
 
     // 가게 ID와 관련된 쿠폰 우선 정렬, 그 외 쿠폰은 할인 금액 내림차순 정렬 (가게 ID가 다르면 X)
     return userCoupons.stream()
@@ -129,7 +129,7 @@ public class UsersCartCouponService {
    */
   @Transactional
   public UsersCheckCouponDto selectCouponById(Long userId, String userCouponId) {
-    UserCoupon selectedCoupon = userCouponRepository.findByUser_UserIdAndUserCouponId(userId, userCouponId);
+    UserCoupon selectedCoupon = userCouponRepository.findByUserIdAndUserCouponId(userId, userCouponId);
 
     //사장님이 발급한 쿠폰이라면
     if(selectedCoupon.getIssuedCouponType().equals(IssuedCouponType.OWNER)) {
