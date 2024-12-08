@@ -16,7 +16,7 @@ public class AcceptOrdersResponseDto {
     public static AcceptOrdersResponseDto fromEntity(Orders order) {
         return AcceptOrdersResponseDto.builder()
                 .orderId(order.getOrderId())
-                .storeId(order.getStoreId())
+                .storeId(order.getStore().getStoreId())
                 .preparationTime(order.getPreparationTime())
                 .orderStatus(order.getOrderStatus())
                 .build();

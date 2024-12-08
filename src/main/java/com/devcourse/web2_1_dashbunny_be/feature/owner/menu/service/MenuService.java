@@ -31,7 +31,7 @@ public interface MenuService {
     /**
     * 다중 메뉴 삭제 처리.
     */
-    void delete(UpdateActionRequestDto actionRequestDTO);
+    void delete(UpdateActionRequestDto actionRequestDTO, String StoreId);
     MenuWithMenuGroupResponseDto MenuWithGroups(Long meneId); //메뉴 수정 페이지 데이터 단 건 반환 및 그룹 반환
 
   /**

@@ -1,6 +1,7 @@
 package com.devcourse.web2_1_dashbunny_be.feature.order.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.user.OrderItem;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
@@ -44,7 +45,8 @@ public class OrderServiceImpl implements OrderService {
   public CompletableFuture<Orders> creatOrder(OrderInfoRequestDto orderInfoRequestDto) {
     return CompletableFuture.supplyAsync(() -> {
       User user = validator.validateUserId(orderInfoRequestDto.getUserPhone());
-      Orders orders = orderInfoRequestDto.toEntity(orderInfoRequestDto.getOrderItems(), menuRepository, user);
+      StoreManagement store = validator.validateStoreId(orderInfoRequestDto.getStoreId());
+      Orders orders = orderInfoRequestDto.toEntity(orderInfoRequestDto.getOrderItems(), menuRepository, user, store);
 
       //재고 등록이 된 메뉴 리스트
       List<OrderItem> stockItems = filterStockItems(orders.getOrderItems(),true);
@@ -111,41 +113,35 @@ public class OrderServiceImpl implements OrderService {
   */
   public Map<Long, MenuManagement> getMenuCache(List<OrderItem> orderItems) {
     Map<Long, MenuManagement> menuCache = new HashMap<>();
+
+    //store key, menu filed
+    String storeKey = orderItems.get(0).getStoreId();
     List<Long> menuIds = orderItems.stream()
             .map(orderItem -> orderItem.getMenu().getMenuId())
             .toList();
 
-    String storeKey = orderItems.stream().map(OrderItem::getStoreId).toString();
+    //레디스 캐시에 담아져있는 메뉴 가져와서 map 에 담기 없는 메뉴면 디비에서 가져오기
+    try{
+      for (Long menuId : menuIds) {
+        MenuManagement menu = menuCacheService.getMenuFromStore(storeKey, menuId);
 
-    try {
-      // Redis에서 한 번에 여러 메뉴를 가져오기
-      List<Object> menus = redisTemplate.opsForHash().multiGet(storeKey, menuIds.stream()
-              .map(String::valueOf)
-              .toList());
+        if (menu == null) {
+          menu = validator.validateMenuId(menuId);
+        }
 
-      // Redis에서 가져온 메뉴들을 Map에 저장
-      for (int i = 0; i < menuIds.size(); i++) {
-        MenuManagement menu = (MenuManagement) menus.get(i);
         if (menu != null) {
-          menuCache.put(menuIds.get(i), menu);
-        } else {
-          // Redis에 없는 메뉴는 DB에서 조회 후 캐싱
-          MenuManagement dbMenu = menuCacheService.getMenu(menuIds.get(i));
-          menuCache.put(menuIds.get(i), dbMenu);
+          menuCache.put(menu.getMenuId(), menu);
         }
       }
     } catch (Exception e) {
-      log.error("Redis에서 메뉴 캐싱 중 오류 발생", e);
-      // Redis 오류 발생 시 DB에서 데이터를 가져옴
-      for (Long menuId : menuIds) {
-        MenuManagement menu = menuCacheService.getMenu(menuId);
-        menuCache.put(menuId, menu);
-      }
-    }
 
+      e.printStackTrace();
+    }
 
     return menuCache;
   }
+
+
   /**
    * 재고 확인 메서드.
    * 사용자가 주문한 메뉴의 수량과 기존 메뉴의 수량을 비교합니다.

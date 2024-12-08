@@ -1,6 +1,7 @@
 package com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.user.OrderItem;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
@@ -29,7 +30,7 @@ public class OrderInfoRequestDto {
   private String storeNote; // 사장님에게 전달할 메모
   private String riderNote; // 라이더에게 전달할 메모
 
-  public Orders toEntity(List<OrderItemDto> orderItems, MenuRepository menuRepository, User user) {
+  public Orders toEntity(List<OrderItemDto> orderItems, MenuRepository menuRepository, User user, StoreManagement store) {
 
     List<OrderItem> orderItemList = orderItems.stream()
             .map(orderItemDto -> {
@@ -39,7 +40,7 @@ public class OrderInfoRequestDto {
             }).toList();
 
     Orders orders = new Orders();
-    orders.setStoreId(this.storeId);
+    orders.setStore(store);
     orders.setUser(user);
     orders.setOrderDate(this.orderDate);
     orders.setOrderItems(orderItemList);
