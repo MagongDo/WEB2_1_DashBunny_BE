@@ -1,7 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.feature.delivery.controller;
 
-import com.devcourse.web2_1_dashbunny_be.domain.Delivery.DeliveryRequests;
-import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
+import com.devcourse.web2_1_dashbunny_be.domain.delivery.DeliveryRequests;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.delivery.dto.DeliveryRequestsDto;
 import com.devcourse.web2_1_dashbunny_be.feature.delivery.dto.DeliveryWorkerUpdateAddressRequestDto;
@@ -15,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @Slf4j
@@ -80,23 +77,23 @@ public class DeliveryController {
 
 	/**
 	 * 가게에서 온 배달 요청을 처리하는 엔드포인트
-	 * @param order 주문 정보
+	 * @param deliveryRequestsDto 주문 정보
 	 * @return 생성된 주문 정보
 	 */
 	@PostMapping("/request")
-	public Orders createAssignment(@RequestBody DeliveryRequestsDto deliveryRequestsDto) {
+	public DeliveryRequests createAssignment(@RequestBody DeliveryRequestsDto deliveryRequestsDto) {
 		// 주문 정보 저장
 		DeliveryRequests savedDeliveryRequests = deliveryService.saveDeliveryRequests(deliveryRequestsDto);
 
 		// 조건에 맞는 배달원 찾기
-		List<User> eligibleDeliveryWorkers = deliveryService.deliveryWorkerWithinARadius(order);
+//		List<User> eligibleDeliveryWorkers = deliveryService.deliveryWorkerWithinARadius(order);
+//
+//		// 배달원에게 SSE로 알림 전송
+//		for (User deliveryWorker : eligibleDeliveryWorkers) {
+//			sseService.notifyDeliveryAssignment(deliveryWorker.getUserId(), savedOrder);
+//		}
 
-		// 배달원에게 SSE로 알림 전송
-		for (User deliveryWorker : eligibleDeliveryWorkers) {
-			sseService.notifyDeliveryAssignment(deliveryWorker.getUserId(), savedOrder);
-		}
-
-		return savedOrder;
+		return savedDeliveryRequests;
 	}
 
 }

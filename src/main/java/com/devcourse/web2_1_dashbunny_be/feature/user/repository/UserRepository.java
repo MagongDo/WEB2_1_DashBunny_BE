@@ -3,7 +3,7 @@ package com.devcourse.web2_1_dashbunny_be.feature.user.repository;
 
 
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
-import com.devcourse.web2_1_dashbunny_be.domain.user.role.DeliveryWorkerStatus;
+import com.devcourse.web2_1_dashbunny_be.domain.delivery.role.DeliveryWorkerStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.Modifying;

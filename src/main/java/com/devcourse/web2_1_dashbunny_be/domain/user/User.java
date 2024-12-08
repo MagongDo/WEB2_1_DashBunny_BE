@@ -1,6 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.domain.user;
 
-import com.devcourse.web2_1_dashbunny_be.domain.user.role.DeliveryWorkerStatus;
+import com.devcourse.web2_1_dashbunny_be.domain.delivery.role.DeliveryWorkerStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -11,7 +11,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Collection;

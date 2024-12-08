@@ -1,4 +1,4 @@
-package com.devcourse.web2_1_dashbunny_be.domain.Delivery;
+package com.devcourse.web2_1_dashbunny_be.domain.delivery;
 
 import jakarta.persistence.*;
 import lombok.*;

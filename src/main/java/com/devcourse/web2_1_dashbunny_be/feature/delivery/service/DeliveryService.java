@@ -1,15 +1,13 @@
 package com.devcourse.web2_1_dashbunny_be.feature.delivery.service;
 
 import com.devcourse.web2_1_dashbunny_be.config.GeoUtils;
-import com.devcourse.web2_1_dashbunny_be.config.jwt.JwtUtil;
-import com.devcourse.web2_1_dashbunny_be.domain.Delivery.DeliveryRequests;
+import com.devcourse.web2_1_dashbunny_be.domain.delivery.DeliveryRequests;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
-import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
-import com.devcourse.web2_1_dashbunny_be.domain.user.role.DeliveryRequestStatus;
-import com.devcourse.web2_1_dashbunny_be.domain.user.role.DeliveryWorkerStatus;
+import com.devcourse.web2_1_dashbunny_be.domain.delivery.role.DeliveryWorkerStatus;
 import com.devcourse.web2_1_dashbunny_be.feature.delivery.dto.DeliveryRequestsDto;
 import com.devcourse.web2_1_dashbunny_be.feature.delivery.dto.DeliveryWorkerUpdateAddressRequestDto;
+import com.devcourse.web2_1_dashbunny_be.feature.delivery.repository.DeliveryRequestsRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
@@ -19,8 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -32,6 +28,7 @@ public class DeliveryService {
 	private final UsersStoreService usersStoreService;
 	private final UserRepository userRepository;
 	private final StoreManagementRepository storeManagementRepository;
+	private final DeliveryRequestsRepository deliveryRequestsRepository;
 
 	// 주소를 통해 현재위치 변경
 	public User updateDeliveryWorkerAddress(
@@ -102,13 +99,14 @@ public class DeliveryService {
 		double distance =
 						GeoUtils.getUsersWithinRadius(store.getLatitude(), store.getLongitude(), deliveryLatitude, deliveryLongitude);
 
-		return DeliveryRequests.builder()
+		DeliveryRequests deliveryRequests = DeliveryRequests.builder()
 						.storeId(storeId)
 						.deliveryAddress(deliveryRequestsDto.getDeliveryAddress())
 						.deliveryDetailsAddress(deliveryRequestsDto.getDeliveryDetailsAddress())
 						.driverRequest(deliveryRequestsDto.getDriverRequest())
 						.distance(distance)
 						.build();
+		return deliveryRequestsRepository.save(deliveryRequests);
 	}
 
 }

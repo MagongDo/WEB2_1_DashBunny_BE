@@ -1,7 +1,6 @@
-package com.devcourse.web2_1_dashbunny_be.domain.Delivery;
+package com.devcourse.web2_1_dashbunny_be.domain.delivery;
 
-import com.devcourse.web2_1_dashbunny_be.domain.user.role.DeliveryRequestStatus;
-import com.devcourse.web2_1_dashbunny_be.domain.user.role.DeliveryWorkerStatus;
+import com.devcourse.web2_1_dashbunny_be.domain.delivery.role.DeliveryRequestStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,11 +25,8 @@ public class DeliveryRequests {
 	@Column(nullable = false)
 	private String storeId; // 가게 ID
 
-	@Column(nullable = false, length = 255)
-	private String storeName; // 가게 이름
+	// 주문  ID도 추가해야함
 
-	@Column(nullable = false, length = 255)
-	private String storeLocation; // 가게 위치
 
 	@Column(nullable = false, length = 255)
 	private String deliveryAddress; // 배달 주소
