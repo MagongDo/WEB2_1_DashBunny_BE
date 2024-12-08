@@ -1,8 +1,8 @@
-package com.devcourse.web2_1_dashbunny_be.feature.order.controller;
+package com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto;
 
 import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
 import com.devcourse.web2_1_dashbunny_be.domain.user.role.OrderStatus;
-import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrderItemDto;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;

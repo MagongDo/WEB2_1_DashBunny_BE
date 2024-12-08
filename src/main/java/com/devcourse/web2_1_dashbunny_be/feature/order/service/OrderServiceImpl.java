@@ -6,6 +6,9 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.OrderItem;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.domain.user.role.OrderStatus;
+import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrderDetailDto;
+import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrderListDto;
+import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrdersListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.*;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.common.Validator;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
@@ -215,5 +218,18 @@ public class OrderServiceImpl implements OrderService {
             .fromEntity(orders, declineRequestDto.getDeclineReasonType());
 
     return CompletableFuture.completedFuture(responseDto);
+  }
+
+  @Override
+  public OrdersListResponseDto getOrdersList(String storeId) {
+    Orders orders = ordersRepository.findByStoreId(storeId).orElseThrow();
+    List<OrderItemDto> orderItems = orders.getOrderItems().stream().map(OrderItemDto::fromEntity).toList();
+    OrderDetailDto orderDetailDto = OrderDetailDto.fromEntity(orders, orderItems);
+
+    //스토어가 가진 모든 오더 정보
+    List<Orders> ordersList = validator.findByOrders(storeId);
+    List<OrderListDto> orderListDtos = ordersList.stream().map(OrderListDto::fromEntity).toList();
+
+    return new OrdersListResponseDto(orderDetailDto, orderListDtos);
   }
 }

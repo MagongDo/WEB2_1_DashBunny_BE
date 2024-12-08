@@ -1,9 +1,6 @@
-package com.devcourse.web2_1_dashbunny_be.feature.order.controller;
+package com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto;
 
-import com.devcourse.web2_1_dashbunny_be.domain.user.OrderItem;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
-import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrderItemDto;
-import jakarta.persistence.criteria.Order;
 import lombok.Builder;
 
 import java.util.List;

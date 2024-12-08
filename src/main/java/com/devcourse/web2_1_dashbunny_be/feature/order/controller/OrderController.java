@@ -106,7 +106,8 @@ public class OrderController {
    * 관리 페이지가 자주 갱신되는 데이터를 실시간으로 반영-> 비동기
   */
   @GetMapping("store/order-list/{storeId}")
-  public ResponseEntity<OrdersListResponseDto> getOrderList(){
-      return ResponseEntity.ok(null);
+  public ResponseEntity<OrdersListResponseDto> getOrderList(@PathVariable("storeId") String storeId) {
+    OrdersListResponseDto responseDto = orderService.getOrdersList(storeId);
+    return ResponseEntity.ok(responseDto);
   }
 }
