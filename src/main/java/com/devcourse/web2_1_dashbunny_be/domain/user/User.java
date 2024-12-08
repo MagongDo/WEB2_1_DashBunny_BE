@@ -94,7 +94,15 @@ public class User implements UserDetails {
     @Builder.Default
     private DeliveryWorkerStatus deliveryStatus = DeliveryWorkerStatus.NOT_READY; // 배달 가능 여부
 
+    private String address;
+    private String detailAddress;
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    public void setDetailAddress(String detailAddress) {
+        this.detailAddress = detailAddress;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
