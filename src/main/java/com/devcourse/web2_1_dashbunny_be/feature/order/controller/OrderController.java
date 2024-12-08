@@ -86,7 +86,6 @@ public class OrderController {
 
 @GetMapping("/list")
   public ResponseEntity<List<UserOrderInfoRequestDto>> listOrders(@RequestHeader("Authorization") String authorizationHeader) {
-      log.info("why???");
     User currentUser = userService.getCurrentUser(authorizationHeader);
     List<UserOrderInfoRequestDto> userOrderLost = orderService.getUserOrderInfoList(currentUser.getPhone());
     return ResponseEntity.ok(userOrderLost);
