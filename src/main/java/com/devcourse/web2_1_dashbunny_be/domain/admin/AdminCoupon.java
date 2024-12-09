@@ -55,7 +55,7 @@ public class AdminCoupon {
 
   private LocalDateTime downloadStartDate; // (선착순 쿠폰일 경우)다운로드 시작 시간
 
-  @Column(columnDefinition="TEXT", nullable = true)
+  @Column(columnDefinition = "TEXT", nullable = true)
   private String couponDescription; //쿠폰 상세 내용
 
 

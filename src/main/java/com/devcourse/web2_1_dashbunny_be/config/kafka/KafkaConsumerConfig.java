@@ -32,7 +32,9 @@ public class KafkaConsumerConfig {
     props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
     props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-    props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 100); // 배치 사이즈 설정
+    props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false); // 수동 커밋 설정
+    //props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 100); // 배치 사이즈 설정
+    props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 1); // 한 번에 하나의 메시지 처리
     return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(),
               new JsonDeserializer<>(CouponRequestMessage.class));
   }
@@ -42,9 +44,9 @@ public class KafkaConsumerConfig {
     ConcurrentKafkaListenerContainerFactory<String, CouponRequestMessage> factory =
             new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory());
-    factory.setBatchListener(true); // 배치 리스너 활성화
-    factory.setConcurrency(3); // 동시성 설정 (필요에 따라 조정)
-    factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.BATCH);
+    //factory.setBatchListener(true); // 배치 리스너 활성화
+    factory.setConcurrency(1); // 동시 처리 Consumer 개수를 1로 제한
+    factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
     return factory;
   }
 }

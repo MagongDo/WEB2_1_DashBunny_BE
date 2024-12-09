@@ -10,6 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CouponRequestMessage {
-    private Long couponId;
-    private Long userId;
+  private Long couponId;
+  private Long userId;
 }

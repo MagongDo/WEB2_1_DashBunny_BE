@@ -112,40 +112,30 @@ public class UserCouponController {
           , @RequestHeader("Authorization") String authorizationHeader) {
     User currentUser = userService.getCurrentUser(authorizationHeader);
 
-//    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//    log.debug("현재 인증 사용자: {}", authentication);
-//    log.debug("세션 ID: {}", request.getSession(false).getId());
-//    if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
-//      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인된 사용자를 찾을 수 없습니다.");
-//    }
-    //현재 사용자의 userId를 가져와야함
-//    userCouponService.downloadCoupon(couponId, IssuedCouponType.ADMIN,currentUser);
-//    return ResponseEntity.ok(Collections.singletonMap("message", "선착순 쿠폰 다운로드에 성공했습니다!"));
-
-    // Kafka Producer 호출
-//    kafkaProducerService.sendCouponRequest(couponId, currentUser.getUserId());
-//    return ResponseEntity.ok(Collections.singletonMap("message", "쿠폰 발급 요청이 접수되었습니다."));
-
+    // 중복 다운로드 확인
+    if (userCouponService.isAlreadyDownloaded(currentUser.getUserId(), couponId)) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+              .body(Collections.singletonMap("message", "중복 다운로드가 불가능한 쿠폰입니다."));
+    }
 
     try {
-      userCouponService.processCouponDownloadRequest(couponId, currentUser.getUserId());
+      // Kafka Producer로 메시지 전송
+      kafkaProducerService.sendCouponDownloadRequest(couponId, currentUser.getUserId());
+      log.info("쿠폰 발급 요청 전송 완료: User {}, Coupon ID {}", currentUser.getUserId(), couponId);
+
+      // 요청 접수 메시지 반환
       return ResponseEntity.ok(Collections.singletonMap("message", "쿠폰 발급 요청이 접수되었습니다."));
-    } catch (CustomException e) {
-      return ResponseEntity.status(e.getStatus()).body(Collections.singletonMap("message", e.getMessage()));
+    }catch (CustomException e) {
+      return ResponseEntity.status(e.getStatus())
+              .body(Collections.singletonMap("message", e.getMessage()));
+    }  catch (Exception e) {
+      log.error("쿠폰 발급 요청 실패: {}", e.getMessage());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body(Collections.singletonMap("message", "쿠폰 발급 요청 처리 중 문제가 발생했습니다."));
     }
   }
 
-//  /**
-//   * 선착순 쿠폰 다운로드 api (POST).
-//   */
-//  @PostMapping("/download/first-come-Test/{couponId}")
-//  public ResponseEntity<?> downloadFirstComeCouponTest(
-//          @PathVariable Long couponId,
-//          @RequestHeader("Authorization") String authorizationHeader) {
-//    Long userId = userService.getCurrentUserId(authorizationHeader).;
-//    userCouponService.downloadFirstComeCouponTest(couponId, userId);
-//    return ResponseEntity.ok(Collections.singletonMap("message", "쿠폰 다운로드 성공"));
-//  }
+
 
   /**
    * 사용자 쿠폰함 쿠폰 목록 조회 api (GET).

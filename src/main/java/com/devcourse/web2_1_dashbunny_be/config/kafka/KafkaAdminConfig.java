@@ -34,7 +34,7 @@ public class KafkaAdminConfig {
   @Bean
   public NewTopic couponDownloadTopic() {
     return TopicBuilder.name("coupon-download-topic")
-            .partitions(3)
+            .partitions(1)
             .replicas(1)
             .build();
   }
@@ -43,7 +43,7 @@ public class KafkaAdminConfig {
   @Bean
   public NewTopic couponDownloadDlqTopic() {
     return TopicBuilder.name("coupon-download-dlq-topic")
-            .partitions(3)
+            .partitions(1)
             .replicas(1)
             .build();
   }
