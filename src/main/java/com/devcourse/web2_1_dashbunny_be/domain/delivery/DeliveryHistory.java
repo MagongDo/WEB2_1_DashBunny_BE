@@ -31,7 +31,7 @@ public class DeliveryHistory {
 	private LocalDateTime completedAt; // 배달완료일시
 
 	@Column(nullable = false)
-	private Double fee; // 배달료
+	private Double deliveryPrice; // 배달료
 
 	@Column(nullable = false, length = 255)
 	private String uniqueCode; // 검색용 코드 (숫자 영문 8자리)

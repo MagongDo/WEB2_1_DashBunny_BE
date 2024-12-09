@@ -48,4 +48,25 @@ public interface UserRepository extends JpaRepository<User, Long> {
             Double longitude
     );
 
+    /**
+     * 지정된 위치 기준으로 반경 내에 있으며, 배달 상태가 READY이고 역할이 ROLE_DELIVERY인 사용자들을 조회합니다.
+     *
+     * @param latitude 기준 지점의 위도
+     * @param longitude 기준 지점의 경도
+     * @param radius 반경 (킬로미터 단위)
+     * @return 반경 내에 있는 사용자 목록
+     */
+    @Query(value = "SELECT *, " +
+            "(6371 * acos(cos(radians(:lat)) * cos(radians(latitude)) * " +
+            "cos(radians(longitude) - radians(:lon)) + sin(radians(:lat)) * sin(radians(latitude)))) AS distance " +
+            "FROM users " +
+            "WHERE delivery_status = 'READY' AND role = 'ROLE_DELIVERY' " +
+            "HAVING distance < :radius " +
+            "ORDER BY distance", nativeQuery = true)
+    List<User> findAvailableDeliveryUsersWithinRadius(
+            @Param("lat") double latitude,
+            @Param("lon") double longitude,
+            @Param("radius") double radius
+    );
+
 }

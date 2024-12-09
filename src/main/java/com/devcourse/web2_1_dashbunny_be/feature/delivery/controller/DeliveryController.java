@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @Slf4j
 @RestController
@@ -29,7 +31,7 @@ public class DeliveryController {
 	private UserRepository userRepository;
 
 	/**
-	 * 배댈원의 주소를 업데이트하는 엔드포인트입니다.
+	 * 배달원의 주소를 업데이트하는 엔드포인트입니다.
 	 *
 	 * @param authorizationHeader 클라이언트의 Authorization 헤더 (JWT 토큰 포함)
 	 * @param deliveryWorkerUpdateAddressRequestDto 주소 업데이트를 위한 요청 데이터
@@ -81,17 +83,17 @@ public class DeliveryController {
 	 * @return 생성된 주문 정보
 	 */
 	@PostMapping("/request")
-	public DeliveryRequests createAssignment(@RequestBody DeliveryRequestsDto deliveryRequestsDto) {
+	public DeliveryRequests deliveryRequest (@RequestBody DeliveryRequestsDto deliveryRequestsDto) {
 		// 주문 정보 저장
 		DeliveryRequests savedDeliveryRequests = deliveryService.saveDeliveryRequests(deliveryRequestsDto);
 
 		// 조건에 맞는 배달원 찾기
-//		List<User> eligibleDeliveryWorkers = deliveryService.deliveryWorkerWithinARadius(savedDeliveryRequests);
-//
+		List<User> eligibleDeliveryWorkers = deliveryService.deliveryWorkerWithInARadius(savedDeliveryRequests);
+		log.info("deliveryRequest - eligibleDeliveryWorkers : {}", eligibleDeliveryWorkers);
 //		// 배달원에게 SSE로 알림 전송
-//		for (User deliveryWorker : eligibleDeliveryWorkers) {
-//			sseService.notifyDeliveryAssignment(deliveryWorker.getUserId(), savedOrder);
-//		}
+		for (User deliveryWorker : eligibleDeliveryWorkers) {
+			sseService.notifyDeliveryAssignment(deliveryWorker.getUserId(), savedDeliveryRequests);
+		}
 
 		return savedDeliveryRequests;
 	}
