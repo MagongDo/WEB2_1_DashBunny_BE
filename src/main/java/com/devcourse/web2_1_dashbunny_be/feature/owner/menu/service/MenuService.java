@@ -19,14 +19,14 @@ public interface MenuService {
   /**
   *단 건 메뉴 모든 정보 수정 (필드 별 수정 가능).
   */
-  void updateAll(Long menuId, UpdateMenuRequestDto updateMenuRequestDto);
+  void updateAll(Long menuId, UpdateMenuRequestDto updateMenuRequestDto, String storeId);
 
   /**
    * 다중 메뉴 품절 처리.
    */
   void updateActionIsSoldOut(UpdateActionRequestDto actionRequestDto);
-    void updateImage(Long menuId, UpdateMenuImageRequestDto imageUrlDTO); //1페이지 이미지 단 건 수정
-    void updateIsSoldOut(Long menuId,UpdateSoldOutRequestDto updateSoldOutRequestDTO);
+    void updateImage(Long menuId,String url, String storeId); //1페이지 이미지 단 건 수정
+    void updateIsSoldOut(Long menuId,UpdateSoldOutRequestDto updateSoldOutRequestDTO, String storeId);
 
     /**
     * 다중 메뉴 삭제 처리.
@@ -37,5 +37,5 @@ public interface MenuService {
   /**
    * 메뉴 단 건 삭제.
    */
-  void deleteMenu(Long menuId);
+  void deleteMenu(Long menuId, String storeId);
 }
