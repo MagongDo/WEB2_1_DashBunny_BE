@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @Getter
 public class UserOrderInfoRequestDto {
 
+    private Long orderId;
     private String storeId; // 가게 ID
     private String userPhone;
     private String storeName;
@@ -34,6 +35,7 @@ public class UserOrderInfoRequestDto {
         StoreManagement storeManagement = storeManagementRepository.findByStoreId(orders.getStoreId());
 
         return UserOrderInfoRequestDto.builder()
+                .orderId(orders.getOrderId())
                 .storeId(orders.getStoreId())
                 .userPhone(orders.getUser().getPhone())
                 .storeName(storeManagement.getStoreName())

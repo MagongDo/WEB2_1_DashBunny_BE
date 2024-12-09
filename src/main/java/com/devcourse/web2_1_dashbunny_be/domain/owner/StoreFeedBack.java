@@ -23,13 +23,20 @@ public class StoreFeedBack {
     private String storeId;
 
     @Column(nullable = true)
-    private Integer reviewCount; // 리뷰 수
+    private Double reviewCount; // 리뷰 수
+
+    @Column(nullable = true)
+    private Double totalRating;
 
     @Column(nullable = true)
     private Double rating; // 평점
 
     @Column(nullable = true)
     private Integer wishlistCount = 0; // 찜 수
+
+    public Double increaseReviewCount() {
+        return this.reviewCount + 1;
+    }
 
     public Integer increaseWishCount() {
       return this.wishlistCount + 1;

@@ -14,4 +14,5 @@ public interface OrderService {
     CompletableFuture<AcceptOrdersResponseDto> acceptOrder(OrderAcceptRequestDto acceptRequestDto);
     CompletableFuture<DeclineOrdersResponseDto> declineOrder(OrderDeclineRequestDto declineRequestDto);
     List<UserOrderInfoRequestDto> getUserOrderInfoList(String userId);
+    void increaseRating(OrderRatingResponseDto oders);
 }

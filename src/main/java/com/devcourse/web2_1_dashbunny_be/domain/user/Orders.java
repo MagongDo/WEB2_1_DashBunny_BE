@@ -54,6 +54,8 @@ public class Orders {
 
   private String paymentId;
 
+  private Double rating;
+
   @Column(nullable = false)
   private Long totalPrice; // 총 금액 (단가 * 수량)
 

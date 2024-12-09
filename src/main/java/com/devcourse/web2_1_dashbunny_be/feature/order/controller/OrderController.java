@@ -1,5 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.feature.order.controller;
 
+import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.*;
 import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.user.UserOrderInfoRequestDto;
@@ -84,10 +85,18 @@ public class OrderController {
   }
 
 
-@GetMapping("/list")
+  @GetMapping("/list")
   public ResponseEntity<List<UserOrderInfoRequestDto>> listOrders(@RequestHeader("Authorization") String authorizationHeader) {
     User currentUser = userService.getCurrentUser(authorizationHeader);
     List<UserOrderInfoRequestDto> userOrderLost = orderService.getUserOrderInfoList(currentUser.getPhone());
     return ResponseEntity.ok(userOrderLost);
-}
+  }
+
+  @PostMapping("/rating")
+  public ResponseEntity<Void> ratingCount(@RequestHeader("Authorization") String authorizationHeader,
+                                          @RequestBody OrderRatingResponseDto orders) {
+      orderService.increaseRating(orders);
+    return ResponseEntity.ok().build();
+  }
+
 }
