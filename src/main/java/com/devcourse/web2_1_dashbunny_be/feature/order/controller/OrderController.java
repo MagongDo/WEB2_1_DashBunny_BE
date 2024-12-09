@@ -68,7 +68,7 @@ public class OrderController {
   /**
   * 사장님 : 주문 수락.
   */
-  @PostMapping("/{orderId}/accept")
+  @PostMapping("/store/{orderId}/accept")
   public CompletableFuture<ResponseEntity<AcceptOrdersResponseDto>> acceptOrder(
           @PathVariable("orderId") Long orderId,
           @RequestBody OrderAcceptRequestDto acceptRequestDto) {

@@ -4,6 +4,7 @@ import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.user.role.OrderStatus;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import lombok.Setter;
 @Setter
 @Entity
 
-public class Orders {
+public class Orders implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
