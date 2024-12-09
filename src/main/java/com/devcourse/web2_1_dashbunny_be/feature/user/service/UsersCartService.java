@@ -254,9 +254,9 @@ public class UsersCartService {
             .map(UsersCartItemDto::toUsersCartItemDto)
             .toList();
 
-    List<OrderItemDto> orderItemDtos = cart.getCartItems().stream()
+/*    List<OrderItemDto> orderItemDtos = cart.getCartItems().stream()
             .map(OrderItemDto::toDto)
-            .toList();
+            .toList();*/
     // 총 금액 및 배달료 합산
     Long totalPrice = cartItemDtos.stream()
             .mapToLong(UsersCartItemDto::getTotalPrice)
@@ -310,9 +310,11 @@ public class UsersCartService {
       userCouponRepository.save(userCoupon);
     }
     cart.setOrderId(orderId);
+    cart.setStoreRequirement(storeRequirement);
+    cart.setDeliveryRequirement(deliveryRequirement);
     cartRepository.save(cart); // 장바구니 업데이트
 
-    OrderInfoRequestDto orders = OrderInfoRequestDto.builder()
+/*    OrderInfoRequestDto orders = OrderInfoRequestDto.builder()
             .storeId(cart.getStoreId())
             .paymentId(orderId)
             .userPhone(cart.getUser().getPhone())
@@ -325,7 +327,7 @@ public class UsersCartService {
             .totalAmount(totalAmount)
             .build();
 
-    orderService.creatOrder(orders);
+    orderService.creatOrder(orders);*/
 
     return UsersCartResponseDto.builder()
             .cartId(cart.getCartId())
