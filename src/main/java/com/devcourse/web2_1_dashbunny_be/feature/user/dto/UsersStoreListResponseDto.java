@@ -24,6 +24,7 @@ public class UsersStoreListResponseDto {
   private Long discountPrice;
   private StoreStatus status;
   private String shortsUrl;
+  private Long menuId;
 
   public static UsersStoreListResponseDto toUsersStoreListResponseDto(StoreManagement store,
                                                                       DeliveryOperatingInfo deliveryOperatingInfo,
@@ -56,7 +57,8 @@ public class UsersStoreListResponseDto {
   }
 
   public static UsersStoreListResponseDto toUsersStoreShortsListResponseDto(StoreManagement store,
-                                                                            StoreOperationInfo storeOperationInfo) {
+                                                                            StoreOperationInfo storeOperationInfo,
+                                                                            Long menuId) {
     if (store == null) {
       return null;
     }
@@ -65,6 +67,7 @@ public class UsersStoreListResponseDto {
     dto.setStoreId(store.getStoreId());
     dto.setStoreName(store.getStoreName());
     dto.setStoreLogo(store.getStoreLogo());
+    dto.setMenuId(menuId);
 
     if (storeOperationInfo != null) {
       dto.setShortsUrl(storeOperationInfo.getShortsUrl());

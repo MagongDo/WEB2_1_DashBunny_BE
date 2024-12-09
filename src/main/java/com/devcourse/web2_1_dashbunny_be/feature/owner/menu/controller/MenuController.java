@@ -61,9 +61,9 @@ public class MenuController {
    */
   @PatchMapping("/menu/action")
   public ResponseEntity<String> updateAction(
-          @RequestBody UpdateActionRequestDto actionRequestDto) {
+          @RequestBody UpdateActionRequestDto actionRequestDto, String storeId) {
     if (actionRequestDto.getAction().equals("delete")) {
-      menuService.delete(actionRequestDto);
+      menuService.delete(actionRequestDto, storeId);
     } else if (actionRequestDto.getAction().equals("SoldOut")) {
       menuService.updateActionIsSoldOut(actionRequestDto);
     }

@@ -5,6 +5,8 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 import java.util.List;
 
 /**
@@ -12,6 +14,8 @@ import java.util.List;
  */
 @Repository
 public interface OrdersRepository extends JpaRepository<Orders, Long> {
+
+    Optional<Orders> findByStore_StoreId(String storeId);
     Orders findByPaymentId(String paymentId);
     List<Orders> findByUser(User user);
 }

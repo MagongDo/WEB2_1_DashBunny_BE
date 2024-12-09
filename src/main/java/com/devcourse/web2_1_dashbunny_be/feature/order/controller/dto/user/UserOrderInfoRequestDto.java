@@ -32,11 +32,11 @@ public class UserOrderInfoRequestDto {
                                                StoreManagementRepository storeManagementRepository,
                                                int totalQuantity,
                                                String menuName) {
-        StoreManagement storeManagement = storeManagementRepository.findByStoreId(orders.getStoreId());
+    StoreManagement storeManagement = storeManagementRepository.findByStoreId(orders.getStore().getStoreId());
 
-        return UserOrderInfoRequestDto.builder()
-                .orderId(orders.getOrderId())
-                .storeId(orders.getStoreId())
+    return UserOrderInfoRequestDto.builder()
+            .orderId(orders.getOrderId())
+                .storeId(orders.getStore().getStoreId())
                 .userPhone(orders.getUser().getPhone())
                 .storeName(storeManagement.getStoreName())
                 .storeLogo(storeManagement.getStoreLogo())

@@ -32,10 +32,11 @@ public class UserCartController {
    */
   @PostMapping("/items")
   public ResponseEntity<UsersCartResponseDto> addItemToCart(
-          @RequestHeader("Authorization") String authorizationHeader,
           @RequestParam Long menuId,
           @RequestParam Long quantity,
-          @RequestParam(required = false) Boolean overwrite) {
+          @RequestParam(required = false, defaultValue = "false") boolean overwrite,
+          @RequestHeader("Authorization") String authorizationHeader
+  ) {
     User currentUser = userService.getCurrentUser(authorizationHeader);
     return ResponseEntity.ok(cartService.addMenuToCart(currentUser.getPhone(), menuId, quantity, overwrite));
   }
@@ -52,7 +53,6 @@ public class UserCartController {
           @PathVariable Long menuId,
           @RequestParam Long quantity,
           @RequestHeader("Authorization") String authorizationHeader
-
   ) {
     User currentUser = userService.getCurrentUser(authorizationHeader);
     return ResponseEntity.ok(cartService.updateItemQuantity(currentUser.getPhone(), menuId, quantity));

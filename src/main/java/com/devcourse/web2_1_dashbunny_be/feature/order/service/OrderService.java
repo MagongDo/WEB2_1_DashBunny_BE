@@ -1,6 +1,7 @@
 package com.devcourse.web2_1_dashbunny_be.feature.order.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
+import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrdersListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.*;
 import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.user.UserOrderInfoRequestDto;
 
@@ -15,4 +16,5 @@ public interface OrderService {
     CompletableFuture<DeclineOrdersResponseDto> declineOrder(OrderDeclineRequestDto declineRequestDto);
     List<UserOrderInfoRequestDto> getUserOrderInfoList(String userId);
     void increaseRating(OrderRatingResponseDto oders);
+    OrdersListResponseDto getOrdersList(String storeId);
 }
