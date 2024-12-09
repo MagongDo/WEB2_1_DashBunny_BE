@@ -42,4 +42,7 @@ public interface MenuRepository extends JpaRepository<MenuManagement, Long> {
 
     Optional<MenuManagement> findById(Long menuId); // ID로 단일 메뉴 조회*/
 
+  @Query("SELECT m.menuId FROM MenuManagement m WHERE m.storeId = :storeId AND m.menuName = :menuName")
+  Optional<Long> findMenuIdByStoreIdAndMenuName(@Param("storeId") String storeId, @Param("menuName") String menuName);
+
 }

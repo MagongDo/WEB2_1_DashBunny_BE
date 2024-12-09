@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @Transactional
@@ -66,7 +68,7 @@ public class DeliveryService {
 	 * @param
 	 * @return 조건에 맞는 배달원 목록
 	 */
-//	public List<User> deliveryWorkerWithinARadius(Orders order) {
+//	public List<User> deliveryWorkerWithinARadius(DeliveryRequests deliveryRequests) {
 //
 //		StoreManagement storeManagement = storeManagementRepository.findByStoreId(order.getStoreId());
 //

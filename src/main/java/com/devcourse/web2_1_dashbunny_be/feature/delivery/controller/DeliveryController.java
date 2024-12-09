@@ -86,7 +86,7 @@ public class DeliveryController {
 		DeliveryRequests savedDeliveryRequests = deliveryService.saveDeliveryRequests(deliveryRequestsDto);
 
 		// 조건에 맞는 배달원 찾기
-//		List<User> eligibleDeliveryWorkers = deliveryService.deliveryWorkerWithinARadius(order);
+//		List<User> eligibleDeliveryWorkers = deliveryService.deliveryWorkerWithinARadius(savedDeliveryRequests);
 //
 //		// 배달원에게 SSE로 알림 전송
 //		for (User deliveryWorker : eligibleDeliveryWorkers) {

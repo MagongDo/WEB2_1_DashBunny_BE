@@ -119,11 +119,18 @@ public class ShortsService {
       StoreOperationInfo storeOperationInfo = storeOperationInfoRepository.findByStore(store);
       log.info("체크 storeOperationInfo : {}", storeOperationInfo.toString());
       log.info("체크 storeOperationInfo : {}", storeOperationInfo.getStore().getStoreId());
+
+      String menuName = storeOperationInfo.getMenuName();
+      log.info("체크 storeId : {}", storeId);
+      log.info("체크 menuName : {}", menuName);
+      Long menuId = menuRepository.findMenuIdByStoreIdAndMenuName(storeId, menuName)
+              .orElseThrow(() -> new IllegalArgumentException("menuId 가 없습니다 : "));
+
       if (store == null) {
         continue; // 가게 정보가 없으면 무시
       }
       // DTO로 변환하여 응답 리스트에 추가
-      UsersStoreListResponseDto dto = UsersStoreListResponseDto.toUsersStoreShortsListResponseDto(store, storeOperationInfo);
+      UsersStoreListResponseDto dto = UsersStoreListResponseDto.toUsersStoreShortsListResponseDto(store, storeOperationInfo, menuId);
       if (dto != null) {
         responseDtos.add(dto);
       }
