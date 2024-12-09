@@ -37,9 +37,13 @@ public class OrderInfoRequestDto {
     List<OrderItem> orderItemList = orderItems.stream()
             .map(orderItemDto -> {
               MenuManagement menu = menuRepository.findById(orderItemDto.getMenuId())
-                      .orElseThrow(() -> new IllegalArgumentException("Invalid menu ID: " + orderItemDto.getMenuId()));
+                      .orElseThrow(() -> new IllegalArgumentException());
               return orderItemDto.toEntity(menu);
             }).toList();
+
+    Long calculatedTotalAmount = orderItemList.stream()
+            .mapToLong(OrderItem::getTotalPrice)
+            .sum();
 
     Orders orders = new Orders();
     orders.setStore(store);
@@ -51,7 +55,7 @@ public class OrderInfoRequestDto {
     orders.setStoreNote(this.storeNote);
     orders.setRiderNote(this.riderNote);
     orders.setPaymentId(this.paymentId);
-    orders.setTotalPrice(this.totalAmount);
+    orders.setTotalPrice(calculatedTotalAmount);
 
     // 양방향 관계 설정
     orderItemList.forEach(orderItem -> orderItem.setOrder(orders));

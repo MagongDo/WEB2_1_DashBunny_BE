@@ -55,17 +55,11 @@ public class OrderServiceImpl implements OrderService {
       //재고 등록이 된 메뉴 리스트
       List<OrderItem> stockItems = filterStockItems(orders.getOrderItems(),true);
       Map<Long, MenuManagement> stockItemsMenuCache = getMenuCache(stockItems);
-      log.info("재고등록이 된 리스트:" + stockItems.size());
-
-      //재고등록이 안된 메뉴 리스트
       List<OrderItem> nonStockItems = filterStockItems(orders.getOrderItems(),false);
-      Map<Long, MenuManagement> nonStockItemsMenuCache = getMenuCache(nonStockItems);
 
+      processStockItems(stockItems, stockItemsMenuCache,nonStockItems);
 
-      CompletableFuture<Void> stockProcessing = processStockItems(stockItems, stockItemsMenuCache);
-      CompletableFuture<Void> nonStockProcessing = processNonStockItems(nonStockItems, nonStockItemsMenuCache);
-
-      CompletableFuture.allOf(stockProcessing, nonStockProcessing).join();
+      orders.setTotalMenuCount(stockItems.size() + nonStockItems.size());
       // 주문 저장
       ordersRepository.save(orders);
       // 메시지 알림
@@ -84,25 +78,19 @@ public class OrderServiceImpl implements OrderService {
     });
   }
 
-  private CompletableFuture<Void> processNonStockItems(List<OrderItem> nonStockItems,
-                                                 Map<Long, MenuManagement> nonStockItemsMenuCache) {
-    return CompletableFuture.runAsync(() -> {
-      log.info("재고 관리가 필요 없는 메뉴 처리: {}", nonStockItems);
-    });
-  }
-
-  private CompletableFuture<Void> processStockItems(List<OrderItem> stockItems,
-                                                 Map<Long, MenuManagement> stockItemsMenuCache) {
-    return CompletableFuture.runAsync(() -> {
+  private void processStockItems(List<OrderItem> stockItems,
+                                 Map<Long, MenuManagement> stockItemsMenuCache,
+                                 List<OrderItem> nonStockItems) {
       try {
-        log.info("재고 처리 중");
-        soldOutCheck(stockItems, stockItemsMenuCache);
-        updateMenuStock(stockItems, stockItemsMenuCache, 1);
+        if(!stockItems.isEmpty()) {
+          log.info("재고 처리 중");
+          soldOutCheck(stockItems, stockItemsMenuCache);
+          updateMenuStock(stockItems, stockItemsMenuCache, 1);
+        }
       } catch (Exception e) {
         log.error("재고 처리 중 예외 발생", e);
-        throw new RuntimeException(e); // 예외를 던져 상위 호출자에게 알림
+        throw new RuntimeException(e);
       }
-    });
   }
 
 

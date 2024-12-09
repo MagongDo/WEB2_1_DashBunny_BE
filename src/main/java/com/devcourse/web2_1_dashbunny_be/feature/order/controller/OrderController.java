@@ -110,4 +110,13 @@ public class OrderController {
     OrdersListResponseDto responseDto = orderService.getOrdersList(storeId);
     return ResponseEntity.ok(responseDto);
   }
+
+  @PostMapping("/delivery-requests/{storeId}/{orderId}")
+  public ResponseEntity<deliveryRequestsResponseDto> deliveryRequests( @PathVariable("storeId") String StoreId,
+                                                                       @PathVariable("orderId") Long orderId,
+                                                                       @RequestBody DeliveryRequestsRequestDto deliveryRequestsRequestDto){
+
+
+    return null;
+  }
 }

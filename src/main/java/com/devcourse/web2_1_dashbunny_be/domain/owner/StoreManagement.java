@@ -52,11 +52,11 @@ public class StoreManagement {
   private StoreStatus storeStatus = StoreStatus.PENDING;
 
   // 가게 소개 내용 (TEXT 타입)
-  @Column(columnDefinition = "TEXT")
+  @Column(columnDefinition = "TEXT", nullable = true)
   private String storeDescription;
 
   // 가게 전화번호 (필수, 최대 길이 13자)
-  @Column(nullable = false, length = 20)
+  @Column(nullable = true, length = 20)
   private String contactNumber;
 
   // 가게 매장 로고 (아직 작성안한 필드)
@@ -68,11 +68,6 @@ public class StoreManagement {
   // 1.가게 주소 (필수, 최대 길이 255자)
   @Column(nullable = false, length = 255)
   private String address;
-
-  // 2.가게 위치 [위도와 경도 (필수, JSON 형태로 저장)]
-  @Column(columnDefinition = "JSON", nullable = true)
-  private String location = "{}";
-
   //2. 가게 위치
   // 위도
   @Column(nullable = false)
