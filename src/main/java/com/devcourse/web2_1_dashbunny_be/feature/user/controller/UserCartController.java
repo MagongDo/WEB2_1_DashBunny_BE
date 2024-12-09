@@ -10,6 +10,7 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.service.UsersCartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 
@@ -31,10 +32,11 @@ public class UserCartController {
    */
   @PostMapping("/items")
   public ResponseEntity<UsersCartResponseDto> addItemToCart(
-          @RequestHeader("Authorization") String authorizationHeader,
           @RequestParam Long menuId,
           @RequestParam Long quantity,
-          @RequestParam(required = false, defaultValue = "false") boolean overwrite) {
+          @RequestParam(required = false, defaultValue = "false") boolean overwrite,
+          @RequestHeader("Authorization") String authorizationHeader
+  ) {
     User currentUser = userService.getCurrentUser(authorizationHeader);
     return ResponseEntity.ok(cartService.addMenuToCart(currentUser.getPhone(), menuId, quantity, overwrite));
   }
@@ -51,7 +53,6 @@ public class UserCartController {
           @PathVariable Long menuId,
           @RequestParam Long quantity,
           @RequestHeader("Authorization") String authorizationHeader
-
   ) {
     User currentUser = userService.getCurrentUser(authorizationHeader);
     return ResponseEntity.ok(cartService.updateItemQuantity(currentUser.getPhone(), menuId, quantity));

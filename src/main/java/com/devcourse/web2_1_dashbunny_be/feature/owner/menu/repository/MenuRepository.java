@@ -25,6 +25,11 @@ public interface MenuRepository extends JpaRepository<MenuManagement, Long> {
   @Query("SELECT m.menuName As menuName From MenuManagement m WHERE m.storeId = :storeId")
   Optional<List<String>> findAllMenuNamesByStoreId(@Param("storeId") String storeId);
 
+  // storeId, menuName 을 조건으로 1행 출력
+  @Query("SELECT m FROM MenuManagement m WHERE m.storeId = :storeId AND m.menuName = :menuName")
+  Optional<MenuManagement> findByStoreIdAndMenuName(@Param("storeId") String storeId, @Param("menuName") String menuName);
+
+  MenuManagement findByStoreId(String storeId);
   /*  // 메뉴명이 포함된 모든 메뉴를 검색
     @Query("SELECT m FROM MenuManagement m WHERE m.menuName LIKE %:menuName%")
     List<MenuManagement> findByMenuNameContaining(String menuName);
@@ -36,5 +41,8 @@ public interface MenuRepository extends JpaRepository<MenuManagement, Long> {
     List<MenuManagement> findByGroupId(String groupId); // 그룹 ID로 메뉴 조회
 
     Optional<MenuManagement> findById(Long menuId); // ID로 단일 메뉴 조회*/
+
+  @Query("SELECT m.menuId FROM MenuManagement m WHERE m.storeId = :storeId AND m.menuName = :menuName")
+  Optional<Long> findMenuIdByStoreIdAndMenuName(@Param("storeId") String storeId, @Param("menuName") String menuName);
 
 }

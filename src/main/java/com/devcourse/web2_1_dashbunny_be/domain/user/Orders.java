@@ -1,8 +1,10 @@
 package com.devcourse.web2_1_dashbunny_be.domain.user;
 
+import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.user.role.OrderStatus;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,7 +18,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class Orders {
+
+public class Orders implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,10 +30,9 @@ public class Orders {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  private String storeId;
-
-    /*  private String storeName;*/
-    //스토어 아이디를 해두는데 스토어 이름이 동시에 들어가는 조인을 해서 가져오는 방법은 어떨까요?
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "store_id", nullable = false)
+  private StoreManagement store;
 
   @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<OrderItem> orderItems;
@@ -48,6 +50,8 @@ public class Orders {
   private LocalDateTime createdAt;
 
   private Long deliveryPrice;
+
+  private String paymentId;
 
   @Column(nullable = false)
   private Long totalPrice; // 총 금액 (단가 * 수량)

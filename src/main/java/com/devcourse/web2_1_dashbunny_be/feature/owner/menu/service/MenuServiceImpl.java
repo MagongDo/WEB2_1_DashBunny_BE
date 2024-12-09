@@ -3,6 +3,7 @@ package com.devcourse.web2_1_dashbunny_be.feature.owner.menu.service;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuGroup;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
+import com.devcourse.web2_1_dashbunny_be.feature.order.service.MenuCacheService;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.common.Validator;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.menu.*;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuGroupRepository;
@@ -24,6 +25,7 @@ public class MenuServiceImpl implements MenuService {
   private final StoreManagementRepository storeManagementRepository;
   private final MenuRepository menuRepository;
   private final MenuGroupRepository menuGroupRepository;
+  private final MenuCacheService menuCacheService;
 
   // 그룹 메뉴 조회
   @Override
@@ -37,7 +39,7 @@ public class MenuServiceImpl implements MenuService {
   @Override
   public List<MenuManagement> findStoreAllMenu(String storeId) {
     StoreManagement store = validator.validateStoreId(storeId);
-    return menuRepository.findAllByStoreId(storeId);
+    return menuCacheService.getAllMenusFromStoreList(storeId);
   }
 
   // 메뉴명 기준으로 메뉴 검색
@@ -61,13 +63,24 @@ public class MenuServiceImpl implements MenuService {
     }
 
     menu.setStoreId(storeId);
+    //디비에 저장
     menuRepository.save(menu);
+    //캐시 저장
+    menuCacheService.addMenuToStore(storeId, menu.getMenuId(), menu);
   }
 
   @Override
-  public void updateAll(Long menuId, UpdateMenuRequestDto updateMenuRequestDto) {
-    MenuManagement menu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new RuntimeException("메뉴를 찾을 수 없습니다."));
+  public void updateAll(Long menuId, UpdateMenuRequestDto updateMenuRequestDto, String storeId) {
+    //  Redis에서 메뉴 정보 조회
+    MenuManagement menu = menuCacheService.getMenuFromCache(menuId, storeId);
+
+    // Redis에 없으면 데이터베이스에서 조회
+    if (menu == null) {
+      menu = validator.validateMenuId(menuId);
+      // Redis에 캐싱
+      menuCacheService.addMenuToStore(menu.getStoreId(), menuId, menu);
+    }
+
     if (updateMenuRequestDto.getMenuName() != null) {
       menu.setMenuName(updateMenuRequestDto.getMenuName());
     }
@@ -91,6 +104,7 @@ public class MenuServiceImpl implements MenuService {
     if (updateMenuRequestDto.getIsSoldOut() != null) {
       menu.setIsSoldOut(updateMenuRequestDto.getIsSoldOut());
     }
+    menuCacheService.addMenuToStore(menu.getStoreId(), menuId, menu);
     menuRepository.save(menu);
   }
 
@@ -102,24 +116,25 @@ public class MenuServiceImpl implements MenuService {
     for (Long menuId : actionRequestDto.getMenuIds()) {
       MenuManagement menu = validator.validateMenuId(menuId);
       menu.setIsSoldOut(true);
+      menuCacheService.addMenuToStore(menu.getStoreId(), menuId, menu);
       menuRepository.save(menu);
     }
   }
 
   @Override
-  public void updateImage(Long menuId, UpdateMenuImageRequestDto imageUrlDto) {
-    MenuManagement menu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new RuntimeException("해당 메뉴를 찾을 수 없습니다."));
-    menu.setMenuImage(imageUrlDto.getImageUrl()); // 이미지 URL 업데이트
+  public void updateImage(Long menuId, String url, String storeId) {
+    MenuManagement menu = menuCacheService.getMenuFromCache(menuId, storeId);
+    menu.setMenuImage(url); // 이미지 URL 업데이트
+    menuRepository.save(menu);
     menuRepository.save(menu); // 변경 내용 저장
   }
 
 
   @Override
-  public void updateIsSoldOut(Long menuId, UpdateSoldOutRequestDto updateSoldOutRequestDto) {
-    MenuManagement menu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new RuntimeException("해당 메뉴를 찾을 수 없습니다."));
+  public void updateIsSoldOut(Long menuId, UpdateSoldOutRequestDto updateSoldOutRequestDto, String storeId) {
+    MenuManagement menu = menuCacheService.getMenuFromCache(menuId, storeId);
     menu.setIsSoldOut(updateSoldOutRequestDto.getIsSoldOut()); // 품절 상태 업데이트
+    menuCacheService.addMenuToStore(menu.getStoreId(), menuId, menu);
     menuRepository.save(menu); // 변경 내용 저장
   }
 
@@ -127,8 +142,10 @@ public class MenuServiceImpl implements MenuService {
    * 다중 메뉴 삭제를 위한 api service.
    */
   @Override
-  public void delete(UpdateActionRequestDto actionRequestDto) {
+  public void delete(UpdateActionRequestDto actionRequestDto, String storeId) {
     for (Long menuId : actionRequestDto.getMenuIds()) {
+      // Redis에서 삭제
+      menuCacheService.removeMenuFromStore(storeId, menuId);
       menuRepository.deleteById(menuId);
     }
   }
@@ -151,7 +168,8 @@ public class MenuServiceImpl implements MenuService {
   * 메뉴 단 건 삭제.
   */
   @Override
-  public void deleteMenu(Long menuId) {
+  public void deleteMenu(Long menuId, String storeId) {
+    menuCacheService.removeMenuFromStore(storeId, menuId);
     menuRepository.deleteById(menuId);
   }
 }

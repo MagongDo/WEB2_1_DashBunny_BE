@@ -13,19 +13,20 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class OrderItem {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long orderItemId; // 주문 항목 ID
 
+  private String storeId;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "order_id", nullable = false)
   private Orders order; // 해당 주문
 
-  @ManyToOne
-  @JoinColumn(name = "menu_id", nullable = false)
+  @ManyToOne(fetch = FetchType.LAZY, optional = true)
+  @JoinColumn(name = "menu_id", nullable = true)
   private MenuManagement menu; // 메뉴 정보
 
   @Column(nullable = false)

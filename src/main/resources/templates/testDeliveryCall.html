@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+        <html lang="ko">
+        <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>대기 화면</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+        .container {
+            padding: 10px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        #waitingList {
+            height: 300px; /* 필요에 따라 높이 조정 */
+            border: 1px solid #ccc;
+            overflow: auto; /* 스크롤 가능하게 함 */
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .item {
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="section-title">대기</div>
+    <div id="waitingList"> <!-- 주문 리스트가 여기 쌓임 --> </div>
+</div>
+
+<script>
+    // SSE 연결
+    const jwtToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsInJvbGUiOiJST0xFX1VTRVIiLCJpYXQiOjE3MzM3MjQ2MjcsImV4cCI6MTczNDMyOTQyN30.UT09KAmXvuu9R6ob969Hju7pcWjnaIAGWKl6X-m9-08";
+    // 실제 SSE endpoint로 변경
+    const eventSource = new EventSource('/sse/assignments?token=${jwtToken}');
+
+    eventSource.onmessage = function(event) {
+        // e.data에 서버에서 전달한 메시지(예: 주문 정보) 존재
+        const data = event.data;
+        console.log("새로운 배차 알림:", data);
+        // 리스트에 항목 추가
+        const waitingList = document.getElementById('waitingList');
+        const item = document.createElement('div');
+        item.className = 'item';
+        item.textContent = data; // 필요시 파싱/형식 조정
+        waitingList.appendChild(item);
+
+        // 항상 최신 항목이 보이도록 스크롤 제어
+        waitingList.scrollTop = waitingList.scrollHeight;
+    };
+
+    eventSource.addEventListener('assignment', function(event) {
+        const data = JSON.parse(event.data);
+        console.log("배차 이벤트:", data);
+
+        // 알림 메시지 생성
+        const message1 = `배차 이벤트: 주문 ID ${data}가 할당되었습니다.`;
+        const message2 = `배차 이벤트: 주문 ID ${data.deliveryRequestId}가 할당되었습니다.`;
+
+
+    });
+
+    eventSource.onopen = function() {
+        console.log("SSE 연결이 성공적으로 열렸습니다.");
+    };
+
+    eventSource.onclose = function() {
+        console.log("SSE 연결이 닫혔습니다.");
+    };
+
+    eventSource.onerror = function(err) {
+        console.error("SSE 에러:", err);
+    };
+</script>
+</body>
+</html>

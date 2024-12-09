@@ -1,15 +1,16 @@
 package com.devcourse.web2_1_dashbunny_be.domain.user;
 
+import com.devcourse.web2_1_dashbunny_be.domain.delivery.role.DeliveryWorkerStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -49,13 +50,14 @@ public class User implements UserDetails {
     @Column(length = 50)
     private String email;
 
-    @Column(nullable = false, length = 11)
+    @Column(nullable = false, length = 13)
     private String role;
 
     @Column(length = 255)
     private String profileImageUrl;
 
     @Column(nullable = false)
+    @CreatedDate
     private LocalDateTime createdDate;
 
     private LocalDateTime modifiedDate;
@@ -82,7 +84,24 @@ public class User implements UserDetails {
     private LocalDateTime refreshTokenExpiryDate =
             LocalDateTime.of(2000, 1, 1, 0, 0);
 
+    private Double latitude; // 위도
 
+    private Double longitude; // 경도
+
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private DeliveryWorkerStatus deliveryStatus = DeliveryWorkerStatus.NOT_READY; // 배달 가능 여부
+
+    private String address;
+    private String detailAddress;
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    public void setDetailAddress(String detailAddress) {
+        this.detailAddress = detailAddress;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
