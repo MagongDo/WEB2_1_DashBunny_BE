@@ -40,6 +40,8 @@ public class Orders {
 
   private String deliveryAddress;
 
+  private String detailDeliveryAddress;
+
   private String storeNote;
 
   private String riderNote;

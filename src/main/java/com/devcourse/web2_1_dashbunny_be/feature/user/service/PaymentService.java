@@ -122,7 +122,8 @@ public class PaymentService {
                 .userPhone(cart.getUser().getPhone())
                 .orderItems(orderItemDtos)
                 .orderDate(LocalDateTime.now())
-                .deliveryAddress(cart.getUser().getAddress() + cart.getUser().getDetailAddress())
+                .deliveryAddress(cart.getUser().getAddress())
+                .detailDeliveryAddress(cart.getUser().getDetailAddress())
                 .storeNote(cart.getStoreRequirement())
                 .riderNote(cart.getDeliveryRequirement())
                 .totalAmount(cart.getTotalPrice())
@@ -146,6 +147,8 @@ public class PaymentService {
           cart.setOrderId(null);
           cart.setTotalPrice(null);
           cart.setStoreId(null);
+          cart.setDeliveryRequirement(null);
+          cart.setStoreRequirement(null);
           if (cart.getCartItems() != null) {
             cart.getCartItems().clear();
           }
