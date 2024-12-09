@@ -3,6 +3,7 @@ package com.devcourse.web2_1_dashbunny_be.feature.owner.menu.service;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuGroup;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
+import com.devcourse.web2_1_dashbunny_be.feature.order.service.MenuCacheService;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.common.Validator;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.menu.*;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuGroupRepository;
@@ -24,6 +25,7 @@ public class MenuServiceImpl implements MenuService {
   private final StoreManagementRepository storeManagementRepository;
   private final MenuRepository menuRepository;
   private final MenuGroupRepository menuGroupRepository;
+  private final MenuCacheService menuCacheService;
 
   // 그룹 메뉴 조회
   @Override
@@ -61,7 +63,10 @@ public class MenuServiceImpl implements MenuService {
     }
 
     menu.setStoreId(storeId);
+    //디비에 저장
     menuRepository.save(menu);
+    //캐시 저장
+    menuCacheService.addMenuToStore(storeId, menu.getMenuId(), menu);
   }
 
   @Override
@@ -92,6 +97,7 @@ public class MenuServiceImpl implements MenuService {
       menu.setIsSoldOut(updateMenuRequestDto.getIsSoldOut());
     }
     menuRepository.save(menu);
+    menuCacheService.addMenuToStore(menu.getStoreId(), menuId, menu);
   }
 
   /**
@@ -127,9 +133,11 @@ public class MenuServiceImpl implements MenuService {
    * 다중 메뉴 삭제를 위한 api service.
    */
   @Override
-  public void delete(UpdateActionRequestDto actionRequestDto) {
+  public void delete(UpdateActionRequestDto actionRequestDto, String storeId) {
     for (Long menuId : actionRequestDto.getMenuIds()) {
       menuRepository.deleteById(menuId);
+      // Redis에서 삭제
+      menuCacheService.removeMenuFromStore(storeId, menuId);
     }
   }
 

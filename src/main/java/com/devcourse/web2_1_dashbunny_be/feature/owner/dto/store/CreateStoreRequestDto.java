@@ -21,14 +21,14 @@ import lombok.*;
 @Builder
 public class CreateStoreRequestDto {
   private String storeName;             // 가게 이름
-  private String contactNumber;         // 가게 연락처
+  private String contactNumber = null;         // 가게 연락처==
   private String address;               // 가게 위치
-  private String description;           // 가게 소개
+  private String description = null;           // 가게 소개--
   private Double latitude;              //위도
   private Double longitude;             //경도
   private String storeRegistrationDocs; // 등록 서류
-  private StoreStatus storeStatus; //가게 상태
-  private String userPhone;              //사장님 이름
+  private StoreStatus storeStatus = StoreStatus.PENDING;      //가게 상태
+  private String userPhone = null;             //사장님 이름
 
   @Size(max = 3, message = "카테고리는 최대 3개까지 선택할 수 있습니다.")
   private List<CategoryType> categories;
@@ -45,7 +45,7 @@ public class CreateStoreRequestDto {
     storeManagement.setStoreRegistrationDocs(this.storeRegistrationDocs);
     storeManagement.setLatitude(this.latitude);
     storeManagement.setLongitude(this.longitude);
-    storeManagement.setStoreStatus(this.storeStatus);
+    storeManagement.setStoreStatus(StoreStatus.PENDING);
     storeManagement.setUser(user);
 
     // CategoryType 리스트를 Categorys 리스트로 변환

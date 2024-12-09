@@ -8,13 +8,15 @@ import lombok.Getter;
 @Getter
 @Builder
 public class AcceptOrdersResponseDto {
+    private Long orderId;
     private String storeId;
     private int preparationTime;
     private OrderStatus orderStatus;
 
     public static AcceptOrdersResponseDto fromEntity(Orders order) {
         return AcceptOrdersResponseDto.builder()
-                .storeId(order.getStoreId())
+                .orderId(order.getOrderId())
+                .storeId(order.getStore().getStoreId())
                 .preparationTime(order.getPreparationTime())
                 .orderStatus(order.getOrderStatus())
                 .build();

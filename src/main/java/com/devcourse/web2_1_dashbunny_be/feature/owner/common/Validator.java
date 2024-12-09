@@ -110,4 +110,12 @@ public class Validator {
     return ordersRepository.findById(orderId)
               .orElseThrow(() -> new EntityNotFoundException("주문 정보를 찾을 수 없습니다."));
   }
+
+  /**
+   *가게의 모든 주문 정보 검증 메서드.
+   */
+  public List<Orders> findByOrders(String storeId) {
+    return storeManagementRepository.findByOrders(storeId)
+          .orElseThrow(() -> new EntityNotFoundException("모든 주문 정보를 찾을 수 없습니다."));
+  }
 }
