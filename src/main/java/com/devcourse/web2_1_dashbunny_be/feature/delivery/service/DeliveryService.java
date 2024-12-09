@@ -64,27 +64,26 @@ public class DeliveryService {
 	}
 
 	/**
-	 * 배달 가능한 배달원 찾기
-	 * @param
+	 * 가게 반경 내 배달 가능한 배달원 찾기
+	 * @param deliveryRequests 저장된 배달 요청 가져오기
 	 * @return 조건에 맞는 배달원 목록
 	 */
-//	public List<User> deliveryWorkerWithinARadius(DeliveryRequests deliveryRequests) {
-//
-//		StoreManagement storeManagement = storeManagementRepository.findByStoreId(order.getStoreId());
-//
-//		Double storeLatitude = storeManagement.getLatitude();
-//		Double storeLongitude = storeManagement.getLongitude();
-//		Double allowedRadius = 5.0; // 허용 반경 (킬로미터 단위)
-//
-//		List<User> allowedWorker = userRepository.findByDeliveryStatusAndRoleAndLatitudeAndLongitude(
-//						DeliveryWorkerStatus.READY,
-//						storeLatitude - allowedRadius,
-//						storeLatitude + allowedRadius,
-//						storeLongitude - allowedRadius,
-//						storeLongitude + allowedRadius
-//		);
-//		return allowedWorker;
-//	}
+	public List<User> deliveryWorkerWithInARadius(DeliveryRequests deliveryRequests) {
+
+		StoreManagement storeManagement = storeManagementRepository.findByStoreId(deliveryRequests.getStoreId());
+		if (storeManagement == null) {
+			throw new IllegalArgumentException("storeId에 대한 스토어를 찾을 수 없습니다: " + deliveryRequests.getStoreId());
+		}
+
+		double storeLatitude = storeManagement.getLatitude();
+		double storeLongitude = storeManagement.getLongitude();
+		double allowedRadius = 3.0; // 허용 반경 (킬로미터 단위)
+		log.info("체크 가게 좌표 : {}, {}", storeLatitude, storeLongitude);
+		// 배달원 리턴
+		List<User> allowedWorker =
+						userRepository.findAvailableDeliveryUsersWithinRadius(storeLatitude, storeLongitude, allowedRadius);
+		return allowedWorker;
+	}
 
 	public DeliveryRequests saveDeliveryRequests (DeliveryRequestsDto deliveryRequestsDto) {
 
@@ -103,9 +102,13 @@ public class DeliveryService {
 
 		DeliveryRequests deliveryRequests = DeliveryRequests.builder()
 						.storeId(storeId)
+						.orderId(deliveryRequestsDto.getOrderId())
 						.deliveryAddress(deliveryRequestsDto.getDeliveryAddress())
 						.deliveryDetailsAddress(deliveryRequestsDto.getDeliveryDetailsAddress())
-						.driverRequest(deliveryRequestsDto.getDriverRequest())
+						.deliveryWorkerNote(deliveryRequestsDto.getDeliveryWorkerNote())
+						.preparationTime(deliveryRequestsDto.getPreparationTime())
+						.orderDate(deliveryRequestsDto.getOrderDate())
+						.deliveryPrice(deliveryRequestsDto.getDeliveryPrice())
 						.distance(distance)
 						.build();
 		return deliveryRequestsRepository.save(deliveryRequests);

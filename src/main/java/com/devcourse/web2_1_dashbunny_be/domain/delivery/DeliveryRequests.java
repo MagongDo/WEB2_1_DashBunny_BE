@@ -25,21 +25,23 @@ public class DeliveryRequests {
 	@Column(nullable = false)
 	private String storeId; // 가게 ID
 
-	// 주문  ID도 추가해야함
-
+	private Long orderId;	// 주문 ID
 
 	@Column(nullable = false, length = 255)
 	private String deliveryAddress; // 배달 주소
 	
 	private String deliveryDetailsAddress; // 배달 상세 주소(102동 205호 등등)
 
-//	@Column(nullable = false)
-//	private Integer cookingTime;
+	private int preparationTime; // 요리 소요시간
 
 	@Column(length = 255)
-	private String driverRequest; // 기사 요청사항
+	private String deliveryWorkerNote; // 기사 요청사항
 
 	private Double distance; // 거리
+
+	private Long deliveryPrice;     // 배달 가격
+
+	private LocalDateTime orderDate; // 주문 받은 날짜
 
 	@CreatedDate
 	private LocalDateTime createdDate;

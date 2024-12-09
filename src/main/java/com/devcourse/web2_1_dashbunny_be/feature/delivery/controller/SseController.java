@@ -27,8 +27,9 @@ public class SseController {
 	 * @return SseEmitter 객체
 	 */
 	@GetMapping("/sse/assignments")
-	public SseEmitter subscribeToAssignments(@RequestHeader("Authorization") String authorizationHeader) {
-		User deliveryWorker = userService.getCurrentUser(authorizationHeader);
+	public SseEmitter subscribeToAssignments(@RequestHeader("Authorization") String authorizationHeader,
+																					 @RequestParam String token) {
+		User deliveryWorker = userService.getCurrentUser(token);
 		Long userId = deliveryWorker.getUserId();
 		SseEmitter emitter = new SseEmitter(Long.MAX_VALUE); // 타임아웃 없음
 		emitters.put(userId, emitter);

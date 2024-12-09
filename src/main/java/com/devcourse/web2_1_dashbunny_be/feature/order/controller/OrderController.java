@@ -1,5 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.feature.order.controller;
 
+import com.devcourse.web2_1_dashbunny_be.feature.delivery.dto.DeliveryRequestsRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.*;
 import com.devcourse.web2_1_dashbunny_be.feature.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -111,12 +112,12 @@ public class OrderController {
     return ResponseEntity.ok(responseDto);
   }
 
-  @PostMapping("/delivery-requests/{storeId}/{orderId}")
-  public ResponseEntity<deliveryRequestsResponseDto> deliveryRequests( @PathVariable("storeId") String StoreId,
-                                                                       @PathVariable("orderId") Long orderId,
-                                                                       @RequestBody DeliveryRequestsRequestDto deliveryRequestsRequestDto){
-
-
-    return null;
-  }
+//  @PostMapping("/delivery-requests/{storeId}/{orderId}")
+//  public ResponseEntity<deliveryRequestsResponseDto> deliveryRequests( @PathVariable("storeId") String StoreId,
+//                                                                       @PathVariable("orderId") Long orderId,
+//                                                                       @RequestBody DeliveryRequestsRequestDto deliveryRequestsRequestDto){
+//
+//
+//    return null;
+//  }
 }
