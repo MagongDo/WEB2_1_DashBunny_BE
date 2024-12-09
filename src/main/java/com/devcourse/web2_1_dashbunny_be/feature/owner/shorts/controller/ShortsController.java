@@ -25,39 +25,12 @@ public class ShortsController {
     private final UserService userService;
 
     /**
-     * 쇼츠Url 등록 및 수정 하는 엔드포인트입니다.
-     * 응답 코드: 200(OK), 400(BAD_REQUEST), 403(FORBIDDEN)
-     * @param shortsRequestDto ShortsRequestDto 가 포함된 요청 본문
-     *                   - userId;
-     *                   - address; // 사용자 주소
-     * @return 회원가입 성공 메시지 또는 에러 메시지를 포함한 ResponseEntity
-     */
-    @PostMapping("/nearby-store")
-    public ResponseEntity<?> getNearbyShorts(@RequestHeader("Authorization") String authorizationHeader,
-                                             @RequestBody ShortsRequestDto shortsRequestDto) {
-        User currentUser = userService.getCurrentUser(authorizationHeader);
-        log.info("getNearbyShorts - Current userId: {}, Request userId: {}",
-                currentUser.getUserId(), shortsRequestDto.getUserId());
-
-        if (!currentUser.getUserId().equals(shortsRequestDto.getUserId())) {
-            log.warn("사용자 ID가 일치하지 않습니다.: currentUserId={}, requestUserId={}",
-                    currentUser.getUserId(), shortsRequestDto.getUserId());
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("사용자 ID가 일치하지 않습니다.");
-        }
-
-        List<UsersStoreListResponseDto> listNearbyShorts = shortsService.getNearbyStoresShorts(shortsRequestDto);
-        log.info("주위 가게 쇼츠 개수 {}", listNearbyShorts.size());
-        return ResponseEntity.ok(listNearbyShorts);
-    }
-
-    /**
      * 쇼츠Url 등록 및 수정 하는 엔드포인트입니다. 코드 201(CREATED), 400(BAD_REQUEST)
      *
      * @param shortsCreateRequestDto ShortsCreateRequestDto 가 포함된 요청 본문
      *                   - url;     // URL
      *                   - storeId; // 가게 ID
-     *                   - menuId;  // 메뉴 ID
+     *                   - menuName;  // 메뉴이름
      * @return 쇼츠 URL 등록/수정 성공 메시지 또는 에러 메시지를 포함한 ResponseEntity
      */
     @PostMapping("/update/shortsUrl")
@@ -79,21 +52,20 @@ public class ShortsController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("가게 ID가 누락되었습니다.");
             }
-            if (shortsCreateRequestDto.getMenuId() == null) {
-                log.warn("메뉴 ID가 누락되었습니다.");
+            if (shortsCreateRequestDto.getMenuName() == null) {
+                log.warn("메뉴이름이 누락되었습니다.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("메뉴 ID가 누락되었습니다.");
+                        .body("메뉴이름이 누락되었습니다.");
             }
             // 쇼츠 URL 업데이트 또는 등록
-            shortsService.updateShortsUrl(shortsCreateRequestDto);
+            shortsService.updateShortsUrl(shortsCreateRequestDto, currentUser);
 
             log.info("쇼츠 URL 업데이트 성공: {}", shortsCreateRequestDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(shortsCreateRequestDto);
         } catch (Exception e) {
             // 일반 예외 처리
             log.error("쇼츠 URL 업데이트 중 오류 발생", e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("쇼츠 URL 업데이트에 실패했습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("쇼츠 URL 업데이트에 실패했습니다.");
         }
     }
 }
