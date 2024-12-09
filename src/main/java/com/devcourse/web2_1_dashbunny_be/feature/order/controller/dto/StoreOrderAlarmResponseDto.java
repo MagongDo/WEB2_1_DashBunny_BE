@@ -18,6 +18,7 @@ import java.util.stream.IntStream;
 @Builder
 public class StoreOrderAlarmResponseDto {
 
+  private Long orderId; // 주문 ID 추가
   private int totalMenuCount;
   private Map<String, String> menuNames;
   private Long totalPrice;
@@ -36,6 +37,7 @@ public class StoreOrderAlarmResponseDto {
             ));
 
     return StoreOrderAlarmResponseDto.builder()
+        .orderId(orders.getOrderId())
         .totalMenuCount(orders.getTotalMenuCount())
         .menuNames(menuNamesWithCounts)
         .totalPrice(orders.getTotalPrice())

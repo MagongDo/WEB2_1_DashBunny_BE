@@ -193,7 +193,7 @@ public class OrderServiceImpl implements OrderService {
   @Override
   public CompletableFuture<DeclineOrdersResponseDto> declineOrder(OrderDeclineRequestDto declineRequestDto) {
     Orders orders = validator.validateOrderId(declineRequestDto.getOrderId());
-    //주문 취소의 경우 재고 돌려두기// 재고 등록 여부가 true인 사항에 한해서만
+    //주문 취소의 경우 재고 돌려두기// 재고 등록 여부가 true인 사항에 한해서만c
     List<OrderItem> stockItems = orders.getOrderItems().stream()
             .filter(orderItem -> orderItem.getMenu().isStockAvailable())
             .toList();
@@ -212,9 +212,16 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   public OrdersListResponseDto getOrdersList(String storeId) {
-    Orders orders = ordersRepository.findByStore_StoreId(storeId).orElseThrow();
-    List<OrderItemDto> orderItems = orders.getOrderItems().stream().map(OrderItemDto::fromEntity).toList();
-    OrderDetailDto orderDetailDto = OrderDetailDto.fromEntity(orders, orderItems);
+    List<Orders> orders = ordersRepository.findAllByStore_StoreId(storeId);
+/*    List<OrderItemDto> orderItems = orders.stream().map(OrderItemDto::fromEntity).toList();
+    List<OrderDetailDto> orderDetailDto = OrderDetailDto.fromEntity(orders, orderItems);*/
+
+    List<OrderDetailDto> orderDetailDto = orders.stream().map(order -> {
+      List<OrderItemDto> orderItems = order.getOrderItems().stream()
+              .map(OrderItemDto::fromEntity)
+              .toList();
+      return OrderDetailDto.fromEntity(order, orderItems);
+    }).toList();
 
     //스토어가 가진 모든 오더 정보
     List<Orders> ordersList = validator.findByOrders(storeId);
