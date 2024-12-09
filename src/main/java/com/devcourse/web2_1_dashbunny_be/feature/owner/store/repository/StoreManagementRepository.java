@@ -3,6 +3,7 @@ package com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreOperationInfo;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.role.StoreStatus;
+import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.BasicInfoProjection;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.dto.store.StoreManagementListDto;
@@ -14,6 +15,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 가게 레포지토리 클래스.
@@ -73,4 +75,13 @@ public interface StoreManagementRepository extends JpaRepository<StoreManagement
 
   StoreManagement findByStoreId(String storeId);
 
+  /**
+   * 해당 스토어가 가지고 있는 모든 order 정보 반환.
+   */
+  @Query("""
+        SELECT s.ordersList
+        FROM StoreManagement s
+        WHERE s.storeId = :storeId
+        """)
+  Optional<List<Orders>> findByOrders(@Param("storeId") String storeId);
 }

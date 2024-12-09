@@ -15,7 +15,7 @@ public class DeclineOrdersResponseDto {
     public static DeclineOrdersResponseDto fromEntity(Orders order,
                                                     DeclineReasonType declineReasonType) {
         return DeclineOrdersResponseDto.builder()
-                .storeId(order.getStoreId())
+                .storeId(order.getStore().getStoreId())
                 .orderId(order.getOrderId())
                 .declineReasonType(declineReasonType)
                 .build();

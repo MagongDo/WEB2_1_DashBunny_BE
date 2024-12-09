@@ -3,7 +3,6 @@ package com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.user.CartItem;
 import com.devcourse.web2_1_dashbunny_be.domain.user.OrderItem;
-import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCartItemDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +19,7 @@ public class OrderItemDto {
   private String menuName; // 메뉴 이름
   private boolean stockAvailableAtOrder; // 재고 여부
   private Integer quantity; // 수량
-  private Long totalPrice; // 총 금액 (단가 * 수량)
+  private Long price; // 총 금액 (단가 * 수량)
 
   /**
    * 엔티티를 변환을 휘한 메서드.
@@ -34,11 +33,22 @@ public class OrderItemDto {
     return orderItem;
   }
 
+  public static OrderItemDto fromEntity(OrderItem orderItem) {
+    return OrderItemDto.builder()
+            .menuId(orderItem.getMenu().getMenuId())
+            .menuName(orderItem.getMenu().getMenuName())
+            .stockAvailableAtOrder(orderItem.isStockAvailableAtOrder())
+            .quantity(orderItem.getQuantity())
+            .price(orderItem.getTotalPrice())
+            .build();
+  }
+
   public static OrderItemDto toDto(CartItem cartItem) {
     return OrderItemDto.builder()
             .menuId(cartItem.getMenuManagement().getMenuId())
             .menuName(cartItem.getMenuManagement().getMenuName())
             .quantity(cartItem.getQuantity().intValue())
-            .totalPrice(cartItem.getMenuManagement().getPrice() * cartItem.getQuantity()).build();
+            .price(cartItem.getMenuManagement().getPrice())
+            .build();//* cartItem.getQuantity()).build();
   }
 }
