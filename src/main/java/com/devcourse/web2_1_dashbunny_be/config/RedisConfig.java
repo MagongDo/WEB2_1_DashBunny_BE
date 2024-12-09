@@ -7,8 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
@@ -48,16 +50,20 @@ public class RedisConfig {
 
     // Key를 String으로 직렬화
     template.setKeySerializer(new StringRedisSerializer());
-    // Hash Key를 String으로 직렬화
-    template.setHashKeySerializer(new StringRedisSerializer());
 
     // Value를 JSON으로 직렬화
-    template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-    // Hash Value를 JSON으로 직렬화
-    template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+    Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
+    template.setValueSerializer(serializer);
+    template.setHashValueSerializer(serializer);
 
+    // After properties
     template.afterPropertiesSet();
     return template;
     }
+
+  @Bean
+  public HashOperations<String, String, Object> hashOperations(RedisTemplate<String, Object> redisTemplate) {
+    return redisTemplate.opsForHash();
+  }
 }
 

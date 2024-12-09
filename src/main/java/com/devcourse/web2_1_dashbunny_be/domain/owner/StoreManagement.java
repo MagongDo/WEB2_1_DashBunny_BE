@@ -117,6 +117,6 @@ public class StoreManagement {
   private List<StoreApplication> storeApplications = new ArrayList<>();
 
   //스토어가 가진 모든 주문 정보
-  @OneToMany(mappedBy = "storeManagement", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Orders> ordersList = new ArrayList<>();
 }

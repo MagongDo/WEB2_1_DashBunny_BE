@@ -51,13 +51,16 @@ public class OrderServiceImpl implements OrderService {
       StoreManagement store = validator.validateStoreId(orderInfoRequestDto.getStoreId());
       Orders orders = orderInfoRequestDto.toEntity(orderInfoRequestDto.getOrderItems(), menuRepository, user, store);
 
+
       //재고 등록이 된 메뉴 리스트
       List<OrderItem> stockItems = filterStockItems(orders.getOrderItems(),true);
+      Map<Long, MenuManagement> stockItemsMenuCache = getMenuCache(stockItems);
+      log.info("재고등록이 된 리스트:" + stockItems.size());
+
       //재고등록이 안된 메뉴 리스트
       List<OrderItem> nonStockItems = filterStockItems(orders.getOrderItems(),false);
-
       Map<Long, MenuManagement> nonStockItemsMenuCache = getMenuCache(nonStockItems);
-      Map<Long, MenuManagement> stockItemsMenuCache = getMenuCache(stockItems);
+
 
       CompletableFuture<Void> stockProcessing = processStockItems(stockItems, stockItemsMenuCache);
       CompletableFuture<Void> nonStockProcessing = processNonStockItems(nonStockItems, nonStockItemsMenuCache);
@@ -116,8 +119,7 @@ public class OrderServiceImpl implements OrderService {
   */
   public Map<Long, MenuManagement> getMenuCache(List<OrderItem> orderItems) {
     Map<Long, MenuManagement> menuCache = new HashMap<>();
-
-    //store key, menu filed
+    log.info(orderItems.toString());
     String storeKey = orderItems.get(0).getStoreId();
     List<Long> menuIds = orderItems.stream()
             .map(orderItem -> orderItem.getMenu().getMenuId())
@@ -222,7 +224,7 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   public OrdersListResponseDto getOrdersList(String storeId) {
-    Orders orders = ordersRepository.findByStoreId(storeId).orElseThrow();
+    Orders orders = ordersRepository.findByStore_StoreId(storeId).orElseThrow();
     List<OrderItemDto> orderItems = orders.getOrderItems().stream().map(OrderItemDto::fromEntity).toList();
     OrderDetailDto orderDetailDto = OrderDetailDto.fromEntity(orders, orderItems);
 
