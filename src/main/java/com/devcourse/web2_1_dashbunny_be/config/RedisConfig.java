@@ -52,7 +52,7 @@ public class RedisConfig {
     template.setKeySerializer(new StringRedisSerializer());
 
     // Value를 JSON으로 직렬화
-    Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
+    Jackson2JsonRedisSerializer<MenuManagement> serializer = new Jackson2JsonRedisSerializer<>(MenuManagement.class);
     template.setValueSerializer(serializer);
     template.setHashValueSerializer(serializer);
 
