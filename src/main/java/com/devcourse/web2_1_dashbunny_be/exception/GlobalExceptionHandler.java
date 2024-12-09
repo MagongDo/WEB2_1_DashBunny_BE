@@ -52,10 +52,10 @@ public class GlobalExceptionHandler {
 //** IllegalArgumentException.
 
 
-  @ExceptionHandler(IllegalArgumentException.class)
-  public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
-    return new ResponseEntity<>("입력한 정보가 올바르지 않습니다. 다시 확인해주세요.", HttpStatus.BAD_REQUEST);
-  }
+//  @ExceptionHandler(IllegalArgumentException.class)
+//  public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+//    return new ResponseEntity<>("입력한 정보가 올바르지 않습니다. 다시 확인해주세요.", HttpStatus.BAD_REQUEST);
+//  }
 
 //** IllegalStateException.
 

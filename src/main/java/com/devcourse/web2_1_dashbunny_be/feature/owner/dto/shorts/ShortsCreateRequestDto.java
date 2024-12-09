@@ -7,8 +7,8 @@ import lombok.Getter;
 @Builder
 public class ShortsCreateRequestDto {
 
-    private String url;          // URL
-    private String storeId;        // 가게 ID
-    private Long menuId;         // 메뉴 ID
+  private String url;          // URL
+  private String storeId;      // 가게 ID
+  private String menuName;     // 메뉴이름
 
 }
