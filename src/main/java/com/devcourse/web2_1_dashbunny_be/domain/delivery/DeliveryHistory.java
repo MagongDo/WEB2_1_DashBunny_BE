@@ -1,5 +1,6 @@
 package com.devcourse.web2_1_dashbunny_be.domain.delivery;
 
+import com.devcourse.web2_1_dashbunny_be.domain.delivery.role.DeliveryProgressStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeliveryHistory {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -31,7 +33,7 @@ public class DeliveryHistory {
 	private LocalDateTime completedAt; // 배달완료일시
 
 	@Column(nullable = false)
-	private Double deliveryPrice; // 배달료
+	private int deliveryPrice; // 배달료
 
 	@Column(nullable = false, length = 255)
 	private String uniqueCode; // 검색용 코드 (숫자 영문 8자리)
@@ -40,7 +42,7 @@ public class DeliveryHistory {
 	private Double distance; // 배달 거리
 
 	@Column(nullable = false, length = 50)
-	private String status; // 배달 상태
+	private DeliveryProgressStatus status; // 배달 상태
 
 	private String deliveryCompletePhoto; // 배달 완료 사진
 

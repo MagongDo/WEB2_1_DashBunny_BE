@@ -1,8 +1,10 @@
 package com.devcourse.web2_1_dashbunny_be.feature.delivery.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class DeliveryWorkerDto {
 	private Long userId;
 	private String phone;

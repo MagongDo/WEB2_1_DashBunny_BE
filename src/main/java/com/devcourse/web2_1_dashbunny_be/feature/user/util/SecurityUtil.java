@@ -1,6 +1,5 @@
-package com.devcourse.web2_1_dashbunny_be.feature.user.Util;
+package com.devcourse.web2_1_dashbunny_be.feature.user.util;
 
-import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
