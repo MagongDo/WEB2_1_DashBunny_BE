@@ -57,7 +57,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of( "https://dashbunnycustomer.vercel.app",
+        configuration.setAllowedOrigins(List.of( "http://ec2-43-203-247-210.ap-northeast-2.compute.amazonaws.com",
                 "http://localhost:3000")); // 프론트엔드 주소
 //        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://frontend.example.com")); // 여러 출처 허용
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));

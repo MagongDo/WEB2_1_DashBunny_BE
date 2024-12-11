@@ -14,7 +14,7 @@ public class UsersStoreResponseDto {
   private String storeId;                     // 가게 ID
   private String storeName;                 // 가게 이름
   private Double rating;                    // 평점
-  private Integer reviewCount;              // 리뷰 수
+  private Double reviewCount;              // 리뷰 수
   private Long deliveryTip;          // 기본 배달 팁
   private String minDeliveryTime;           // 최소 배달 예상 시간
   private String maxDeliveryTime;           // 최대 배달 예상 시간

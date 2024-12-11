@@ -1,6 +1,7 @@
 package com.devcourse.web2_1_dashbunny_be.feature.order.service;
 
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
+import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreFeedBack;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.user.OrderItem;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
@@ -10,9 +11,13 @@ import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrderDetai
 import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrderListDto;
 import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrdersListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.*;
+import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.user.UserOrderInfoRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.common.Validator;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.order.repository.OrdersRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreFeedBackRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
+import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -20,6 +25,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +44,9 @@ public class OrderServiceImpl implements OrderService {
   private final SimpMessagingTemplate messageTemplate;
   private final MenuCacheService menuCacheService;
   private static final String ERROR_TOPIC = "/topic/order/error";
+  private final UserRepository userRepository;
+  private final StoreManagementRepository storeManagementRepository;
+  private final StoreFeedBackRepository storeFeedBackRepository;
 
   /**
    * 사용자의 주문 요청을 처리합니다.
@@ -229,4 +239,45 @@ public class OrderServiceImpl implements OrderService {
 
     return new OrdersListResponseDto(orderDetailDto, orderListDtos);
   }
+    @Override
+    public List<UserOrderInfoRequestDto> getUserOrderInfoList(String userId) {
+        // 사용자 조회
+        log.info(userId);
+        User user = userRepository.findByPhone(userId).orElseThrow(() ->
+                new IllegalArgumentException("해당 사용자를 찾을 수 없습니다.")
+        );
+        log.info("why not?");
+        // 사용자의 주문 조회
+        List<Orders> ordersList = ordersRepository.findByUser(user);
+        log.info("please");
+        // Orders -> UserOrderInfoRequestDto 변환 및 정렬
+        List<UserOrderInfoRequestDto> userOrderInfoRequestDtos = ordersList.stream()
+                .map(order -> {
+                    // 주문 아이템 정보 추출
+                    int totalQuantity = order.getOrderItems().stream()
+                            .mapToInt(OrderItem::getQuantity) // OrderItem에서 수량 추출
+                            .sum();
+
+                    String menuName = order.getOrderItems().stream()
+                            .map(orderItem -> orderItem.getMenu().getMenuName()) // OrderItem에서 메뉴 이름 추출
+                            .findFirst() // 첫 번째 메뉴 이름 가져오기
+                            .orElse("메뉴 이름 없음");
+
+                    // DTO 변환
+                    return UserOrderInfoRequestDto.todo(order, storeManagementRepository, totalQuantity, menuName);
+                })
+                .sorted((dto1, dto2) -> dto2.getOrderDate().compareTo(dto1.getOrderDate())) // orderDate 기준 내림차순 정렬
+                .toList();
+        log.info(userOrderInfoRequestDtos.toString());
+        return userOrderInfoRequestDtos;
+    }
+    @Override
+    public void increaseRating(OrderRatingResponseDto orders) {
+        DecimalFormat df = new DecimalFormat("#.0");
+        StoreFeedBack storeFeedBack = storeFeedBackRepository.findByStoreId(orders.getStoreId());
+        storeFeedBack.increaseReviewCount();
+        storeFeedBack.setTotalRating(storeFeedBack.getTotalRating() + orders.getRating());
+        storeFeedBack.setRating(Double.valueOf(df.format(storeFeedBack.getTotalRating() / storeFeedBack.getReviewCount())));
+        storeFeedBackRepository.save(storeFeedBack);
+    }
 }

@@ -1,7 +1,10 @@
 package com.devcourse.web2_1_dashbunny_be.feature.order.controller;
 
+import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.*;
+import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.user.UserOrderInfoRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.order.service.OrderService;
+import com.devcourse.web2_1_dashbunny_be.feature.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -10,6 +13,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -25,7 +29,7 @@ public class OrderController {
   private final String ERROR_TOPIC = "/topic/order/error";
   private final SimpMessagingTemplate messageTemplate;
   private final OrderService orderService;
-
+  private final UserService userService;
   /**
    * 사용자에게 주문 요청이 옴과 동시에 주문 접수 요청에 대한 알람을 보냅니다.
    */
@@ -109,6 +113,21 @@ public class OrderController {
   public ResponseEntity<OrdersListResponseDto> getOrderList(@PathVariable("storeId") String storeId) {
     OrdersListResponseDto responseDto = orderService.getOrdersList(storeId);
     return ResponseEntity.ok(responseDto);
+  }
+
+
+  @GetMapping("/list")
+  public ResponseEntity<List<UserOrderInfoRequestDto>> listOrders(@RequestHeader("Authorization") String authorizationHeader) {
+    User currentUser = userService.getCurrentUser(authorizationHeader);
+    List<UserOrderInfoRequestDto> userOrderLost = orderService.getUserOrderInfoList(currentUser.getPhone());
+    return ResponseEntity.ok(userOrderLost);
+  }
+
+  @PostMapping("/rating")
+  public ResponseEntity<Void> ratingCount(@RequestHeader("Authorization") String authorizationHeader,
+                                          @RequestBody OrderRatingResponseDto orders) {
+      orderService.increaseRating(orders);
+    return ResponseEntity.ok().build();
   }
 
 //  @PostMapping("/delivery-requests/{storeId}/{orderId}")

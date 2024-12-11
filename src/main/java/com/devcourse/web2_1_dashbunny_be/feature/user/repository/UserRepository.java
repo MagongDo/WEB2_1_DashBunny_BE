@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -31,6 +32,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("UPDATE User u SET u.refreshToken = NULL WHERE u.refreshToken = :refreshToken")
     void deleteByRefreshToken(String refreshToken);
 
+    @Query("SELECT u.role, COUNT(u) FROM User u GROUP BY u.role")
+    List<Object[]> countByUserOwnerCount();
     /**
      * deliveryStatus가 READY이고, role이 ROLE_DELIVERY이며,
      * latitude와 longitude가 지정된 값과 일치하는 모든 유저를 조회합니다.
