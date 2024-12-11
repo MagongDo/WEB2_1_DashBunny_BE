@@ -9,7 +9,7 @@ import lombok.Setter;
 @Builder
 public class DeliveryOrderNotificationDto { // 배달원에게 가는 배달알림 dto
 
-	private String deliveryRequestId;
+	private Long deliveryRequestId;
 	private String storeId;
 	private String storeName;
 	private String storeAddress;
@@ -18,7 +18,7 @@ public class DeliveryOrderNotificationDto { // 배달원에게 가는 배달알�
 	private int deliveryPrice; // 배달료
 	private String deliveryAddress;
 	private String deliveryDetailsAddress;
-	private String uniqueCode; // 검색용 코드 (숫자 영문 8자리 ex) 5D7Q3Z1D )
+//	private String uniqueCode; // 검색용 코드 (숫자 영문 8자리 ex) 5D7Q3Z1D )
 	private String deliveryWorkerNote; // 라이더에게 전달할 메모
 
 	/*

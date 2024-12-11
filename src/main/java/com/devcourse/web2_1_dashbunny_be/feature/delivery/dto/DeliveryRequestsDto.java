@@ -19,6 +19,6 @@ public class DeliveryRequestsDto {
 	private int preparationTime; // 요리 소요시간
 	private String deliveryWorkerNote; // 라이더에게 전달할 메모
 	private LocalDateTime orderDate; // 주문 받은 날짜
-	private Long deliveryPrice;     // 배달 가격
+	private int deliveryPrice;     // 배달 가격
 
 }
