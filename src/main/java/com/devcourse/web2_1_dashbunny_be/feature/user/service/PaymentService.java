@@ -44,7 +44,7 @@ public class PaymentService {
    * 결제 준비 요청
    */
   @Transactional
-  public PaymentResponseDto requestPayment(PaymentRequestDto requestDto)  {
+  public PaymentResponseDto requestPayment(PaymentRequestDto requestDto, String idempotencyKey)  {
     // DB에 결제 요청 정보 저장 (status: READY)
     Payment payment = Payment.builder()
             .orderId(requestDto.getOrderId())
@@ -60,6 +60,7 @@ public class PaymentService {
     HttpHeaders headers = new HttpHeaders();
     headers.add("Authorization", "Basic " + encodeToBase64(tossPaymentsConfig.getSecretKey() + ":"));
     headers.add("Content-Type", "application/json");
+    headers.add("Idempotency-Key", idempotencyKey);
 
     HttpEntity<PaymentRequestDto> entity = new HttpEntity<>(requestDto, headers);
     ResponseEntity<PaymentResponseDto> response = restTemplate.exchange(
