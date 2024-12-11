@@ -25,9 +25,11 @@ public class UserCoupon {
   @UuidGenerator
   private String userCouponId; //사용자 쿠폰 아이디
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user; // 사용자 엔티티와 연관관계
+//  @ManyToOne(fetch = FetchType.LAZY)
+//  @JoinColumn(name = "user_id", nullable = false)
+//  private User user; // 사용자 엔티티와 연관관계
+
+  private Long userId;
 
   @Column(nullable = false)
   private Long couponId; //쿠폰 아이디
