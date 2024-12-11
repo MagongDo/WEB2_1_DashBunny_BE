@@ -45,7 +45,7 @@ public class KafkaConsumerConfig {
             new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory());
     //factory.setBatchListener(true); // 배치 리스너 활성화
-    factory.setConcurrency(1); // 동시 처리 Consumer 개수를 1로 제한
+    factory.setConcurrency(3); // 동시 처리 Consumer 개수를 3로 제한
     factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
     return factory;
   }
