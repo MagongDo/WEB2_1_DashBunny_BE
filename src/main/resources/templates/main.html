@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>메인 페이지</title>
+    <meta charset="UTF-8" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .user-info {
+            border: 1px solid #ccc;
+            padding: 15px;
+            max-width: 400px;
+        }
+        .user-info h2 {
+            margin-top: 0;
+        }
+        .user-info p {
+            margin: 5px 0;
+        }
+        .logout-link {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="user-info" th:if="${user}">
+    <h2>사용자 정보</h2>
+    <p ><strong>전화번호:</strong> <span th:text="${user.phone}">전화번호</span></p>
+    <p><strong>이름:</strong> <span th:text="${user.name}">이름</span></p>
+    <p><strong>생일:</strong> <span th:text="${user.birthday}">생일</span></p>
+<!--    <p><strong>이메일:</strong> <span th:text="${user.email}">이메일</span></p>-->
+    <p><strong>역할:</strong> <span th:text="${user.role}">역할</span></p>
+    <p><strong>가입일:</strong> <span th:text="${#temporals.format(user.createdDate, 'yyyy-MM-dd HH:mm:ss')}">가입일</span></p>
+    <p th:if="${user.modifiedDate}"><strong>수정일:</strong>
+        <span th:text="${user.modifiedDate != null} ? ${#temporals.format(user.modifiedDate, 'yyyy-MM-dd HH:mm:ss')} : '정보 없음'">수정일</span>
+    </p>
+</div>
+
+<div th:if="${user == null}">
+    <p>사용자 정보를 불러올 수 없습니다.</p>
+</div>
+<div class="logout-link">
+    <a href="/api/logout">로그아웃</a>
+</div>
+</body>
+</html>

@@ -4,16 +4,19 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 // 메뉴 정보를 관리하는 엔티티 클래스
 @Getter
 @Setter
 @Entity
 @Table(name = "menu_management")
-public class MenuManagement {
+public class MenuManagement implements Serializable {
 
     // 메뉴 고유키 (자동 생성)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private Long menuId;
 
     // 가게 고유키 (필수)
@@ -50,9 +53,10 @@ public class MenuManagement {
     private Boolean isSoldOut = false;
 
     //상품 금액
-
     @Column(nullable = false)
     private Long price;
+
+
 
 
 
