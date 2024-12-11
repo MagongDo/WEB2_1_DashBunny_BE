@@ -1,4 +1,4 @@
-package com.devcourse.web2_1_dashbunny_be.feature.user.Util;
+package com.devcourse.web2_1_dashbunny_be.feature.user.util;
 
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.SmsVerificationRepository;
 import lombok.RequiredArgsConstructor;

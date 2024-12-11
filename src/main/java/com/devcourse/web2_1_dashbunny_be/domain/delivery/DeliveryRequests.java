@@ -39,7 +39,7 @@ public class DeliveryRequests {
 
 	private Double distance; // 거리
 
-	private Long deliveryPrice;     // 배달 가격
+	private int deliveryPrice;     // 배달 가격
 
 	private LocalDateTime orderDate; // 주문 받은 날짜
 
@@ -51,6 +51,6 @@ public class DeliveryRequests {
 	@Column(nullable = false, length = 50)
 	private DeliveryRequestStatus status = DeliveryRequestStatus.REQUESTED; // 음식 상태
 
-	@Version
-	private Integer version; // 낙관적 락
+//	@Version
+//	private Integer version; // 낙관적 락
 }

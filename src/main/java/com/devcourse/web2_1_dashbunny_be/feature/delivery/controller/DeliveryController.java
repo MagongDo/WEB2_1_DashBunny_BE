@@ -1,6 +1,8 @@
 package com.devcourse.web2_1_dashbunny_be.feature.delivery.controller;
 
+import com.devcourse.web2_1_dashbunny_be.domain.delivery.DeliveryHistory;
 import com.devcourse.web2_1_dashbunny_be.domain.delivery.DeliveryRequests;
+import com.devcourse.web2_1_dashbunny_be.domain.delivery.role.DeliveryWorkerStatus;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.feature.delivery.dto.DeliveryRequestsDto;
 import com.devcourse.web2_1_dashbunny_be.feature.delivery.dto.DeliveryWorkerUpdateAddressRequestDto;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -26,9 +29,8 @@ public class DeliveryController {
 
 	private final UserService userService;
 	private final DeliveryService deliveryService;
-	private OrdersRepository ordersRepository;
-	private SseService sseService;
-	private UserRepository userRepository;
+	private final SseService sseService;
+
 
 	/**
 	 * 배달원의 주소를 업데이트하는 엔드포인트입니다.
@@ -66,7 +68,7 @@ public class DeliveryController {
 	 * @return 업데이트된 상태에 따른 HTTP 응답
 	 */
 	@PostMapping("/worker/status/toggle")
-	public ResponseEntity<?> toggleDeliveryStatus(@RequestHeader("Authorization") String authorizationHeader) {
+	public ResponseEntity<DeliveryWorkerStatus> toggleDeliveryStatus(@RequestHeader("Authorization") String authorizationHeader) {
 		// Authorization 헤더에서 현재 사용자 정보를 추출
 		User currentUser = userService.getCurrentUser(authorizationHeader);
 		log.info("toggleWorkerStatus - Current userId: {}", currentUser.getUserId());
@@ -74,7 +76,7 @@ public class DeliveryController {
 		currentUser = deliveryService.toggleDeliveryStatus(currentUser);
 
 		log.info("배달 상태 업데이트: {}", currentUser.getDeliveryStatus());
-		return ResponseEntity.ok("배달 가능 상태가 " + currentUser.getDeliveryStatus() + "으로 변경되었습니다.");
+		return ResponseEntity.ok(currentUser.getDeliveryStatus());
 	}
 
 	/**
@@ -90,12 +92,31 @@ public class DeliveryController {
 		// 조건에 맞는 배달원 찾기
 		List<User> eligibleDeliveryWorkers = deliveryService.deliveryWorkerWithInARadius(savedDeliveryRequests);
 		log.info("deliveryRequest - eligibleDeliveryWorkers : {}", eligibleDeliveryWorkers);
-//		// 배달원에게 SSE로 알림 전송
+		// 배달원에게 SSE로 알림 전송
 		for (User deliveryWorker : eligibleDeliveryWorkers) {
-			sseService.notifyDeliveryAssignment(deliveryWorker.getUserId(), savedDeliveryRequests);
+			log.info("for문 안 - deliveryWorker.getUserId : {}", deliveryWorker.getUserId());
+			sseService.notifyDeliveryAssignment
+							(deliveryWorker.getUserId(), deliveryService.convertToDeliveryOrderNotificationDto(savedDeliveryRequests));
 		}
 
 		return savedDeliveryRequests;
+	}
+
+	/**
+	 * 배달 요청을 수락하는 엔드포인트
+	 * @param authorizationHeader 클라이언트의 Authorization(JWT) 정보
+	 * @param deliveryRequests 배달 요청 정보를 포함하는 객체
+	 * @return 저장된 배달 히스토리 정보
+	 */
+	@PostMapping("/accept-delivery")
+	public ResponseEntity<?> acceptDeliveryRequest(@RequestHeader("Authorization") String authorizationHeader,
+																								 @RequestBody DeliveryRequests deliveryRequests){
+		log.info("acceptDeliveryRequest - deliveryRequests : {}", deliveryRequests);
+		// DeliveryRequests 에서 가져온 후 DeliveryHistory 저장
+		DeliveryHistory saveDeliveryHistory =
+						deliveryService.acceptDeliveryRequest(authorizationHeader, deliveryRequests);
+		log.info("saveDeliveryHistory : {}", saveDeliveryHistory);
+		return ResponseEntity.ok(saveDeliveryHistory);
 	}
 
 }
