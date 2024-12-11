@@ -31,10 +31,13 @@ public class UserOrderInfoRequestDto {
                                                StoreManagementRepository storeManagementRepository,
                                                int totalQuantity,
                                                String menuName) {
-        StoreManagement storeManagement = storeManagementRepository.findByStoreId(orders.getStoreId());
+    StoreManagement storeManagement = storeManagementRepository.findByStoreId(orders.getStore().getStoreId());
+        if (storeManagement == null) {
+            throw new IllegalArgumentException("storeId에 대한 스토어를 찾을 수 없습니다: " + orders.getStore().getStoreId());
+        }
 
-        return UserOrderInfoRequestDto.builder()
-                .storeId(orders.getStoreId())
+    return UserOrderInfoRequestDto.builder()
+                .storeId(orders.getStore().getStoreId())
                 .userPhone(orders.getUser().getPhone())
                 .storeName(storeManagement.getStoreName())
                 .storeLogo(storeManagement.getStoreLogo())

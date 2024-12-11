@@ -1,4 +1,4 @@
-package com.devcourse.web2_1_dashbunny_be.feature.user.Util;
+package com.devcourse.web2_1_dashbunny_be.feature.user.util;
 
 import jakarta.annotation.PostConstruct;
 import net.nurigo.sdk.NurigoApp;

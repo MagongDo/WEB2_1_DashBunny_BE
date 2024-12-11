@@ -19,11 +19,7 @@ public class FileUploadController {
   private final StoreManagementService storeManagementService;
   private final MenuService menuService;
 
-  /**
-  * 파일 업로드 API
-  * @param menuImageFile 업로드할 파일
-  * @return 업로드된 파일의 URL.
-  */
+/*
   @PatchMapping("/{menuId}")
   public ResponseEntity<String> uploadMenuImageFile(@RequestParam("menuImageFile") MultipartFile menuImageFile,
                                            @PathVariable("menuId") Long menuId) {
@@ -37,6 +33,7 @@ public class FileUploadController {
         throw new RuntimeException(e);
     }
   }
+*/
 
   @PatchMapping("storeLogoImage/{storeId}")
   public ResponseEntity<String> uploadLogoImageFile(@RequestParam("storeLogoFile") MultipartFile logoImageFile,

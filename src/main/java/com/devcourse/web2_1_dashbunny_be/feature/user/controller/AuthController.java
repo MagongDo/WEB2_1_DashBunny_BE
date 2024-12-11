@@ -41,12 +41,14 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> authenticateUser(@RequestBody LoginRequestDto loginRequest) {
+        log.info("loginRequest : {}", loginRequest.toString());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getPhone(),
                         loginRequest.getPassword()
                 )
         );
+
 			  log.info("getPrincipal : {}", authentication.getPrincipal());
         // 인증 성공 시 사용자 정보를 UserDetails로 변환
         User user = (User) authentication.getPrincipal();

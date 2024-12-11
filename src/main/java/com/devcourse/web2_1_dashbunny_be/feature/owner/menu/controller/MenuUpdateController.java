@@ -31,11 +31,12 @@ public class MenuUpdateController {
   /**
    *메뉴 수정 요청 api.
    */
-  @PatchMapping("/update-menu/{menuId}")
+  @PatchMapping("/update-menu/{storeId}/{menuId}")
   public ResponseEntity<String> updateMenu(
           @PathVariable("menuId") Long menuId,
+          @PathVariable("storeId") String storeId,
           @RequestBody UpdateMenuRequestDto updateMenuRequestDto) {
-    menuService.updateAll(menuId, updateMenuRequestDto);
+    menuService.updateAll(menuId, updateMenuRequestDto, storeId);
     return ResponseEntity.ok("메뉴 정보가 성공적으로 업데이트되었습니다.");
   }
 }

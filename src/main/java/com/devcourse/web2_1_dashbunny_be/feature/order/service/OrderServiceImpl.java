@@ -6,13 +6,13 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.OrderItem;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.domain.user.role.OrderStatus;
+import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrderDetailDto;
+import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrderListDto;
+import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrdersListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.*;
-import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.user.UserOrderInfoRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.common.Validator;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.order.repository.OrdersRepository;
-import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
-import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -20,7 +20,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,9 +35,8 @@ public class OrderServiceImpl implements OrderService {
   private final OrdersRepository ordersRepository;
   private final MenuRepository menuRepository;
   private final SimpMessagingTemplate messageTemplate;
+  private final MenuCacheService menuCacheService;
   private static final String ERROR_TOPIC = "/topic/order/error";
-  private final UserRepository userRepository;
-  private final StoreManagementRepository storeManagementRepository;
 
   /**
    * 사용자의 주문 요청을 처리합니다.
@@ -50,52 +48,49 @@ public class OrderServiceImpl implements OrderService {
   public CompletableFuture<Orders> creatOrder(OrderInfoRequestDto orderInfoRequestDto) {
     return CompletableFuture.supplyAsync(() -> {
       User user = validator.validateUserId(orderInfoRequestDto.getUserPhone());
-      Orders orders = orderInfoRequestDto.toEntity(orderInfoRequestDto.getOrderItems(), menuRepository, user);
+      StoreManagement store = validator.validateStoreId(orderInfoRequestDto.getStoreId());
+      Orders orders = orderInfoRequestDto.toEntity(orderInfoRequestDto.getOrderItems(), menuRepository, user, store);
+
 
       //재고 등록이 된 메뉴 리스트
-      List<OrderItem> stockItems = filterStockItems(orders.getOrderItems(), true);
-      //재고등록이 안된 메뉴 리스트
-      List<OrderItem> nonStockItems = filterStockItems(orders.getOrderItems(), false);
-
-      Map<Long, MenuManagement> nonStockItemsMenuCache = getMenuCache(nonStockItems);
+      List<OrderItem> stockItems = filterStockItems(orders.getOrderItems(),true);
       Map<Long, MenuManagement> stockItemsMenuCache = getMenuCache(stockItems);
+      List<OrderItem> nonStockItems = filterStockItems(orders.getOrderItems(),false);
 
-      CompletableFuture<Void> stockProcessing = processStockItems(stockItems, stockItemsMenuCache);
-      CompletableFuture<Void> nonStockProcessing = processNonStockItems(nonStockItems, nonStockItemsMenuCache);
+      processStockItems(stockItems, stockItemsMenuCache,nonStockItems);
 
-      CompletableFuture.allOf(stockProcessing, nonStockProcessing).join();
+      orders.setTotalMenuCount(stockItems.size() + nonStockItems.size());
       // 주문 저장
       ordersRepository.save(orders);
       // 메시지 알림
       StoreOrderAlarmResponseDto responseDto = StoreOrderAlarmResponseDto.fromEntity(orders);
+      // 메시지 페이로드 구성
+      Map<String, Object> payload = new HashMap<>();
+      payload.put("type", "ORDER_RECEIVED"); // 이벤트 타입
+      payload.put("message", "새로운 주문이 접수되었습니다.");
+      payload.put("data", responseDto); // DTO를 데이터에 포함
+
       String orderTopic = String.format("/topic/storeOrder/" + orders.getOrderId());
       messageTemplate.convertAndSend(orderTopic, responseDto);
-      log.info("사장님 알람 전송" + responseDto);
+      log.info("사장님 알람 전송" + payload);
 
       return orders;
     });
   }
 
-
-  private CompletableFuture<Void> processNonStockItems(List<OrderItem> nonStockItems,
-                                                 Map<Long, MenuManagement> nonStockItemsMenuCache) {
-    return CompletableFuture.runAsync(() -> {
-      log.info("재고 관리가 필요 없는 메뉴 처리: {}", nonStockItems);
-    });
-  }
-
-  private CompletableFuture<Void> processStockItems(List<OrderItem> stockItems,
-                                                 Map<Long, MenuManagement> stockItemsMenuCache) {
-    return CompletableFuture.runAsync(() -> {
+  private void processStockItems(List<OrderItem> stockItems,
+                                 Map<Long, MenuManagement> stockItemsMenuCache,
+                                 List<OrderItem> nonStockItems) {
       try {
-        log.info("재고 처리 중");
-        soldOutCheck(stockItems, stockItemsMenuCache);
-        updateMenuStock(stockItems, stockItemsMenuCache, 1);
+        if(!stockItems.isEmpty()) {
+          log.info("재고 처리 중");
+          soldOutCheck(stockItems, stockItemsMenuCache);
+          updateMenuStock(stockItems, stockItemsMenuCache, 1);
+        }
       } catch (Exception e) {
         log.error("재고 처리 중 예외 발생", e);
-        throw new RuntimeException(e); // 예외를 던져 상위 호출자에게 알림
+        throw new RuntimeException(e);
       }
-    });
   }
 
 
@@ -112,17 +107,33 @@ public class OrderServiceImpl implements OrderService {
   */
   public Map<Long, MenuManagement> getMenuCache(List<OrderItem> orderItems) {
     Map<Long, MenuManagement> menuCache = new HashMap<>();
-    for (OrderItem orderItem : orderItems) {
-      Long key = orderItem.getMenu().getMenuId();
-      try {
-        MenuManagement menuManagement = validator.validateMenuId(key);
-        menuCache.put(key, menuManagement);
-      } catch (Exception e) {
-        log.error("키 {}에 대한 메뉴 검증 중 오류 발생", key, e);
+    log.info(orderItems.toString());
+    String storeKey = orderItems.get(0).getStoreId();
+    List<Long> menuIds = orderItems.stream()
+            .map(orderItem -> orderItem.getMenu().getMenuId())
+            .toList();
+
+    //레디스 캐시에 담아져있는 메뉴 가져와서 map 에 담기 없는 메뉴면 디비에서 가져오기
+    try{
+      for (Long menuId : menuIds) {
+        MenuManagement menu = menuCacheService.getMenuFromStore(storeKey, menuId);
+
+        if (menu == null) {
+          menu = validator.validateMenuId(menuId);
+        }
+
+        if (menu != null) {
+          menuCache.put(menu.getMenuId(), menu);
+        }
       }
+    } catch (Exception e) {
+
+      e.printStackTrace();
     }
+
     return menuCache;
   }
+
 
   /**
    * 재고 확인 메서드.
@@ -161,6 +172,7 @@ public class OrderServiceImpl implements OrderService {
       log.info("재고 업데이트 진행"+menu.getMenuStock());
   menuRepository.save(menu);
     });
+    //레디스 변경
   }
 
   @Async
@@ -181,7 +193,7 @@ public class OrderServiceImpl implements OrderService {
   @Override
   public CompletableFuture<DeclineOrdersResponseDto> declineOrder(OrderDeclineRequestDto declineRequestDto) {
     Orders orders = validator.validateOrderId(declineRequestDto.getOrderId());
-    //주문 취소의 경우 재고 돌려두기// 재고 등록 여부가 true인 사항에 한해서만
+    //주문 취소의 경우 재고 돌려두기// 재고 등록 여부가 true인 사항에 한해서만c
     List<OrderItem> stockItems = orders.getOrderItems().stream()
             .filter(orderItem -> orderItem.getMenu().isStockAvailable())
             .toList();
@@ -199,35 +211,22 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  public List<UserOrderInfoRequestDto> getUserOrderInfoList(String userId) {
-    // 사용자 조회
-    log.info(userId);
-    User user = userRepository.findByPhone(userId).orElseThrow(() ->
-            new IllegalArgumentException("해당 사용자를 찾을 수 없습니다.")
-    );
-    log.info("why not?");
-    // 사용자의 주문 조회
-    List<Orders> ordersList = ordersRepository.findByUser(user);
-    log.info("please");
-    // Orders -> UserOrderInfoRequestDto 변환 및 정렬
-    List<UserOrderInfoRequestDto> userOrderInfoRequestDtos = ordersList.stream()
-            .map(order -> {
-              // 주문 아이템 정보 추출
-              int totalQuantity = order.getOrderItems().stream()
-                      .mapToInt(OrderItem::getQuantity) // OrderItem에서 수량 추출
-                      .sum();
+  public OrdersListResponseDto getOrdersList(String storeId) {
+    List<Orders> orders = ordersRepository.findAllByStore_StoreId(storeId);
+/*    List<OrderItemDto> orderItems = orders.stream().map(OrderItemDto::fromEntity).toList();
+    List<OrderDetailDto> orderDetailDto = OrderDetailDto.fromEntity(orders, orderItems);*/
 
-              String menuName = order.getOrderItems().stream()
-                      .map(orderItem -> orderItem.getMenu().getMenuName()) // OrderItem에서 메뉴 이름 추출
-                      .findFirst() // 첫 번째 메뉴 이름 가져오기
-                      .orElse("메뉴 이름 없음");
+    List<OrderDetailDto> orderDetailDto = orders.stream().map(order -> {
+      List<OrderItemDto> orderItems = order.getOrderItems().stream()
+              .map(OrderItemDto::fromEntity)
+              .toList();
+      return OrderDetailDto.fromEntity(order, orderItems);
+    }).toList();
 
-              // DTO 변환
-              return UserOrderInfoRequestDto.todo(order, storeManagementRepository, totalQuantity, menuName);
-            })
-            .sorted((dto1, dto2) -> dto2.getOrderDate().compareTo(dto1.getOrderDate())) // orderDate 기준 내림차순 정렬
-            .toList();
-    log.info(userOrderInfoRequestDtos.toString());
-    return userOrderInfoRequestDtos;
+    //스토어가 가진 모든 오더 정보
+    List<Orders> ordersList = validator.findByOrders(storeId);
+    List<OrderListDto> orderListDtos = ordersList.stream().map(OrderListDto::fromEntity).toList();
+
+    return new OrdersListResponseDto(orderDetailDto, orderListDtos);
   }
 }

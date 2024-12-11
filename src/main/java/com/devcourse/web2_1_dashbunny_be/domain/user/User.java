@@ -50,7 +50,7 @@ public class User implements UserDetails {
     @Column(length = 50)
     private String email;
 
-    @Column(nullable = false, length = 11)
+    @Column(nullable = false, length = 13)
     private String role;
 
     @Column(length = 255)
