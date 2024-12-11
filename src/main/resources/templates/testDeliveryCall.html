@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>배달 콜 화면</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+        .container {
+            width: 400px; /* 가로 400px 고정 */
+            margin: 0 auto; /* 화면 중앙 정렬 */
+            box-sizing: border-box;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        #waitingList {
+            height: 500px; /* 필요에 따라 높이 조정 */
+            border: 1px solid #ccc;
+            overflow: auto; /* 스크롤 가능하게 함 */
+            box-sizing: border-box;
+            background: #f9f9f9;
+        }
+        .item {
+            margin: 10px;
+            border: 1px solid #ddd;
+            background: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            /*box-sizing: border-box; !**!*/
+            /*display: flex; !* Flex 사용 *!*/
+            /*justify-content: space-between; !* 양 옆으로 배치 *!*/
+            /*align-items: center; !* 세로 중앙 정렬 *!*/
+        }
+        .item-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .item-delivery-address{
+            font-size: 12px;
+            color: #FF6200;
+            margin-bottom: 5px;
+        }
+        .item-detail {
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        .status-toggle-button {
+            width: 400px;
+            padding: 10px 20px;
+            background-color: #ffe600;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        #startSseButton {
+            width: 400px;
+            height: 50px;
+            background-color: #FF6200;
+            border: 1px solid #ccc;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .status-toggle-button:hover {
+            background-color: #ffeb3b;
+        }
+        .hidden {
+            display: none;
+        }
+        /* 모달 스타일 */
+        .modal {
+            display: none; /* 처음에는 보이지 않음 */
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* 필수: 모달 내용이 길어질 경우 스크롤 */
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            width: 300px;
+            border-radius: 5px;
+        }
+        .modal-message {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .modal-button-container {
+            text-align: right;
+        }
+        .modal-button {
+            margin-left: 10px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+        }
+        .modal-confirm {
+            background-color: #28a745;
+            color: #fff;
+        }
+        .modal-cancel {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        /* 배차하기 버튼 스타일 */
+        .assign-button {
+            display: block;       /* 버튼을 블록 요소로 변경 */
+            width: 100%;
+            background-color: #FF6200;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .assign-button:hover {
+            background-color: #ff7f2a;
+        }
+        /* 토스트 메시지 스타일 */
+        .toast-message {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 3px;
+            font-size: 14px;
+            z-index: 10000;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="section-title">대기</div>
+    <div id="waitingList"> <!-- 주문 리스트가 여기 쌓임 --> </div>
+    <div class="button-container">
+        <button id="startSseButton">배달 시작</button>
+        <button class="status-toggle-button hidden" onclick="workerStatusToggle()">콜 닫힘</button>
+    </div>
+</div>
+
+<!-- 모달 영역 -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-message">배차하시겠습니까?</div>
+        <div class="modal-button-container">
+            <button class="modal-button modal-cancel" onclick="closeModal()">취소</button>
+            <button class="modal-button modal-confirm" onclick="confirmAssignment()">확인</button>
+        </div>
+    </div>
+</div>
+
+<!-- 토스트 메시지 영역 -->
+<div id="toast" class="toast-message">콜 수락</div>
+
+<script>
+    // SSE 연결
+    // 14번 유저
+    const jwtToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTA1MTIzNTEyMyIsInJvbGUiOiJST0xFX0RFTElWRVJZIiwiaWF0IjoxNzMzNzM5MTc2LCJleHAiOjE3MzQzNDM5NzZ9.pOFxRwkxyK9kn5-BeuInt2y-ZgZyK8ILgdJZKaUMUqI";
+
+    let deliveryRequests = null; // 현재 어떤 배차건을 할지 저장
+
+    document.getElementById('startSseButton').addEventListener('click', function() {
+        this.style.display = 'none';
+        const statusToggleButton = document.querySelector('.status-toggle-button');
+        statusToggleButton.classList.remove('hidden');
+        // 헤더에 JWT 토큰을 포함하여 SSE URL 요청
+        fetch('/api/delivery/worker/sse/start', {
+            method: 'GET',
+            headers: {
+                'Authorization': jwtToken // 실제 JWT 토큰 값
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('SSE URL 요청 실패');
+                }
+                return response.text(); // 서버에서 반환된 SSE URL
+            })
+            .then(sseUrl => {
+                // 반환된 SSE URL로 EventSource 연결
+                const eventSource = new EventSource(sseUrl);
+
+                eventSource.addEventListener('assignment', function(event) {
+                    console.log("배차 이벤트 raw data:", event.data);
+                    try {
+                        const data = JSON.parse(event.data);
+                        console.log("배차 이벤트:", data);
+
+                        // 여기서 data 내용에 따라 표시할 항목을 자유롭게 수정
+                        // 예: data.deliveryAddress, data.storeName, data.distance 등
+                        const waitingList = document.getElementById('waitingList');
+                        const item = document.createElement('div');
+                        item.className = 'item';
+                        item.setAttribute('data-request-id', data.deliveryRequestId); // 고유 아이디 설정
+
+                        const title = document.createElement('div');
+                        title.className = 'item-title';
+                        title.textContent = (data.storeName || "가게명 ") + " | [ " +  (data.deliveryPrice)+"원 ]";
+
+                        const storeAddress = document.createElement('div');
+                        storeAddress.className = 'item-detail';
+                        storeAddress.textContent = "가게 주소: " + (data.storeAddress || "주소 정보 없음");
+
+                        const deliveryAddress = document.createElement('div');
+                        deliveryAddress.className = 'item-delivery-address';
+                        deliveryAddress.textContent = "배달 주소: " + (data.deliveryAddress || "주소 정보 없음") + " | " + (data.distance ? parseFloat(data.distance).toFixed(2) + "km" : "정보 없음");
+
+                        const deliveryWorkerNote = document.createElement('div');
+                        deliveryWorkerNote.className = 'item-detail';
+                        deliveryWorkerNote.textContent = (data.preparationTime || "정보 없음") + "분 |" + "| 메모: " + (data.deliveryWorkerNote || "정보 없음");
+
+                        const assignButton = document.createElement('button');
+                        assignButton.className = 'assign-button';
+                        assignButton.textContent = '배차하기';
+
+                        // 버튼 클릭 시 모달 표시
+                        assignButton.addEventListener('click', function() {
+                            deliveryRequests = data; // 현재 배차할 데이터를 저장
+                            openModal();
+                        });
+
+                        item.appendChild(title);
+                        item.appendChild(storeAddress);
+                        item.appendChild(deliveryAddress);
+                        item.appendChild(deliveryWorkerNote);
+                        item.appendChild(assignButton);
+                        waitingList.appendChild(item);
+                        waitingList.scrollTop = waitingList.scrollHeight;
+                    } catch (e) {
+                        console.error("JSON 파싱 에러:", e);
+                    }
+                });
+
+                eventSource.onopen = function() {
+                    console.log("SSE 연결이 성공적으로 열렸습니다.");
+                };
+                eventSource.onclose = function() {
+                    console.log("SSE 연결이 닫혔습니다.");
+                };
+                eventSource.onerror = function(err) {
+                    console.error("SSE 에러:", err);
+                };
+
+            })
+            .catch(err => {
+                console.error("SSE 연결 실패:", err);
+            });
+    });
+
+    function workerStatusToggle() {
+        const button = document.querySelector('.status-toggle-button');
+
+        // 버튼 비활성화 (3초 동안)
+        button.disabled = true;
+
+        fetch('/api/delivery/worker/status/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': jwtToken
+            }
+        })
+            .then(response => response.json())
+            .then(status  => {
+                console.log("상태 토글 응답:", status );
+                if (status === ("READY")) {
+                    button.textContent = "콜 대기중...";
+                } else if (status === ("NOT_READY")) {
+                    button.textContent = "콜 닫힘";
+                } else {
+                    button.textContent = "상태 알 수 없음";
+                }
+            })
+            .catch(error => {
+                console.error("토글 요청 실패:", error);
+            })
+            .finally(() => {
+                // 3초 후 버튼 다시 활성화
+                setTimeout(() => {
+                    button.disabled = false;
+                }, 2000);
+            });
+    }
+
+    // 모달 열기
+    function openModal() {
+        document.getElementById('modal').style.display = 'block';
+    }
+
+    // 모달 닫기
+    function closeModal() {
+        document.getElementById('modal').style.display = 'none';
+    }
+
+    // 배차 확인 버튼 클릭
+    function confirmAssignment() {
+        // deliveryRequests 를 이용해 배차 처리 로직 수행
+        console.log("배차할 데이터:", deliveryRequests );
+        // 여기에 배차 API 호출 등 로직 추가
+        // 예: fetch('/api/delivery/assign', { ... })
+        fetch('/api/delivery/accept-delivery', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': jwtToken
+            },
+            body: JSON.stringify(deliveryRequests) // 객체를 JSON 문자열로 변환
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP error ' + response.status);
+                }
+                return response.json(); // 응답 데이터를 JSON으로 파싱
+            })
+            .then(data => {
+                console.log('요청 성공:', data); // 성공적으로 응답 받은 데이터
+                console.log("deliveryRequestId : ", deliveryRequests.deliveryRequestId );
+                // 여기서 deliveryRequestId로 waitingList에서 해당 item 제거
+                removeItemFromWaitingList(deliveryRequests.deliveryRequestId);
+                closeModal();
+
+                // 토스트 메시지 표시
+                showToastMessage("콜 수락");
+            })
+            .catch(error => {
+                console.error('요청 실패:', error); // 오류 처리
+            });
+        // 모달 닫기
+        closeModal();
+    }
+    function removeItemFromWaitingList(requestId) {
+        const waitingList = document.getElementById('waitingList');
+        const itemToRemove = waitingList.querySelector(`.item[data-request-id="${requestId}"]`);
+        if (itemToRemove) {
+            waitingList.removeChild(itemToRemove);
+        }
+    }
+
+    // 토스트 메시지 표시 함수
+    function showToastMessage(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.style.display = 'block';
+
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 1000); // 1초 후에 사라짐
+    }
+
+</script>
+</body>
+</html>

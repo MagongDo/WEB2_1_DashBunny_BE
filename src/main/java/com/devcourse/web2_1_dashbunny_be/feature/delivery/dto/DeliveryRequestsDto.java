@@ -10,11 +10,15 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class DeliveryRequestsDto {
+
 	private Long deliveryRequestId;
 	private String storeId;
-	private String storeName;
+	private Long orderId;           // 주문id
 	private String deliveryAddress;
 	private String deliveryDetailsAddress;
-	private String driverRequest;
-	private LocalDateTime createdDate; // 배달 요청 일시
+	private int preparationTime; // 요리 소요시간
+	private String deliveryWorkerNote; // 라이더에게 전달할 메모
+	private LocalDateTime orderDate; // 주문 받은 날짜
+	private int deliveryPrice;     // 배달 가격
+
 }
