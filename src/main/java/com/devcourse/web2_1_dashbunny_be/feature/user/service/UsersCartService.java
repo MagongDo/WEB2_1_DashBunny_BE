@@ -286,18 +286,25 @@ public class UsersCartService {
             .map(cartItem -> cartItem.getMenuManagement().getMenuName())
             .toList();
 
-    String idempotencyKey = UUID.randomUUID().toString();
-    idempotencyKeyService.saveIdempotencyKey(idempotencyKey, menuNames, 900);
-
     String orderId = UUID.randomUUID().toString();
+
+
+    String idempotencyKey = idempotencyKeyService.getOrCreateIdempotencyKey(userId, menuNames);
+
+    // 결제 요청 생성
     PaymentRequestDto paymentRequest = PaymentRequestDto.builder()
-            .orderId(orderId)
+            .orderId(UUID.randomUUID().toString())
             .method("card")
             .orderName(orderName)
             .amount(totalAmount)
             .failUrl(tossPaymentConfig.getFailUrl())
-            .successUrl(tossPaymentConfig.getSuccessUrl()).build();
+            .successUrl(tossPaymentConfig.getSuccessUrl())
+            .build();
+
+    // 결제 요청 수행
     PaymentResponseDto paymentResponse = paymentService.requestPayment(paymentRequest, idempotencyKey);
+
+
 
     // 최종 응답 DTO 생성
     cartDto.setStoreRequirement(storeRequirement);
@@ -321,20 +328,6 @@ public class UsersCartService {
     cart.setDeliveryRequirement(deliveryRequirement);
     cartRepository.save(cart); // 장바구니 업데이트
 
-/*    OrderInfoRequestDto orders = OrderInfoRequestDto.builder()
-            .storeId(cart.getStoreId())
-            .paymentId(orderId)
-            .userPhone(cart.getUser().getPhone())
-            .orderItems(orderItemDtos)
-            .orderDate(LocalDateTime.now())
-            .deliveryPrice(cartDto.getDeliveryFee())
-            .deliveryAddress(user.getAddress() + user.getDetailAddress())
-            .storeNote(storeRequirement)
-            .riderNote(deliveryRequirement)
-            .totalAmount(totalAmount)
-            .build();
-
-    orderService.creatOrder(orders);*/
 
     return UsersCartResponseDto.builder()
             .cartId(cart.getCartId())

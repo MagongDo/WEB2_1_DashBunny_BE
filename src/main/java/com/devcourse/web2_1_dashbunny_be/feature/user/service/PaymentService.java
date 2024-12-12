@@ -16,12 +16,13 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.repository.PaymentReposito
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UsersCartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -35,7 +36,6 @@ public class PaymentService {
   private final String ERROR_TOPIC = "/topic/order/error";
   private final TossPaymentConfig tossPaymentsConfig;
   private final PaymentRepository paymentRepository;
-  private final RestTemplate restTemplate;
   private final RestClient restClient;
   private final UsersCartRepository usersCartRepository;
   private final OrdersRepository ordersRepository;
@@ -76,7 +76,6 @@ public class PaymentService {
             .body(requestDto)
             .retrieve()
             .body(PaymentResponseDto.class);
-
 
     payment.setPaymentKey(response.getPaymentKey());
     paymentRepository.save(payment);
