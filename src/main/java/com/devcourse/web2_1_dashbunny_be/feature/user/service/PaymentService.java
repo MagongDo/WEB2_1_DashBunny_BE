@@ -20,6 +20,7 @@ import org.springframework.http.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
@@ -35,6 +36,7 @@ public class PaymentService {
   private final TossPaymentConfig tossPaymentsConfig;
   private final PaymentRepository paymentRepository;
   private final RestTemplate restTemplate;
+  private final RestClient restClient;
   private final UsersCartRepository usersCartRepository;
   private final OrdersRepository ordersRepository;
   private final OrderService orderService;
@@ -62,15 +64,23 @@ public class PaymentService {
     headers.add("Content-Type", "application/json");
     headers.add("Idempotency-Key", idempotencyKey);
 
-    HttpEntity<PaymentRequestDto> entity = new HttpEntity<>(requestDto, headers);
+  /*  HttpEntity<PaymentRequestDto> entity = new HttpEntity<>(requestDto, headers);
     ResponseEntity<PaymentResponseDto> response = restTemplate.exchange(
             url, HttpMethod.POST, entity, PaymentResponseDto.class
     );
-
     PaymentResponseDto responseBody = response.getBody();
-    payment.setPaymentKey(responseBody.getPaymentKey());
+    */
+    PaymentResponseDto response = restClient.post()
+            .uri(url)
+            .headers(httpHeaders -> httpHeaders.addAll(headers))
+            .body(requestDto)
+            .retrieve()
+            .body(PaymentResponseDto.class);
+
+
+    payment.setPaymentKey(response.getPaymentKey());
     paymentRepository.save(payment);
-    return responseBody;
+    return response;
 
   }
 
@@ -85,16 +95,25 @@ public class PaymentService {
     headers.add("Authorization", "Basic " + encodeToBase64(tossPaymentsConfig.getSecretKey() + ":"));
     headers.add("Content-Type", "application/json");
 
-    // HTTP 요청 엔티티 생성
-    HttpEntity<PaymentApproveRequestDto> entity = new HttpEntity<>(approveRequest, headers);
+
+/*    // HTTP 요청 엔티티 생성
+    HttpEntity<PaymentApproveRequestDto> entity = new HttpEntity<>(approveRequest, headers);*/
     try {
       // REST API 호출
-      ResponseEntity<PaymentApproveResponseDto> response = restTemplate.exchange(
+     /* ResponseEntity<PaymentApproveResponseDto> response = restTemplate.exchange(
               url, HttpMethod.POST, entity, PaymentApproveResponseDto.class
       );
-
       // 응답 본문 처리
       PaymentApproveResponseDto responseBody = response.getBody();
+      */
+      PaymentApproveResponseDto responseBody = restClient.post()
+              .uri(url)
+              .headers(httpHeaders -> httpHeaders.addAll(headers))
+              .body(approveRequest)
+              .retrieve()
+              .body(PaymentApproveResponseDto.class);
+
+
 
       if (responseBody == null) {
         throw new RuntimeException("PaymentApproveResponseDto is null");
