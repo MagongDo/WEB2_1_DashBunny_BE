@@ -35,7 +35,7 @@ public class FileUploadController {
   }
 */
 
-  @PatchMapping("storeLogoImage/{storeId}")
+  @PatchMapping("/storeLogoImage/{storeId}")
   public ResponseEntity<String> uploadLogoImageFile(@RequestParam("storeLogoFile") MultipartFile logoImageFile,
                                                     @PathVariable("storeId") String storeId) {
     try {
@@ -49,7 +49,7 @@ public class FileUploadController {
     }
   }
 
-  @PatchMapping("storeBannerImage/{storeId}")
+  @PatchMapping("/storeBannerImage/{storeId}")
   public ResponseEntity<String> uploadBannerImageFile(@RequestParam("storeBannerFile") MultipartFile bannerImageFile,
                                                     @PathVariable("storeId") String storeId) {
     try {
@@ -62,6 +62,4 @@ public class FileUploadController {
       throw new RuntimeException(e);
     }
   }
-
-
 }

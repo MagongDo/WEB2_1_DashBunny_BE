@@ -35,6 +35,7 @@ public class OperationInfoController {
     log.info("Get operation info for store {}", storeId);
     OperationInfoListResponseDto operationInfo = storeService.findOperationInfo(storeId);
     return ResponseEntity.ok(operationInfo);
+    // 운영 정보 시작 시간 정지 시가 ㄴ
   }
 
   /**

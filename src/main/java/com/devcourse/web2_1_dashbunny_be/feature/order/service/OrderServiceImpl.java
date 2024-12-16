@@ -6,13 +6,11 @@ import com.devcourse.web2_1_dashbunny_be.domain.user.OrderItem;
 import com.devcourse.web2_1_dashbunny_be.domain.user.Orders;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 import com.devcourse.web2_1_dashbunny_be.domain.user.role.OrderStatus;
-import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrderDetailDto;
-import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrderListDto;
-import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrdersListResponseDto;
 import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.*;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.common.Validator;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.order.repository.OrdersRepository;
+import com.order.generated.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -211,22 +209,55 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  public OrdersListResponseDto getOrdersList(String storeId) {
+  public ordersListResponseProtobuf.OrdersListResponse getOrdersList(String storeId) {
+    // 1. Store ID로 모든 Orders 가져오기
     List<Orders> orders = ordersRepository.findAllByStore_StoreId(storeId);
-/*    List<OrderItemDto> orderItems = orders.stream().map(OrderItemDto::fromEntity).toList();
-    List<OrderDetailDto> orderDetailDto = OrderDetailDto.fromEntity(orders, orderItems);*/
 
-    List<OrderDetailDto> orderDetailDto = orders.stream().map(order -> {
-      List<OrderItemDto> orderItems = order.getOrderItems().stream()
-              .map(OrderItemDto::fromEntity)
-              .toList();
-      return OrderDetailDto.fromEntity(order, orderItems);
-    }).toList();
+    // 2. Orders → OrderDetail Protobuf 메시지로 변환
+    List<OrderDetailProtobuf.OrderDetail> orderDetails = orders.stream()
+            .map(order -> {
+              // OrderItems를 Protobuf로 변환
+              List<OrderItemProtobuf.OrderItem> orderItems = order.getOrderItems().stream()
+                      .map(orderItem -> OrderItemProtobuf.OrderItem.newBuilder()
+                              .setMenuId(orderItem.getMenu().getMenuId())
+                              .setMenuName(orderItem.getMenu().getMenuName())
+                              .setStockAvailableAtOrder(orderItem.isStockAvailableAtOrder())
+                              .setQuantity(orderItem.getQuantity())
+                              .setPrice(orderItem.getTotalPrice())
+                              .build())
+                      .toList();
+              //.newBuilder() → 빌더 객체 반환 (중간 단계).
 
-    //스토어가 가진 모든 오더 정보
+              // Order → OrderDetail Protobuf로 변환
+              return OrderDetailProtobuf.OrderDetail.newBuilder()
+                      .setOrderId(order.getOrderId())
+                      .setTotalPrice(order.getTotalPrice())
+                      .addAllOrderItems(orderItems)
+                      .setOrderStatus(OrderStatusProtobuf.OrderStatus.valueOf(order.getOrderStatus().name())) // Enum 매핑
+                      .setStoreNote(order.getStoreNote())
+                      .setPreparationTime(order.getPreparationTime())
+                      .build();
+            })
+            .toList();
+
+    // 3. 스토어가 가진 모든 Orders 정보를 OrderList Protobuf로 변환
     List<Orders> ordersList = validator.findByOrders(storeId);
-    List<OrderListDto> orderListDtos = ordersList.stream().map(OrderListDto::fromEntity).toList();
+    List<OrderListProtobuf.OrderList> orderLists = ordersList.stream()
+            .map(order -> OrderListProtobuf.OrderList.newBuilder()
+                    .addAllMenuName(order.getOrderItems().stream()
+                            .map(orderItem -> orderItem.getMenu().getMenuName())
+                            .toList())
+                    .setPreparationTime(order.getPreparationTime())
+                    .setTotalPrice(order.getTotalPrice())
+                    .build())
+            .toList();
 
-    return new OrdersListResponseDto(orderDetailDto, orderListDtos);
+    // 4. OrdersListResponse Protobuf 반환
+    return ordersListResponseProtobuf.OrdersListResponse.newBuilder()
+            .addAllOrderDetail(orderDetails)
+            .addAllOrderList(orderLists)
+            .build();
   }
+
+
 }

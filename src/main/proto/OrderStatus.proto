@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option java_package = "com.order.generated";
+option java_outer_classname = "OrderStatusProtobuf"; // 고유 클래스 이름 설정
+
+// 주문 상태를 정의하는 ENUM
+enum OrderStatus {
+    UNSPECIFIED = 0;
+    PENDING = 1;           // 주문 대기 중 (접수 대기)
+    IN_PROGRESS = 2;       // 조리 중
+    DECLINED = 3;          // 주문 거절
+    OUT_FOR_DELIVERY = 4;  // 배달 중
+    DELIVERED = 5;         // 배달 완료
+}

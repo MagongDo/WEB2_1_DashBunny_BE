@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option java_package = "com.order.generated";
+option java_outer_classname = "OrderListProtobuf"; // 고유 클래스 이름 설정
+// 주문 목록 메시지
+message OrderList {
+repeated string menuName = 1;      // 주문 메뉴 이름 리스트
+int32 preparationTime = 2;         // 준비 시간
+int64 totalPrice = 3;              // 총 금액
+}

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option java_package = "com.order.generated";
+
+import "OrderStatus.proto";
+import "OrderItem.proto";
+import "google/protobuf/timestamp.proto";
+option java_outer_classname = "OrderDetailProtobuf";
+// 개별 주문 상세 정보
+message OrderDetail {
+int64 orderId = 1;                // 주문 ID
+int64 totalPrice = 2;             // 총 가격
+google.protobuf.Timestamp orderDate = 3;  // 주문 시간
+OrderStatus orderStatus = 4;      // 주문 상태
+string storeNote = 5;             // 사장님 요청사항
+repeated OrderItem orderItems = 6; // 주문 아이템 리스트
+int32 preparationTime = 7;        // 준비 시간 (분 단위)
+}

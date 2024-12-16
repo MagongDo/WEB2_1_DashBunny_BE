@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option java_package = "com.order.generated";
+import "OrderDetail.proto";
+import "OrderList.proto";
+option java_outer_classname = "ordersListResponseProtobuf"; // 고유 클래스 이름 설정
+
+// 최종 응답 메시지
+message OrdersListResponse {
+repeated OrderDetail orderDetail = 1;  // 주문 상세 리스트
+repeated OrderList orderList = 2;      // 주문 목록 리스트
+}
