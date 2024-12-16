@@ -18,5 +18,5 @@ public interface OrderService {
     ordersListResponseProtobuf.OrdersListResponse getOrdersList(String storeId);
     List<UserOrderInfoRequestDto> getUserOrderInfoList(String userId);
     void increaseRating(OrderRatingResponseDto oders);
-    OrdersListResponseDto getOrdersList(String storeId);
+ /*   OrdersListResponseDto getOrdersList(String storeId);*/
 }
