@@ -31,7 +31,7 @@ public class UserStoreController {
 
   @PostMapping("/stores/checking")
   public ResponseEntity<Void> getUsersStoreChecking(@RequestParam String address,
-                                                    @RequestParam String detailAddress,
+                                                      @RequestParam String detailAddress,
                                                     @RequestHeader("Authorization") String authorizationHeader
                                                     ) {
     User currentUser = userService.getCurrentUser(authorizationHeader);

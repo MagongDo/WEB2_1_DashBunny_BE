@@ -16,8 +16,8 @@ public class UsersStoreListResponseDto {
   private String storeId;
   private String storeName;
   private String storeLogo;
-  private double rating;
-  private int reviewCount;
+  private Double rating;
+  private Double reviewCount;
   private Long deliveryTip;
   private String minDeliveryTime;
   private String maxDeliveryTime;

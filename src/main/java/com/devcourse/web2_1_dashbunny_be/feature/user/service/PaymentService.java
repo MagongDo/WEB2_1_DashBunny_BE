@@ -16,11 +16,13 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.repository.PaymentReposito
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UsersCartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -34,7 +36,7 @@ public class PaymentService {
   private final String ERROR_TOPIC = "/topic/order/error";
   private final TossPaymentConfig tossPaymentsConfig;
   private final PaymentRepository paymentRepository;
-  private final RestTemplate restTemplate;
+  private final RestClient restClient;
   private final UsersCartRepository usersCartRepository;
   private final OrdersRepository ordersRepository;
   private final OrderService orderService;
@@ -44,7 +46,7 @@ public class PaymentService {
    * 결제 준비 요청
    */
   @Transactional
-  public PaymentResponseDto requestPayment(PaymentRequestDto requestDto)  {
+  public PaymentResponseDto requestPayment(PaymentRequestDto requestDto, String idempotencyKey)  {
     // DB에 결제 요청 정보 저장 (status: READY)
     Payment payment = Payment.builder()
             .orderId(requestDto.getOrderId())
@@ -60,16 +62,24 @@ public class PaymentService {
     HttpHeaders headers = new HttpHeaders();
     headers.add("Authorization", "Basic " + encodeToBase64(tossPaymentsConfig.getSecretKey() + ":"));
     headers.add("Content-Type", "application/json");
+    headers.add("Idempotency-Key", idempotencyKey);
 
-    HttpEntity<PaymentRequestDto> entity = new HttpEntity<>(requestDto, headers);
+  /*  HttpEntity<PaymentRequestDto> entity = new HttpEntity<>(requestDto, headers);
     ResponseEntity<PaymentResponseDto> response = restTemplate.exchange(
             url, HttpMethod.POST, entity, PaymentResponseDto.class
     );
-
     PaymentResponseDto responseBody = response.getBody();
-    payment.setPaymentKey(responseBody.getPaymentKey());
+    */
+    PaymentResponseDto response = restClient.post()
+            .uri(url)
+            .headers(httpHeaders -> httpHeaders.addAll(headers))
+            .body(requestDto)
+            .retrieve()
+            .body(PaymentResponseDto.class);
+
+    payment.setPaymentKey(response.getPaymentKey());
     paymentRepository.save(payment);
-    return responseBody;
+    return response;
 
   }
 
@@ -84,16 +94,25 @@ public class PaymentService {
     headers.add("Authorization", "Basic " + encodeToBase64(tossPaymentsConfig.getSecretKey() + ":"));
     headers.add("Content-Type", "application/json");
 
-    // HTTP 요청 엔티티 생성
-    HttpEntity<PaymentApproveRequestDto> entity = new HttpEntity<>(approveRequest, headers);
+
+/*    // HTTP 요청 엔티티 생성
+    HttpEntity<PaymentApproveRequestDto> entity = new HttpEntity<>(approveRequest, headers);*/
     try {
       // REST API 호출
-      ResponseEntity<PaymentApproveResponseDto> response = restTemplate.exchange(
+     /* ResponseEntity<PaymentApproveResponseDto> response = restTemplate.exchange(
               url, HttpMethod.POST, entity, PaymentApproveResponseDto.class
       );
-
       // 응답 본문 처리
       PaymentApproveResponseDto responseBody = response.getBody();
+      */
+      PaymentApproveResponseDto responseBody = restClient.post()
+              .uri(url)
+              .headers(httpHeaders -> httpHeaders.addAll(headers))
+              .body(approveRequest)
+              .retrieve()
+              .body(PaymentApproveResponseDto.class);
+
+
 
       if (responseBody == null) {
         throw new RuntimeException("PaymentApproveResponseDto is null");
@@ -122,7 +141,8 @@ public class PaymentService {
                 .userPhone(cart.getUser().getPhone())
                 .orderItems(orderItemDtos)
                 .orderDate(LocalDateTime.now())
-                .deliveryAddress(cart.getUser().getAddress() + cart.getUser().getDetailAddress())
+                .deliveryAddress(cart.getUser().getAddress())
+                .detailDeliveryAddress(cart.getUser().getDetailAddress())
                 .storeNote(cart.getStoreRequirement())
                 .riderNote(cart.getDeliveryRequirement())
                 .totalAmount(cart.getTotalPrice())
@@ -146,6 +166,8 @@ public class PaymentService {
           cart.setOrderId(null);
           cart.setTotalPrice(null);
           cart.setStoreId(null);
+          cart.setDeliveryRequirement(null);
+          cart.setStoreRequirement(null);
           if (cart.getCartItems() != null) {
             cart.getCartItems().clear();
           }

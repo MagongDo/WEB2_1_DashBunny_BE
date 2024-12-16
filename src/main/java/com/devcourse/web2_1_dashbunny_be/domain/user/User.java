@@ -45,12 +45,12 @@ public class User implements UserDetails {
     private String name;
 
     @Column(length = 8)
-    private String birthday;
+    private String birthday; //주민번호 앞자리-성별
 
     @Column(length = 50)
     private String email;
 
-    @Column(nullable = false, length = 11)
+    @Column(nullable = false, length = 13)
     private String role;
 
     @Column(length = 255)

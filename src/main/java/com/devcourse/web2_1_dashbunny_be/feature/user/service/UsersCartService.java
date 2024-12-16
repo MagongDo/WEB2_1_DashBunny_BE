@@ -52,6 +52,7 @@ public class UsersCartService {
   private final UserCouponRepository userCouponRepository; //사용자 쿠폰 저장소
   private final TossPaymentConfig tossPaymentConfig;
   private final OrderService orderService;
+  private final IdempotencyKeyService idempotencyKeyService;
 
 
   /**
@@ -254,9 +255,7 @@ public class UsersCartService {
             .map(UsersCartItemDto::toUsersCartItemDto)
             .toList();
 
-/*    List<OrderItemDto> orderItemDtos = cart.getCartItems().stream()
-            .map(OrderItemDto::toDto)
-            .toList();*/
+
     // 총 금액 및 배달료 합산
     Long totalPrice = cartItemDtos.stream()
             .mapToLong(UsersCartItemDto::getTotalPrice)
@@ -281,16 +280,31 @@ public class UsersCartService {
             .map(cartItem -> cartItem.getMenuManagement().getMenuName()) // 메뉴 이름 추출
             .orElse("Default Order Name"); // 장바구니가 비어 있을 경우 기본값
 
+
+    // Redis에 멱등성 키 저장
+    List<String> menuNames = cart.getCartItems().stream()
+            .map(cartItem -> cartItem.getMenuManagement().getMenuName())
+            .toList();
+
     String orderId = UUID.randomUUID().toString();
 
+
+    String idempotencyKey = idempotencyKeyService.getOrCreateIdempotencyKey(userId, menuNames);
+
+    // 결제 요청 생성
     PaymentRequestDto paymentRequest = PaymentRequestDto.builder()
-            .orderId(orderId)
+            .orderId(UUID.randomUUID().toString())
             .method("card")
             .orderName(orderName)
             .amount(totalAmount)
             .failUrl(tossPaymentConfig.getFailUrl())
-            .successUrl(tossPaymentConfig.getSuccessUrl()).build();
-    PaymentResponseDto paymentResponse = paymentService.requestPayment(paymentRequest);
+            .successUrl(tossPaymentConfig.getSuccessUrl())
+            .build();
+
+    // 결제 요청 수행
+    PaymentResponseDto paymentResponse = paymentService.requestPayment(paymentRequest, idempotencyKey);
+
+
 
     // 최종 응답 DTO 생성
     cartDto.setStoreRequirement(storeRequirement);
@@ -314,20 +328,6 @@ public class UsersCartService {
     cart.setDeliveryRequirement(deliveryRequirement);
     cartRepository.save(cart); // 장바구니 업데이트
 
-/*    OrderInfoRequestDto orders = OrderInfoRequestDto.builder()
-            .storeId(cart.getStoreId())
-            .paymentId(orderId)
-            .userPhone(cart.getUser().getPhone())
-            .orderItems(orderItemDtos)
-            .orderDate(LocalDateTime.now())
-            .deliveryPrice(cartDto.getDeliveryFee())
-            .deliveryAddress(user.getAddress() + user.getDetailAddress())
-            .storeNote(storeRequirement)
-            .riderNote(deliveryRequirement)
-            .totalAmount(totalAmount)
-            .build();
-
-    orderService.creatOrder(orders);*/
 
     return UsersCartResponseDto.builder()
             .cartId(cart.getCartId())

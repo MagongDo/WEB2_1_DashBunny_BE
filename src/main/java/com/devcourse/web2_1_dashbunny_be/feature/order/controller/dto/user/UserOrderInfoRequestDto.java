@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @Getter
 public class UserOrderInfoRequestDto {
 
+    private Long orderId;
     private String storeId; // 가게 ID
     private String userPhone;
     private String storeName;
@@ -32,8 +33,12 @@ public class UserOrderInfoRequestDto {
                                                int totalQuantity,
                                                String menuName) {
     StoreManagement storeManagement = storeManagementRepository.findByStoreId(orders.getStore().getStoreId());
+        if (storeManagement == null) {
+            throw new IllegalArgumentException("storeId에 대한 스토어를 찾을 수 없습니다: " + orders.getStore().getStoreId());
+        }
 
     return UserOrderInfoRequestDto.builder()
+            .orderId(orders.getOrderId())
                 .storeId(orders.getStore().getStoreId())
                 .userPhone(orders.getUser().getPhone())
                 .storeName(storeManagement.getStoreName())

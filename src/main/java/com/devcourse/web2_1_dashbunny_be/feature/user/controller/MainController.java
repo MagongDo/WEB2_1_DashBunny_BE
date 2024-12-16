@@ -18,10 +18,10 @@ public class MainController {
 
     private final UserService userService;
 
-    @GetMapping ("/login")
-    public String login(Model model) {
+    @GetMapping ("/testDeliveryCall")
+    public String testDeliveryCall(Model model) {
 
-        return "login";
+        return "testDeliveryCall";
     }
 
     @GetMapping("/moveAdditionalInfo")

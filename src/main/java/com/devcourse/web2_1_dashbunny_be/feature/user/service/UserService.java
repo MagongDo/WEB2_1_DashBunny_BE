@@ -2,15 +2,16 @@ package com.devcourse.web2_1_dashbunny_be.feature.user.service;
 
 import com.devcourse.web2_1_dashbunny_be.config.jwt.JwtUtil;
 import com.devcourse.web2_1_dashbunny_be.domain.user.SmsVerification;
-import com.devcourse.web2_1_dashbunny_be.feature.user.Util.SmsUtil;
+import com.devcourse.web2_1_dashbunny_be.feature.user.util.SmsUtil;
 import com.devcourse.web2_1_dashbunny_be.domain.user.SocialUser;
 import com.devcourse.web2_1_dashbunny_be.domain.user.User;
 
-import com.devcourse.web2_1_dashbunny_be.feature.user.Util.ValidationUtil;
+import com.devcourse.web2_1_dashbunny_be.feature.user.util.ValidationUtil;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.UserDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.SmsVerificationRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.SocialUserRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
+import io.jsonwebtoken.Jwt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -214,11 +215,22 @@ public class UserService {
 //        }
 //        return user;
 //    }
+//    public String getCurrentUserId(String authorizationHeader) {
+//        String token = jwtUtil.extractTokenFromHeader(authorizationHeader);
+//
+//        if (!jwtUtil.validateToken(token)) {
+//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰");
+//        }
+//
+//        return jwtUtil.getUserIdFromToken(token);
+//    }
+
 
     // 로그인된 사용자 정보 JWT 버전
     public User getCurrentUser(String authorizationHeader) {
         // Authorization 헤더에서 토큰 추출
         String token = jwtUtil.extractTokenFromHeader(authorizationHeader);
+
 
         // 토큰 유효성 검증
         if (!jwtUtil.validateToken(token)) {

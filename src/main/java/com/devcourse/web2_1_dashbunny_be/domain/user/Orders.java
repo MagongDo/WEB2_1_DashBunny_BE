@@ -41,6 +41,8 @@ public class Orders implements Serializable {
 
   private String deliveryAddress;
 
+  private String detailDeliveryAddress;
+
   private String storeNote;
 
   private String riderNote;
@@ -52,6 +54,8 @@ public class Orders implements Serializable {
   private Long deliveryPrice;
 
   private String paymentId;
+
+  private Double rating;
 
   @Column(nullable = false)
   private Long totalPrice; // 총 금액 (단가 * 수량)

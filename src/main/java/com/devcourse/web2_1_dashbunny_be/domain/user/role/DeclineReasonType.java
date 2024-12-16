@@ -6,6 +6,7 @@ public enum DeclineReasonType {
     HIGH_ORDER_VOLUME("주문량 과다"),
     DELIVERY_ISSUE("배달 문제"),
     MENU_UNAVAILABLE("메뉴 준비 불가"),
+    CANCEL("주문자 취소"),
     OTHER("기타 사유");
 
     private final String description;
