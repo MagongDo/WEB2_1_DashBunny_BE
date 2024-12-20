@@ -129,7 +129,7 @@
       <td align="center"><b>BE 팀장<br/>사장님 도메인<br>주문 도메인</b></td>
       <td align="center"><b>BE<br/>회원 및 로그인<br/>쇼츠<br/>배달원 도메인<br/></b></td>
       <td align="center"><b>BE<br/>시용자 도메인<br/>결제</b></td>
-      <td align="center"><b>관리자 도메인<br/>쿠폰 도메인</td>
+      <td align="center"><b>BE<br/>관리자 도메인<br/>쿠폰 도메인</td>
     </tr>
   </tbody>
 </table>
