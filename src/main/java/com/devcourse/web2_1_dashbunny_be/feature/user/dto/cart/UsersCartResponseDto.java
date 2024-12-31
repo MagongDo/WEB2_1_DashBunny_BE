@@ -22,7 +22,7 @@ public class UsersCartResponseDto {
   private Long deliveryFee;              // 배달료
   private Long discountPrice;                   //할인 금액
   private Long totalAmount;              // 총 결제 금액 (주문 금액 + 배달료 - 할인금액)
-  private PaymentResponseDto paymentInfo;
+//  private PaymentResponseDto paymentInfo;
   private String storeRequirement;
   private String deliveryRequirement;
 
@@ -51,7 +51,7 @@ public class UsersCartResponseDto {
               .cartItems(cartItemDtos)  // 장바구니 아이템 리스트
               .deliveryFee(deliveryFee)  // 배달료
               .totalAmount(totalAmount)  // 총 결제 금액
-              .paymentInfo(paymentInfo)
+//              .paymentInfo(paymentInfo)
               .build();
   }
 }

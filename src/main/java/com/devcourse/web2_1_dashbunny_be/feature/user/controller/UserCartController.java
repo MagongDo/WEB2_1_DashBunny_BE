@@ -103,14 +103,16 @@ public class UserCartController {
    * @param deliveryRequirement 배달 요청사항
    * @return 결제된 장바구니 상태를 담은 응답 DTO
    */
-  @PostMapping("/carts/checkout")
+  @PostMapping("carts/checkout")
   public ResponseEntity<UsersCartResponseDto> checkoutCart(@RequestParam String storeRequirement,
                                                            @RequestParam String deliveryRequirement,
+                                                           @RequestParam String method,
                                                            @RequestHeader("Authorization") String authorizationHeader) {
     User currentUser = userService.getCurrentUser(authorizationHeader);
     UsersCartResponseDto cartDto = cartService.checkoutCart(currentUser.getPhone(),
             storeRequirement,
-            deliveryRequirement);
+            deliveryRequirement,
+            method);
     return ResponseEntity.ok(cartDto);
   }
 }

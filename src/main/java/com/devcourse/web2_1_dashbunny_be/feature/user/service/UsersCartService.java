@@ -5,13 +5,7 @@ import com.devcourse.web2_1_dashbunny_be.domain.common.role.DiscountType;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.DeliveryOperatingInfo;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.MenuManagement;
 import com.devcourse.web2_1_dashbunny_be.domain.owner.StoreManagement;
-import com.devcourse.web2_1_dashbunny_be.domain.user.Cart;
-import com.devcourse.web2_1_dashbunny_be.domain.user.CartItem;
-import com.devcourse.web2_1_dashbunny_be.domain.user.User;
-import com.devcourse.web2_1_dashbunny_be.domain.user.UserCoupon;
-import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrderInfoRequestDto;
-import com.devcourse.web2_1_dashbunny_be.feature.order.controller.dto.OrderItemDto;
-import com.devcourse.web2_1_dashbunny_be.feature.order.service.OrderService;
+import com.devcourse.web2_1_dashbunny_be.domain.user.*;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.menu.repository.MenuRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.DeliveryOperatingInfoRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.owner.store.repository.StoreManagementRepository;
@@ -20,6 +14,7 @@ import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCartResponse
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.cart.UsersCheckCouponDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentRequestDto;
 import com.devcourse.web2_1_dashbunny_be.feature.user.dto.payment.PaymentResponseDto;
+import com.devcourse.web2_1_dashbunny_be.feature.user.repository.PaymentRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UserRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.repository.UsersCartRepository;
 import com.devcourse.web2_1_dashbunny_be.feature.user.userCoupon.repository.UserCouponRepository;
@@ -51,8 +46,8 @@ public class UsersCartService {
   private final PaymentService paymentService; // 결제 서비스
   private final UserCouponRepository userCouponRepository; //사용자 쿠폰 저장소
   private final TossPaymentConfig tossPaymentConfig;
-  private final OrderService orderService;
   private final IdempotencyKeyService idempotencyKeyService;
+  private final PaymentRepository paymentRepository;
 
 
   /**
@@ -238,8 +233,7 @@ public class UsersCartService {
    */
 
   @Transactional
-  public UsersCartResponseDto checkoutCart(String userId, String storeRequirement, String deliveryRequirement) {
-    User user = userRepository.findByPhone(userId).orElseThrow(null);
+  public UsersCartResponseDto checkoutCart(String userId, String storeRequirement, String deliveryRequirement, String method) {
     // 장바구니 확인
     UsersCartResponseDto cartDto = getCart(userId);
     if (cartDto == null || cartDto.getCartItems() == null || cartDto.getCartItems().isEmpty()) {
@@ -288,13 +282,12 @@ public class UsersCartService {
 
     String orderId = UUID.randomUUID().toString();
 
-
     String idempotencyKey = idempotencyKeyService.getOrCreateIdempotencyKey(userId, menuNames);
 
     // 결제 요청 생성
     PaymentRequestDto paymentRequest = PaymentRequestDto.builder()
             .orderId(UUID.randomUUID().toString())
-            .method("card")
+            .method(method)
             .orderName(orderName)
             .amount(totalAmount)
             .failUrl(tossPaymentConfig.getFailUrl())
@@ -303,8 +296,12 @@ public class UsersCartService {
 
     // 결제 요청 수행
     PaymentResponseDto paymentResponse = paymentService.requestPayment(paymentRequest, idempotencyKey);
-
-
+    /*Payment payment = paymentRepository.findByOrderId(paymentRequest.getOrderId()).orElseThrow(IllegalArgumentException::new);
+    PaymentResponseDto paymentResponse = PaymentResponseDto.builder()
+            .paymentKey(payment.getPaymentKey())
+            .orderId(payment.getOrderId())
+            .checkout(payment.getUrl())
+            .amount(payment.getAmount()).build();*/
 
     // 최종 응답 DTO 생성
     cartDto.setStoreRequirement(storeRequirement);
@@ -327,8 +324,6 @@ public class UsersCartService {
     cart.setStoreRequirement(storeRequirement);
     cart.setDeliveryRequirement(deliveryRequirement);
     cartRepository.save(cart); // 장바구니 업데이트
-
-
     return UsersCartResponseDto.builder()
             .cartId(cart.getCartId())
             .userId(cart.getUser().getUserId())
@@ -337,7 +332,7 @@ public class UsersCartService {
             .deliveryFee(cartDto.getDeliveryFee())
             .discountPrice(discountPrice)
             .totalAmount(totalAmount)
-            .paymentInfo(paymentResponse)
+//            .paymentInfo(paymentResponse)
             .storeRequirement(storeRequirement)
             .deliveryRequirement(deliveryRequirement)
             .coupon(selectedCoupon)
