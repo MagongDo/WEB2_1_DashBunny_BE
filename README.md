@@ -135,34 +135,4 @@
 </table>
 
 ---
-## 주요 기능 에러 사항 및 진행 상황 
-
-<details>
-<summary>📋 더 자세히 보기</summary>
-
--작성
-
-</details>
-
-<details>
-<summary>📋 더 자세히 보기</summary>
-
--작성
-
-</details>
-
-<details>
-<summary>📋 더 자세히 보기</summary>
-
--작성
-
-</details>
-
-<details>
-<summary>📋 더 자세히 보기</summary>
-
--작성
-
-</details>
-
 
